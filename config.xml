@@ -21,6 +21,8 @@
         following tag to your config.xml; you will still have the INTERNET
         permission on your app, which PhoneGap requires.
     -->
+	<preference name='phonegap-version' value='cli-7.0.1' />
+	<preference name='pgb-builder-version' value='1' />
     <preference name="permissions"                value="none"/>
     <!-- Customize your app and platform with the preference element. -->
     <preference name="orientation"                value="default" />        <!-- all: default means both landscape and portrait are enabled -->
