@@ -1,0 +1,214 @@
+/* Portrait layout (default) */
+
+
+
+.normal .ui-panel-wrapper {
+    background: url(../img/graphs/Background.png) no-repeat center center fixed  !important ;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+
+.app {
+    background:url(../img/logo.png) no-repeat center top; /* 170px x 200px */
+    position:absolute;             /* position in the center of the screen */
+    left:50%;
+    top:50%;
+    height:50px;                   /* text area height */
+    width:225px;                   /* text area width */
+    text-align:center;
+    padding:180px 0px 0px 0px;     /* image height is 200px (bottom 20px are overlapped with text) */
+    margin:-115px 0px 0px -112px;  /* offset vertical: half of image height and text area height */
+                                   /* offset horizontal: half of text area width */
+}
+
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
+    .app {
+        background-position:left center;
+        padding:75px 0px 75px 170px;  /* padding-top + padding-bottom + text area = image height */
+        margin:-90px 0px 0px -198px;  /* offset vertical: half of image height */
+                                      /* offset horizontal: half of image width and text area width */
+    }
+}
+
+
+
+.event {
+    border-radius:4px;
+    -webkit-border-radius:4px;
+    color:#FFFFFF;
+    font-size:12px;
+    margin:0px 30px;
+    padding:2px 0px;
+}
+
+.event.listening {
+    background-color:#333333;
+    display:block;
+}
+
+.event.received {
+	background-color: #FF0000;
+	display: none;
+}
+
+@keyframes fade {
+    from { opacity: 1.0; }
+    50% { opacity: 0.4; }
+    to { opacity: 1.0; }
+}
+ 
+@-webkit-keyframes fade {
+    from { opacity: 1.0; }
+    50% { opacity: 0.4; }
+    to { opacity: 1.0; }
+}
+ 
+.blink {
+    animation:fade 3000ms infinite;
+    -webkit-animation:fade 3000ms infinite;
+}
+
+	div.gallery-row:after { clear: both; content: "."; display: block; height: 0; visibility: hidden; }
+		div.gallery-item { float: left; width: 33.333333%; }
+		div.gallery-item a { display: block; margin: 5px; border: 1px solid #3c3c3c; }
+		div.gallery-item img { display: block; width: 100%; height: auto; }
+		#Gallery1 .ui-content, #Gallery2 .ui-content { overflow: hidden; }
+		
+/* Portrait layout (default) */
+.LoginPage {
+background: url(../img/graphs/loginbackgroundls.jpg) no-repeat center center fixed;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+	.Menupp .ui-page {
+ background: transparent;
+}
+
+.Menupp .ui-content {
+ background: transparent;
+}
+
+
+.Menupp {
+background: url(../img/graphs/loginbackgroundls.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+
+	
+	
+	    .Menupp, .ui-panel-wrapper {
+       background: transparent url(../img/graphs/loginbackgroundls.jpg) no-repeat center center fixed !important;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    }
+
+
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
+    .LoginPage {
+       background: url(../img/graphs/loginbackground.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    }
+	
+	    .Menupp {
+       background: url(../img/graphs/loginbackground.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    }
+	
+		 /*   #pageMenu{
+       background: transparent url(../img/graphs/loginbackground.png) no-repeat center center fixed !important;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    }*/
+	
+	.Menupp .ui-page {
+ background: transparent;
+}
+
+.Menupp .ui-content {
+ background: transparent;
+}
+	
+	    .Menuapp, .ui-panel-wrapper {
+       background: transparent url(../img/graphs/loginbackground.png) no-repeat center center fixed !important;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    }*/
+}
+
+.loginbuttons
+{
+	float:right;
+	margin-right:2%;
+	position:fixed;
+	width:100%;
+}
+
+.Absolute-Center {
+ margin-top:15%;
+}
+
+#generic-dialog .ui-header a {
+	display: none;
+}
+
+.center-wrapper{
+text-align: center;
+}
+.center-wrapper * {
+margin: 0 auto;
+}
+
+.vanish {
+  display: none;
+}
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
+	
+	.half
+{
+
+width: 50% !important;
+margin: auto;
+
+}
+
+.dlang
+{
+	width: 75% !important;
+	margin: auto;
+
+	
+}
+	
+	
+	
+	
+}
+
+		
+		
+
