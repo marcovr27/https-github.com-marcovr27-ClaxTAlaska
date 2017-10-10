@@ -3,9 +3,16 @@
 
 ///////<<<<<<<<<<<<============================= GLOBAL VARIABLES =========================================>>>>>>>>>>>///////
 var newdatabasetoinsert;//Variable to get all tables from web service and insert on device db;
+var newtasksdatatoinsert;
+var newgroupsdatatoinsert;
+var newcoursesdatatoinsert;
+var newhoursdatatoinsert;
+var newmessagesdatatoinsert;
 var sendproceduresarray; //Sync Variables
 var sendstepsarray; //Sync Variables
 var sendchecklistarray;//Sync Variables
+var sendmessages;//Sync Variables
+var sendsubmittedhours;//Sync Variables
 var pictureSource;   // picture source
 var destinationType; // sets the format of returned value
 var capture; // The global capture object
@@ -231,10 +238,393 @@ function QuerytocheckifdbSuccess(tx,results,typeofsync)
 	
 }
 
-
-
-
 //GET DATA FROM SERVER
+function GetservicedataCourses()
+{	
+	var ipserver=$("#ipsync").val();
+    //alert("Get Data from:"+ipserver);
+	
+$("#progressheader").html(" ");
+	//progressheader
+	$("#progressheader").html("Downloading data...");
+		$("#progressMessage").html("Waiting for server connection");
+		pbar.setValue(0);
+		//alert("listo para el post: "+ipserver+'//GetStructureData');
+	                $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetCoursesdata',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						//alert(response.d);
+						//alert("WEb service works");
+						InsertDatabaseCourses(response.d);
+                        //alert(response.d.users);
+                       // var obj = jQuery.parseJSON(response.d.users);
+                       // $.each(obj, function (key, value) {
+                         //   alert(value.Username);//inserts users
+                        //});
+                       // $('#lblData').html(JSON.stringify());
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+							$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+                    console.log(xmlHttpRequest.responseText);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+				//alert("primer post ejecutado");
+}
+
+function InsertDatabaseCourses(newdatabase)
+{
+
+	$("#progressMessage").html("Successful connection");
+		pbar.setValue(1);
+	newcoursesdatatoinsert=newdatabase;
+	//alert(newdatabase);
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      db.transaction(QuerytoinsertCourses, errorCB);
+	
+}
+
+function QuerytoinsertCourses(tx)
+{
+	//alert("deleteoldrecords");
+	$("#progressMessage").html("Deleting old records");
+		pbar.setValue(2);
+	tx.executeSql("DELETE FROM COURSES");
+	//ready to insert new records
+	//alert("Insert new data");
+	$("#progressMessage").html("Ready to insert new records");
+	var query;
+	var obj = jQuery.parseJSON(QuerytoinsertCourses.Courses);
+	//alert("Items "+obj.length);
+	var itemcount=0;
+	 try
+	 {
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO GROUPS2CONTENT (GroupID,ID,Ord) VALUES ("'+value.GroupID+'", "'+value.ID+'","'+value.Ord+'")';
+		tx.executeSql(query);
+		itemcount++;
+     });
+	// alert("totalGroups2content: "+itemcount);
+	 
+	 	$("#progressMessage").html("Groups2Content updated");
+	pbar.setValue(10);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating Groups2Content "+error);
+			pbar.setValue(30);
+		 
+	 }
+	 
+	
+		 
+	 $("#progressMessage").html("Groups updated");
+		pbar.setValue(100);
+
+	$("#progressMessage").html("");
+		pbar.setValue(100);
+    Getservicedata();
+   //sendprocedures();	
+}
+//GET DATA FROM SERVER
+
+function GetservicedataGroups()
+{	
+	var ipserver=$("#ipsync").val();
+    //alert("Get Data from:"+ipserver);
+	
+$("#progressheader").html(" ");
+	//progressheader
+	$("#progressheader").html("Downloading data...");
+		$("#progressMessage").html("Waiting for server connection");
+		pbar.setValue(0);
+		//alert("listo para el post: "+ipserver+'//GetStructureData');
+	                $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetGroupsData',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						//alert(response.d);
+						//alert("WEb service works");
+						InsertDatabaseGroups(response.d);
+                        //alert(response.d.users);
+                       // var obj = jQuery.parseJSON(response.d.users);
+                       // $.each(obj, function (key, value) {
+                         //   alert(value.Username);//inserts users
+                        //});
+                       // $('#lblData').html(JSON.stringify());
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+							$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+                    console.log(xmlHttpRequest.responseText);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+				//alert("primer post ejecutado");
+}
+
+function InsertDatabaseGroups(newdatabase)
+{
+
+	$("#progressMessage").html("Successful connection");
+		pbar.setValue(1);
+	newgroupsdatatoinsert=newdatabase;
+	//alert(newdatabase);
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      db.transaction(QuerytoinsertGroups, errorCB);
+	
+}
+
+function QuerytoinsertGroups(tx)
+{
+	//alert("deleteoldrecords");
+	$("#progressMessage").html("Deleting old records");
+		pbar.setValue(2);
+	tx.executeSql("DELETE FROM GROUP2SUPS");
+	tx.executeSql("DELETE FROM GROUP2SUPSRTI");
+	tx.executeSql("DELETE FROM GROUPS2CONTENT");
+	//ready to insert new records
+	//alert("Insert new data");
+	$("#progressMessage").html("Ready to insert new records");
+	var query;
+	var obj = jQuery.parseJSON(newgroupsdatatoinsert.Groups2Content);
+	//alert("Items "+obj.length);
+	var itemcount=0;
+	 try
+	 {
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO GROUPS2CONTENT (GroupID,ID,Ord) VALUES ("'+value.GroupID+'", "'+value.ID+'","'+value.Ord+'")';
+		tx.executeSql(query);
+		itemcount++;
+     });
+	// alert("totalGroups2content: "+itemcount);
+	 
+	 	$("#progressMessage").html("Groups2Content updated");
+	pbar.setValue(10);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating Groups2Content "+error);
+			pbar.setValue(30);
+		 
+	 }
+	 
+	 try
+	 {
+		 	 obj=jQuery.parseJSON(newgroupsdatatoinsert.Groups2Sups);
+			 //alert("Groups:"+obj.length);
+	     $.each(obj, function (key, value) {
+		query='INSERT INTO GROUP2SUPS (GroupID,ID) VALUES ("'+value.GroupID+'","'+value.ID+'")';
+		tx.executeSql(query);
+		 $("#progressMessage").html("Group2Sups updated");
+	pbar.setValue(20);
+     });
+		 
+	 }
+	 catch(error)
+	 {
+		  $("#progressMessage").html("Error updating Group2Sups"+error);
+			pbar.setValue(20);
+		 
+	 }
+	   
+	  
+	  try
+	 {
+	  obj=jQuery.parseJSON(newgroupsdatatoinsert.Groups2SupsRTI);
+	  	 //alert("User2Groups:"+obj.length);
+	     $.each(obj, function (key, value) {
+		
+		query='INSERT INTO GROUP2SUPSRTI (GroupID,ID) VALUES ("'+value.UserID+'","'+value.ID+'")';
+		tx.executeSql(query);
+     });
+	 
+	$("#progressMessage").html("Group2supsRTI updated");
+	pbar.setValue(60);
+	 }
+	 	 catch(error)
+	 {
+		 
+		  $("#progressMessage").html("Error updating Group2supsRTI"+error);
+			pbar.setValue(60);
+		 
+	 }
+    // alert("Groups UPDATED");
+		 
+	 $("#progressMessage").html("Groups updated");
+		pbar.setValue(100);
+
+	$("#progressMessage").html("");
+		pbar.setValue(100);
+    GetservicedataCourses();
+   //sendprocedures();	
+}
+
+
+
+
+//GET DATA FROM SERVER TASKS
+function GetservicedataTasks()
+{
+	
+	
+	var ipserver=$("#ipsync").val();
+    //alert("Get Data from:"+ipserver);
+	
+$("#progressheader").html(" ");
+	//progressheader
+	$("#progressheader").html("Downloading data...");
+		$("#progressMessage").html("Waiting for server connection");
+		pbar.setValue(0);
+		//alert("listo para el post: "+ipserver+'//GetStructureData');
+	                $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetTasksData',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						//alert(response.d);
+						//alert("WEb service works");
+						InsertDatabaseTasks(response.d);
+                        //alert(response.d.users);
+                       // var obj = jQuery.parseJSON(response.d.users);
+                       // $.each(obj, function (key, value) {
+                         //   alert(value.Username);//inserts users
+                        //});
+                       // $('#lblData').html(JSON.stringify());
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+							$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+                    console.log(xmlHttpRequest.responseText);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+				//alert("primer post ejecutado");
+}
+
+function InsertDatabaseTasks(newdatabase)
+{
+
+	$("#progressMessage").html("Successful connection");
+		pbar.setValue(1);
+	newtasksdatatoinsert=newdatabase;
+	//alert(newdatabase);
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      db.transaction(QuerytoinsertTasks, errorCB);
+	
+}
+
+function QuerytoinsertTasks(tx)
+{
+	//alert("deleteoldrecords");
+	$("#progressMessage").html("Deleting old records");
+		pbar.setValue(2);
+	tx.executeSql("DELETE FROM ITEMS");
+	tx.executeSql("DELETE FROM LEVELS2ITEMS");
+	tx.executeSql("DELETE FROM DUTIES2TASKS");
+	//ready to insert new records
+	//alert("Insert new data");
+	$("#progressMessage").html("Ready to insert new records");
+	var query;
+	var obj = jQuery.parseJSON(newtasksdatatoinsert.Items);
+	//alert("Items "+obj.length);
+	var itemcount=0;
+	 try
+	 {
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO ITEMS (ID,Item,CourseID) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.Item)+'","'+escapeDoubleQuotes(value.CourseID)+'")';
+		tx.executeSql(query);
+		itemcount++;
+     });
+	 //alert("totalusers:"+usercount);
+	 
+	 	$("#progressMessage").html("Items updated");
+	pbar.setValue(10);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating Items "+error);
+			pbar.setValue(30);
+		 
+	 }
+	 
+	 try
+	 {
+		 	 obj=jQuery.parseJSON(newtasksdatatoinsert.Levels2Items);
+			 //alert("Groups:"+obj.length);
+	     $.each(obj, function (key, value) {
+		query='INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES ("'+value.LevelNum+'","'+value.ID+'")';
+		tx.executeSql(query);
+		 $("#progressMessage").html("Levels2Items updated");
+	pbar.setValue(20);
+     });
+		 
+	 }
+	 catch(error)
+	 {
+		  $("#progressMessage").html("Error updating Levels2Items "+error);
+			pbar.setValue(20);
+		 
+	 }
+	   
+	  
+	  try
+	 {
+	  obj=jQuery.parseJSON(newtasksdatatoinsert.Duties2Tasks);
+	  	 //alert("User2Groups:"+obj.length);
+	     $.each(obj, function (key, value) {
+		
+		query='INSERT INTO DUTIES2TASKS(UserID,ID) VALUES ("'+value.UserID+'","'+value.ID+'")';
+		tx.executeSql(query);
+     });
+	 
+	$("#progressMessage").html("Duties2Tasks updated");
+	pbar.setValue(60);
+	 }
+	 	 catch(error)
+	 {
+		 
+		  $("#progressMessage").html("Error updating Duties2Tasks "+error);
+			pbar.setValue(60);
+		 
+	 }
+
+		 
+	 $("#progressMessage").html("Tasks updated");
+		pbar.setValue(100);
+
+	$("#progressMessage").html("");
+		pbar.setValue(100);
+    GetservicedataGroups();
+   //sendprocedures();	
+}
+
+//Get DATA FROM FIRST SYNC
 function Getservicedata()
 {
 	
@@ -317,8 +707,8 @@ function Querytoinsertusers(tx)
 	 try
 	 {
     $.each(obj, function (key, value) {
-		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'")');
-		query='INSERT INTO USERS (Username,Password,FirstName,LastName) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'")';
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")';
 		tx.executeSql(query);
 		usercount++;
      });
@@ -739,7 +1129,7 @@ for (var i=0; i<results.rows.length; i++){
 
 sendproceduresarray=array;
 	$("#progressMessage").html("Procedures ready to send");
-		pbar.setValue(20);
+		pbar.setValue(10);
 sendsteps();
 	
 }
@@ -775,7 +1165,7 @@ for (var i=0; i<results.rows.length; i++){
 
 sendstepsarray=array;
 	$("#progressMessage").html("Steps ready to send");
-		pbar.setValue(40);
+		pbar.setValue(20);
 sendchecklists();
 
 	
@@ -810,15 +1200,88 @@ array.push(JSON.stringify(row));
 }
 sendchecklistarray=array;
 $("#progressMessage").html("Checklist ready to send");
-pbar.setValue(60);
+pbar.setValue(30);
+sendMessages();
+
+	
+}
+
+function sendMessages()
+{
+	 sendmessages="";
+	 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      db.transaction(QuerytosendMessages, errorCB);
+	
+}
+
+function QuerytosendMessages(tx)
+{
+	var querytosend="SELECT * FROM MESSAGES WHERE Sync='no'";
+	tx.executeSql(querytosend, [], QuerytosendMessagesSuccess, errorCB);
+}
+
+function QuerytosendMessagesSuccess(tx,results)
+{
+	var len = results.rows.length;
+	var array = [];
+	//alert(len);
+for (var i=0; i<results.rows.length; i++){
+ row = results.rows.item(i);
+ // alert(row.FaultID);
+ array.push(JSON.stringify(row));
+
+
+
+}
+
+sendmessages=array;
+	$("#progressMessage").html("Messages ready to send");
+	pbar.setValue(40);
+	sendSubmittedHours();
+
+	
+}
+
+function sendSubmittedHours()
+{
+	 sendmessages="";
+	 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      db.transaction(QuerytosendSubmittedHours(), errorCB);
+	
+}
+
+function QuerytosendSubmittedHours(tx)
+{
+	var querytosend="SELECT * FROM SUBMITTEDHOURS WHERE Sync='no'";
+	tx.executeSql(querytosend, [], QuerytosendMessagesSuccess, errorCB);
+}
+
+function QuerytosendMessagesSuccess(tx,results)
+{
+	var len = results.rows.length;
+	var array = [];
+	//alert(len);
+for (var i=0; i<results.rows.length; i++){
+ row = results.rows.item(i);
+ // alert(row.FaultID);
+ array.push(JSON.stringify(row));
+
+
+
+}
+
+sendsubmittedhours=array;
+	$("#progressMessage").html("Submitted Hours ready to send");
+		pbar.setValue(50);
 sendDataToServer();
 
 	
 }
 
+
 function sendDataToServer()
 {
-	//alert("entro");
+	//alert("entro a enviar datos");
 	var ipserver=$("#ipsync").val();
 		$("#progressheader").html("Uploading Data...");
 		$("#progressMessage").html("Preparing data to send");
@@ -828,6 +1291,8 @@ function sendDataToServer()
  obj['steps'] = JSON.stringify(sendstepsarray); 
  obj['checklists'] =JSON.stringify(sendchecklistarray); 
  obj['submittedcustomvalues'] ="[]";
+ obj['Messages'] =JSON.stringify(sendmessages); 
+ obj['SubmittedHours'] =JSON.stringify(sendsubmittedhours); 
  //var kaka=obj['procedures'];
  //alert("enviar datos"+ipserver+'//SetDeviceDataarray');
  //alert(kaka);
@@ -840,7 +1305,7 @@ function sendDataToServer()
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
 						pbar.setValue(100);
-						sendmediaobj();
+						sendmediaobj();// calling upload media
                        // alert(response.d);
            
                       
@@ -928,7 +1393,7 @@ tosend++;
 	{
 		$("#progressMessage").html("No Media found");
 		pbar.setValue(100);
-		Getservicedata()
+		GetservicedataTasks();
 		
 		
 	}
@@ -1003,7 +1468,7 @@ function winftp(r) {
 			if(parseInt(ppinitial, 10)==100)
 			{
 				//alert("termino");
-				Getservicedata();
+				GetservicedataTasks();
 			}
 			//pbar.setValue(pptoshow);
 			//alert(pptoshow);
@@ -1350,6 +1815,18 @@ function checkConnection() {
 ///////=============================<<<<<<<<<<<< END CHECK INTERNET CONNECTION >>>>>>>>>>>=========================================///////
 
 ///////<<<<<<<<<<<<============================= ORIENTATION CHANGE =========================================>>>>>>>>>>>///////
+function SetPortrait()
+{
+	//alert("PortraitFunction");
+	screen.orientation.lock('portrait').then(function success() {
+console.log("Successfully locked the orientation");
+//alert("Successfully locked the orientation");
+},function error(errMsg) {
+console.log("Error locking the orientation :: "+ errMsg);
+alert("Error locking the orientation :: "+ errMsg);
+});
+	
+}
 
 $(window).bind( 'orientationchange', function(e){
   //  if ($.event.special.orientationchange.orientation() == "portrait") {
@@ -1368,19 +1845,18 @@ $(window).bind( 'orientationchange', function(e){
 	//alert(textprocedure);
 	if (window.innerHeight > window.innerWidth) {
 		//alert("p portrait");
-		$('#logincontent').empty();
-		$('#logincontent').append('<div class="ui-grid-a"></div><div class="ui-grid-b"><form id="loginForm" style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div data-role="fieldcontain" class="ui-hide-label"><label for="username">Username:</label><input type="text" name="username" id="username" value="" placeholder="Username" /></div><div data-role="fieldcontain" class="ui-hide-label"><label for="password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" /></div><input type="button" class="ui-btn-b"  value="Login" id="LoginButton" onClick="LoginUser()"></form></div>').trigger('create');
-				$('#menucontentd').empty();
-$('#menucontentd').append('<form  style="margin-left:10%;  margin-right:10%; margin-top:85%;"><input type="button" value="'+textcheck+'" data-theme="a" onClick="navbyapp('+"'checklist'"+')"><input type="button" value="'+textprocedure+'" data-theme="a" onClick="navbyapp('+"'procedurelaunch'"+')"><input data-role="button" id="mbtnevaluations" type="button" value="Evaluations" data-theme="a" onClick="navbyapp('+"'evaulationslaunch'"+')"><input type="button" value="'+textdata+'" data-theme="a" onClick="navbyapp('+"'dataqueris'"+')">'+rejbtn+'<input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form>').trigger('create');
+		//$('#logincontent').empty();
+		//$('#logincontent').append('<div class="ui-grid-a"></div><div class="ui-grid-b"><form id="loginForm" style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div data-role="fieldcontain" class="ui-hide-label"><label for="username">Username:</label><input type="text" name="username" id="username" value="" placeholder="Username" /></div><div data-role="fieldcontain" class="ui-hide-label"><label for="password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" /></div><input type="button" class="ui-btn-b"  value="Login" id="LoginButton" onClick="LoginUser()"></form></div>').trigger('create');
+				$('#menucontentd').append('<form  style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></div></form>').trigger('create');
         //Do whatever in portrait mode
 
     } else {
 		//alert("l lasndscape");
         //Do Whatever in landscape mode
-		$('#logincontent').empty();
-		$('#logincontent').append(' <div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form id="loginForm" style="width:70%; margin-left:20%; margin-top:32%;"><div data-role="fieldcontain" class="ui-hide-label"><label for="username">Username:</label><input type="text" name="username" id="username" value="" placeholder="Username" /></div><div data-role="fieldcontain" class="ui-hide-label"><label for="password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" /></div><input type="button" class="ui-btn-b"  value="Login" id="LoginButton" onClick="LoginUser()"></form></div></div>').trigger('create');
+		//$('#logincontent').empty();
+		//$('#logincontent').append(' <div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form id="loginForm" style="width:70%; margin-left:20%; margin-top:32%;"><div data-role="fieldcontain" class="ui-hide-label"><label for="username">Username:</label><input type="text" name="username" id="username" value="" placeholder="Username" /></div><div data-role="fieldcontain" class="ui-hide-label"><label for="password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" /></div><input type="button" class="ui-btn-b"  value="Login" id="LoginButton" onClick="LoginUser()"></form></div></div>').trigger('create');
 					$('#menucontentd').empty();
-			$('#menucontentd').append('<div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form  style="width:70%; margin-left:20%; margin-top:32%;"><div data-role="fieldcontain" class="ui-hide-label"><input type="button" value="'+textcheck+'" data-theme="a" onClick="navbyapp('+"'checklist'"+')"><input type="button" value="'+textprocedure+'" data-theme="a" onClick="navbyapp('+"'procedurelaunch'"+')"><input data-role="button" id="mbtnevaluations" type="button" value="Evaluations" data-theme="a" onClick="navbyapp('+"'evaulationslaunch'"+')"><input type="button" value="'+textdata+'" data-theme="a" onClick="navbyapp('+"'dataqueris'"+')">'+rejbtn+'<input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form></div>').trigger('create');
+			$('#menucontentd').append('<div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form  style="width:70%; margin-left:20%; margin-top:32%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form></div>').trigger('create');
 		
 		//$('#menucontentd').empty();
 		//$('#menucontentd').append('LANDSCAPE').trigger('create');
@@ -1725,7 +2201,8 @@ function QuerywritehtmltSuccess(tx,results,language)
         // tx.executeSql('DROP TABLE IF EXISTS USERS');
 		
 		
-         tx.executeSql('CREATE TABLE IF NOT EXISTS USERS (Username unique, Password,FirstName,LastName)');
+         tx.executeSql('CREATE TABLE IF NOT EXISTS USERS (Username unique,Password,FirstName,LastName,LevelNum)');
+		 
 //         tx.executeSql('INSERT INTO USERS (Username,Password,FirstName,LastName) VALUES ("dclaxton", "pai","Darien","Claxton")');
 //		 tx.executeSql('INSERT INTO USERS (Username,Password,FirstName,LastName) VALUES ("mpoarch", "pai","Mark","Poarch")');
 //		 tx.executeSql('INSERT INTO USERS (Username,Password,FirstName,LastName) VALUES ("rali", "pai","Rudy","Ali")');
@@ -2441,9 +2918,288 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS STEPS2RESPONSES (ID,OrdNum,Text)');
 //tx.executeSql('INSERT INTO STEPS2RESPONSES (ID,OrdNum,Text) VALUES ("MTC.013","3","3")');
 //tx.executeSql('INSERT INTO STEPS2RESPONSES (ID,OrdNum,Text) VALUES ("MTC.013","4","4")');
 //tx.executeSql('INSERT INTO STEPS2RESPONSES (ID,OrdNum,Text) VALUES ("MTC.013","5","5 (Excellent)")');
+//Levels
+tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT)');
+//tx.executeSql('INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("1","6","72","1000")');
+//tx.executeSql('INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("2","6","72","1000")');
+//tx.executeSql('INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("3","12","144","2000")');
+//tx.executeSql('INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("4","12","144","2000")');
+//tx.executeSql('INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("5","12","144","2000")');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS TASKS (ID,Name,ReqHrsOJT)');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("A1- Complete new miner MSHA training","A1- Complete new miner MSHA training","30")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("A2- Review SOP for specific task(s)","A2- Review SOP for specific task(s)","120")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("A3- Complete Safety task training","A3- Complete Safety task training","250")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("A4-Complete Task training","A4-Complete Task training","250")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("A5-Complete performance plan review","A5-Complete performance plan review","50")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B1- Prepare daily PPE","B1- Prepare daily PPE","38")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B2- Participate in Safety Meetings","B2- Participate in Safety Meetings","30")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B3- Perform daily equipment inspections","B3- Perform daily equipment inspections","160")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B4- Perform daily housekeeping activities","B4- Perform daily housekeeping activities","163")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B5- Perform pipe system inspections","B5- Perform pipe system inspections","48")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B6- Complete daily MSHA workplace inspection","B6- Complete daily MSHA workplace inspection","204")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B7-  Maintain communications with support group","B7-  Maintain communications with support group","61")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B8- Respond to control room call-outs","B8- Respond to control room call-outs","105")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B9- Un-sand equipment","B9- Un-sand equipment","56")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B10- Follow established start up / shut down procedures (i.e. planned / emergency)","B10- Follow established start up / shut down procedures (i.e. planned / emergency)","92")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B11- Perform LTE/ZTE mill shutdown tasks","B11- Perform LTE/ZTE mill shutdown tasks","80")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("B12- Attend safety training refresher classes","B12- Attend safety training refresher classes","63")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C1- Complete Reagent Safety Training","C1- Complete Reagent Safety Training","59")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C2- Track mill consumption","C2- Track mill consumption","61")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C3- Measure reagent specific gravities","C3- Measure reagent specific gravities","68")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C4- Receive Chemical Inventory","C4- Receive Chemical Inventory","120")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C5- Stage Reagents in designated staging areas","C5- Stage Reagents in designated staging areas","118")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C6- Mix chemical batches","C6- Mix chemical batches","375")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C7- Clean debris strainers","C7- Clean debris strainers","58")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C8- Receive grinding media inventory","C8- Receive grinding media inventory","60")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C9- Fill ball hoppers","C9- Fill ball hoppers","98")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C10- Complete daily Reagent Report","C10- Complete daily Reagent Report","44")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("C11- Complete daily reagents and grinding media orders","C11- Complete daily reagents and grinding media orders","39")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("D1- Assess clarifier performance","D1- Assess clarifier performance","153")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("D2- Verify pH balances","D2- Verify pH balances","71")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("D3- Verify NTU reading balances","D3- Verify NTU reading balances","75")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("D4- Maintain lime slaking system","D4- Maintain lime slaking system","196")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("D5- Inspect sand filter system","D5- Inspect sand filter system","85")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("D6- Inspect single-stage air compressor  Sullairs/Blowers","D6- Inspect single-stage air compressor  Sullairs/Blowers","45")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("D7- Maintain flocculant systems","D7- Maintain flocculant systems","118")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("D8- Perform daily outside pump run inspection","D8- Perform daily outside pump run inspection","219")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("D9- Complete water treatment system PM work order(s)","D9- Complete water treatment system PM work order(s)","54")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("D10- Complete daily water treatment operator reports","D10- Complete daily water treatment operator reports","84")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E1- Perform dewatering circuit inspection","E1- Perform dewatering circuit inspection","105")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E2- Monitor filter press performance","E2- Monitor filter press performance","140")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E3- Assess thickener performance","E3- Assess thickener performance","71")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E4- Collect Dewatering density samples","E4- Collect Dewatering density samples","76")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E5- Collect moisture samples","E5- Collect moisture samples","81")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E6- Inspect Conveyor Belt System","E6- Inspect Conveyor Belt System","63")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E7- Maintain drop chute clearances","E7- Maintain drop chute clearances","45")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E8- Manage filtered water from the filter presses","E8- Manage filtered water from the filter presses","29")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E9- Monitor concentrate height in CSB","E9- Monitor concentrate height in CSB","31")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E10- Inspect CSB Baghouse (i.e. air filtration system)","E10- Inspect CSB Baghouse (i.e. air filtration system)","36")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E11- Collect daily dewatering samples","E11- Collect daily dewatering samples","67")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E12-  Measure flocculant dosage","E12-  Measure flocculant dosage","53")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E13- Inspect multi-stage air compressor","E13- Inspect multi-stage air compressor","52")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E14- Change out faulty clothes","E14- Change out faulty clothes","50")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E15- Complete scheduled filter batch change out","E15- Complete scheduled filter batch change out","78")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E16- Prepare filter cloths for change out","E16- Prepare filter cloths for change out","27")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E17- Stage filter cloths for change out","E17- Stage filter cloths for change out","17")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E18- Manage trash screen performance","E18- Manage trash screen performance","24")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E19- Complete Dewatering circuit PM work orders","E19- Complete Dewatering circuit PM work orders","29")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("E20- Complete daily dewatering operator reports","E20- Complete daily dewatering operator reports","26")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F1- Collect grinding density samples","F1- Collect grinding density samples","99")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F2- Analyze cyclone efficiency","F2- Analyze cyclone efficiency","111")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F3- Perform routine conveyor belt inspections","F3- Perform routine conveyor belt inspections","67")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F4- Measure grinding reagent","F4- Measure grinding reagent","36")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F5- Complete CRO reports","F5- Complete CRO reports","66")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F6- Inspect SAG mill feed chutes","F6- Inspect SAG mill feed chutes","39")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F7- Inspect SAG trommel screens","F7- Inspect SAG trommel screens","30")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F8- Inspect apron feeders","F8- Inspect apron feeders","48")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F10- Manage dust scrubber performance","F10- Manage dust scrubber performance","57")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F11- Complete daily mill charge (i.e. SAG, Ball)","F11- Complete daily mill charge (i.e. SAG, Ball)","75")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F12- Optimize grinding throughput","F12- Optimize grinding throughput","128")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F13- Monitor PSI reading (i.e. cyclone, air, bearing lube pressure)","F13- Monitor PSI reading (i.e. cyclone, air, bearing lube pressure)","41")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F14- Monitor pre-flot circuit performance","F14- Monitor pre-flot circuit performance","54")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F15- Confirm mill feed sample stream","F15- Confirm mill feed sample stream","33")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F16- Complete pump changeover (i.e. lube oil, slurry)","F16- Complete pump changeover (i.e. lube oil, slurry)","56")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F17- Complete grinding cyclone(s) swap","F17- Complete grinding cyclone(s) swap","28")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F18- Collect daily grinding samples","F18- Collect daily grinding samples","39")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F19- Conduct grinding pre-flot cell PM","F19- Conduct grinding pre-flot cell PM","32")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G1- Monitor reagents for circuit (i.e. SG, usage, dosage)","G1- Monitor reagents for circuit (i.e. SG, usage, dosage)","105")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G2- Monitor performance of mechanical flotation cell","G2- Monitor performance of mechanical flotation cell","77")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G3- Measure flotation circuit densities ","G3- Measure flotation circuit densities","62")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G4- Inspect flotation cell agitator","G4- Inspect flotation cell agitator","47")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G5- Collect daily silica samples","G5- Collect daily silica samples","45")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G6- Monitor zinc and lead courier streams and targets","G6- Monitor zinc and lead courier streams and targets","81")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G7-  Flush circuit sample stream lines","G7-  Flush circuit sample stream lines","42")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G8- Collect daily flotation samples","G8- Collect daily flotation samples","57")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G9- Analyze froth structure","G9- Analyze froth structure","70")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G10- Monitor column cell performance","G10- Monitor column cell performance","101")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G11- Adjust column cell air disbursement system","G11- Adjust column cell air disbursement system","72")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G12- Clean wash water headers","G12- Clean wash water headers","52")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G13- Clean column level indicators","G13- Clean column level indicators","32")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G14- Clean concentrate launders","G14- Clean concentrate launders","33")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G15- Manage regrind mill performance","G15- Manage regrind mill performance","77")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G16- Monitor flotation circuit flow (i.e. Zn, Pb)","G16- Monitor flotation circuit flow (i.e. Zn, Pb)","116")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("G17- Monitor mechanical cell air blowers","G17- Monitor mechanical cell air blowers","31")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("H1- Conduct shift change carryover meeting","H1- Conduct shift change carryover meeting","39")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("H2- Communicate task(s) with mill operators","H2- Communicate task(s) with mill operators","67")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("H3- Perform dispatch responsibilities","H3- Perform dispatch responsibilities ","50")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("H4- Provide training & technical support for mill operators (i.e. SOP’s, SDS, MWO)","H4- Provide training & technical support for mill operators (i.e. SOP’s, SDS, MWO)","118")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("H5- Monitor mill performance data","H5- Monitor mill performance data","119")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("H6- Manage production targets","H6- Manage production targets","89")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("H7- Maximize mill throughput of ore","H7- Maximize mill throughput of ore","65")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("H8- Optimize reagent usage","H8- Optimize reagent usage","64")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("H9- Complete daily control room operator reports","H9- Complete daily control room operator reports","89")');
+//tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F9- Manage dust suppression system","F9- Manage dust suppression system","61")');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS ITEMS (ID,Item,CourseID)');
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00104-15 Introduction to Power Tools","00104-15 Introduction to Power Tools"," ")');
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00105-15 Introduction to Construction Drawings","00105-15 Introduction to Construction Drawings"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00101-15 Basic Safety","00101-15 Basic Safety","401")');
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00102-15 Introduction to Construction Math","00102-15 Introduction to Construction Math"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00103-15 Introduction to Hand Tools	00103-15","Introduction to Hand Tools"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("Cross-training with S&H department","Cross-training with S&H department"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("MSHA Workplace Examinations training","MSHA Workplace Examinations training"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("Safety meetings","Safety meetings"," "	)');
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("Prepare daily","Preparerepare daily PPE"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("Proper equipment inspections","Proper equipment inspections"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("Housekeeping and 5s with Business Improvement","Housekeeping and 5s with Business Improvement"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("CBT","CBT"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("Workbook","Workbook"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("Cross training with Mill Maintenance","Cross training with Mill Maintenance"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("Cross training with CRO on Reagent ordering","Cross training with CRO on Reagent ordering"," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00106-15 Introduction to Basic Rigging ","00106-15 Introduction to Basic Rigging"," ")'); 	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00107-15 Basic Communication Skills ","00107-15 Basic Communication Skills "," ")');	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00108-15 Basic Employability Skills","00108-15 Basic Employability Skills"," ")'); 	
+//tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00109-15 Introduction to Material Handling","00109-15 Introduction to Material Handling"," ")');	
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS2TASKS (LevelNum,ID)');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS2ITEMS (LevelNum,ID)');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("1","00101-15 Basic Safety")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("1","00102-15 Introduction to Construction Math")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("1","00103-15 Introduction to Hand Tools")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("1","00104-15 Introduction to Power Tools")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("1","00105-15 Introduction to Construction Drawings")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("2","Cross-training with S&H department")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("2","Housekeeping and 5s with Business Improvement")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("2","MSHA Workplace Examinations training")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("2","Prepare daily PPE")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("2","Proper equipment inspections")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("2","Safety meetings")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("3","CBT")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("3","Cross training with CRO on Reagent ordering")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("3","Cross training with Mill Maintenance")');
+//tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("3","Workbook")');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Task,LevelNum,Item,Hours,Mins,PersonnelID,SupervisorID,RejectReason,ReviewDate,Sync)');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync)');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS SUBMITOJT2USERS (SubmitID,UserID)');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS COURSES (ID,Description,DescriptionLang2,ContentType,DurationHours,DurationMins,Scope,Instructor,FileName)');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS GROUP2SUPS (GroupID,ID)');
+//tx.executeSql('INSERT INTO GROUP2SUPS (GroupID,ID) VALUES ("D10T1","jbaca")');
+//tx.executeSql('INSERT INTO GROUP2SUPS (GroupID,ID) VALUES ("A1","jbaca")');
+//tx.executeSql('INSERT INTO GROUP2SUPS (GroupID,ID) VALUES ("A3","dclaxton")');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS GROUP2SUPSRTI (GroupID,ID)');
+//tx.executeSql('INSERT INTO GROUP2SUPSRTI (GroupID,ID) VALUES ("A1","mterrazas")');
+//tx.executeSql('INSERT INTO GROUP2SUPSRTI (GroupID,ID) VALUES ("A3","jbaca")');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS GROUPS2CONTENT(GroupID,ID,Ord)');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS  DUTIES2TASKS(Duty,TaskID,OrdNum)');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A1- Complete new miner MSHA training","1")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A2- Review SOP for specific task(s)","2")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A3- Complete Safety task training","4")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A4-Complete Task training","7")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A5-Complete performance plan review","11")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B1- Prepare daily PPE","1")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B10- Follow established start up / shut down procedures (i.e. planned / emergency)","10")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B11- Perform LTE/ZTE mill shutdown tasks","11")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B12- Attend safety training refresher classes","12")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B2- Participate in Safety Meetings","2")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B3- Perform daily equipment inspections","3")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B4- Perform daily housekeeping activities","4")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B5- Perform pipe system inspections","5")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B6- Complete daily MSHA workplace inspection","6")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B7-  Maintain communications with support group","7")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B8- Respond to control room call-outs","8")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("B","B9- Un-sand equipment","9")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C1- Complete Reagent Safety Training","1")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C10- Complete daily Reagent Report","10")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C11- Complete daily reagents and grinding media orders","11")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C2- Track mill consumption","2")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C3- Measure reagent specific gravities","3")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C4- Receive Chemical Inventory","4")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C5- Stage Reagents in designated staging areas","5")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C6- Mix chemical batches","6")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C7- Clean debris strainers","7")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C8- Receive grinding media inventory","8")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("C","C9- Fill ball hoppers","9")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("D","D1- Assess clarifier performance","1")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("D","D10- Complete daily water treatment operator reports","10")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("D","D2- Verify pH balances","2")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("D","D3- Verify NTU reading balances","3")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("D","D4- Maintain lime slaking system","4")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("D","D5- Inspect sand filter system","5")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("D","D6- Inspect single-stage air compressor  Sullairs/Blowers","6")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("D","D7- Maintain flocculant systems","7")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("D","D8- Perform daily outside pump run inspection","8")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("D","D9- Complete water treatment system PM work order(s)","9")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E1- Perform dewatering circuit inspection","1")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E10- Inspect CSB Baghouse (i.e. air filtration system)","10")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E11- Collect daily dewatering samples","11")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E12-  Measure flocculant dosage","12")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E13- Inspect multi-stage air compressor","13")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E14- Change out faulty clothes","14")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E15- Complete scheduled filter batch change out","15")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E16- Prepare filter cloths for change out","16")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E17- Stage filter cloths for change out","17")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E18- Manage trash screen performance","18")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E19- Complete Dewatering circuit PM work orders","19")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E2- Monitor filter press performance","2")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E20- Complete daily dewatering operator reports","20")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E3- Assess thickener performance","3")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E4- Collect Dewatering density samples","4")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E5- Collect moisture samples","5")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E6- Inspect Conveyor Belt System","6")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E7- Maintain drop chute clearances","7")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E8- Manage filtered water from the filter presses","8")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("E","E9- Monitor concentrate height in CSB","9")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F1- Collect grinding density samples","1")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F10- Manage dust scrubber performance","10")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F11- Complete daily mill charge (i.e. SAG, Ball)","11")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F12- Optimize grinding throughput","12")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F13- Monitor PSI reading (i.e. cyclone, air, bearing lube pressure)","13")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F14- Monitor pre-flot circuit performance","14")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F15- Confirm mill feed sample stream","15")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F16- Complete pump changeover (i.e. lube oil, slurry)","16")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F17- Complete grinding cyclone(s) swap","17")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F18- Collect daily grinding samples","18")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F19- Conduct grinding pre-flot cell PM	","19")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F2- Analyze cyclone efficiency","2")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F3- Perform routine conveyor belt inspections","3")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F4- Measure grinding reagent","4")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F5- Complete CRO reports","5")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F6- Inspect SAG mill feed chutes","6")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F7- Inspect SAG trommel screens","7")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F8- Inspect apron feeders","8")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("F","F9- Manage dust suppression system","9")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G12- Clean wash water headers","12")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G13- Clean column level indicators","13")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G14- Clean concentrate launders","14")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G15- Manage regrind mill performance","15")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G16- Monitor flotation circuit flow (i.e. Zn, Pb)","16")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G17- Monitor mechanical cell air blowers","17")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G2- Monitor performance of mechanical flotation cell","2")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G3- Measure flotation circuit densities","3")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G4- Inspect flotation cell agitator","4")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G5- Collect daily silica samples","5")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G6- Monitor zinc and lead courier streams and targets","6")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G7-  Flush circuit sample stream lines","7")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G8- Collect daily flotation samples","8")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G9- Analyze froth structure","9")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("H","H1- Conduct shift change carryover meeting","1")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("H","H2- Communicate task(s) with mill operators","2")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("H","H3- Perform dispatch responsibilities","3")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("H","H4- Provide training & technical support for mill operators (i.e. SOP’s, SDS, MWO)","4")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("H","H5- Monitor mill performance data","5")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("H","H6- Manage production targets","6")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("H","H7- Maximize mill throughput of ore","7")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("H","H8- Optimize reagent usage","8")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("H","H9- Complete daily control room operator reports","9")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G1- Monitor reagents for circuit (i.e. SG, usage, dosage)","1")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G10- Monitor column cell performance","10")');
+//tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("G","G11- Adjust column cell air disbursement system","11")');
 
 //temp
 tx.executeSql('CREATE TABLE IF NOT EXISTS TEMPRESPONSES (SubmitID,ProcID,StepID,Text,Num,Response,Comments,UserID,QNum)');
+
+
+
 
  }
  
@@ -2742,26 +3498,18 @@ $(document).on( 'pagebeforeshow', '#generic-dialog',function(event,data){
 });
 //ON CREATE PAGE LOGIN
 $(document).on( 'pageinit', '#pageLogin',function(){
-
+	//SetPortrait();
 verifyrejected();
 	if(window.innerHeight > window.innerWidth){
    // alert("Portrait!");
 			$('#logincontent').empty();
 		$('#logincontent').append('<div class="ui-grid-a"></div><div class="ui-grid-b"><form id="loginForm" style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div data-role="fieldcontain" class="ui-hide-label"><label for="username">Username:</label><input type="text" name="username" id="username" value="" placeholder="Username" /></div><div data-role="fieldcontain" class="ui-hide-label"><label for="password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" /></div><input type="button" class="ui-btn-b"  value="Login" id="LoginButton" onClick="LoginUser()"></form></div>').trigger('create');
-	//$('#menucontentd').empty();
-	//$('#menucontentd').append('Portrait').trigger('create');	
 }
 else
 {
 	// alert("Landscapet!");
 			$('#logincontent').empty();
 		$('#logincontent').append(' <div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form id="loginForm" style="width:70%; margin-left:20%; margin-top:32%;"><div data-role="fieldcontain" class="ui-hide-label"><label for="username">Username:</label><input type="text" name="username" id="username" value="" placeholder="Username" /></div><div data-role="fieldcontain" class="ui-hide-label"><label for="password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" /></div><input type="button" class="ui-btn-b"  value="Login" id="LoginButton" onClick="LoginUser()"></form></div></div>').trigger('create');
-		
-		//$('#menucontentd').empty();
-		//$('#menucontentd').append('Landscape').trigger('create');
-		
-		
-	
 }
 
 translatehtml();
@@ -2778,6 +3526,7 @@ translatehtml();
 
 //ON CREATE PAGE MENU
 $(document).on( 'pagebeforeshow', '#pageMenu',function(){
+	
 	verifyrejected();
 	var rejbtn="";
 	var textprocedure=$("#btpro").val();
@@ -2793,15 +3542,15 @@ $(document).on( 'pagebeforeshow', '#pageMenu',function(){
     //alert("Portrffgait!");
 
 			$('#menucontentd').empty();
-				$('#menucontentd').append('<form  style="margin-left:10%;  margin-right:10%; margin-top:85%;"><input type="button" value="'+textcheck+'" data-theme="a" onClick="navbyapp('+"'checklist'"+')"><input type="button" value="'+textprocedure+'" data-theme="a" onClick="navbyapp('+"'procedurelaunch'"+')"><input data-role="button" id="mbtnevaluations" type="button" value="Evaluations" data-theme="a" onClick="navbyapp('+"'evaulationslaunch'"+')"><input type="button" value="'+textdata+'" data-theme="a" onClick="navbyapp('+"'dataqueris'"+')">'+rejbtn+'<input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form>').trigger('create');
+				$('#menucontentd').append('<form  style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></div></form>').trigger('create');
 	//$('#menucontentd').empty();
 	//$('#menucontentd').append('Portrait').trigger('create');	
 }
 else
 {
 	// alert("Landscdfdapet!");
-			$('#menucontentd').empty();
-		$('#menucontentd').append('<div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form  style="width:70%; margin-left:20%; margin-top:32%;"><div data-role="fieldcontain" class="ui-hide-label"><input type="button" value="'+textcheck+'" data-theme="a" onClick="navbyapp('+"'checklist'"+')"><input type="button" value="'+textprocedure+'" data-theme="a" onClick="navbyapp('+"'procedurelaunch'"+')"><input data-role="button" id="mbtnevaluations" type="button" value="Evaluations" data-theme="a" onClick="navbyapp('+"'evaulationslaunch'"+')"><input type="button" value="'+textdata+'" data-theme="a" onClick="navbyapp('+"'dataqueris'"+')">'+rejbtn+'<input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form></div>').trigger('create');
+		$('#menucontentd').empty();
+		$('#menucontentd').append('<div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form  style="width:70%; margin-left:20%; margin-top:32%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form></div>').trigger('create');
 		
 		
 		//$('#menucontentd').empty();
@@ -3435,8 +4184,29 @@ fillevaluationsteps();
 });
 
 <!---------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------------------------------------------->
+//ON CREATE 
+$(document).on( 'pagebeforeshow', '#pageLogbook',function(){
+//fill username name,level and name
+	var userfullname=sessionStorage.fname;
+	var leveluser=sessionStorage.lvlname;
+	var headstring=userfullname+": Level "+leveluser;
+	var monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+	var d = new Date();
+	var monthname=monthNames[d.getMonth()];
+	var daynumber=(d.getDate()) > 9 ? (d.getDate()) : "0" + (d.getDate());
+	var yearnumber=d.getFullYear();
+	//alert(monthname+" "+daynumber+", "+yearnumber);	
+	$("#hplogusername").html(headstring);
+	//var namedate=monthname+" "+daynumber+", "+yearnumber;
+	$("#hplogdatez").html(monthname+" "+daynumber+", "+yearnumber);
+	filltaskworked();
+});
 
 
+<!---------------------------------------------------------------------------------------------------------------------->
 <!---------------------------------------------------------------------------------------------------------------------->
 
 ///////=============================<<<<<<<<<<<< END ON LOAD PAGES >>>>>>>>>>>=========================================///////
@@ -3475,6 +4245,7 @@ function LoginUser()
 	{
 		var username=$("#username").val();
 		var password=$("#password").val();
+		username=username.toLowerCase();
 		//alert(username+" "+password);
 		//alert("SELECT * FROM PROCEDURESTEPS");
 		tx.executeSql("SELECT * FROM USERS WHERE Username='"+username+"' AND Password='"+password+"'", [], UserLoginSuccess, errorCB);
@@ -3484,15 +4255,18 @@ function LoginUser()
 	
 	 function UserLoginSuccess(tx, results) {
       var len = results.rows.length;
-	  //alert("query rows:"+len);
+	 // alert("query rows:"+len);
 	  if(len==1)
 	  {
 		  var nameuser=results.rows.item(0).Username;
 		  var fname=results.rows.item(0).FirstName;
 		  var lname=results.rows.item(0).LastName
 		  var fullname=fname+' '+lname;
+		  var LevelName=results.rows.item(0).LevelNum;
+		 // alert(LevelName);
 		   sessionStorage.userid=nameuser;
 		   sessionStorage.fname=fullname;
+		   sessionStorage.lvlname=LevelName;
 		  // SyncStatus();
 		  
 		$(':mobile-pagecontainer').pagecontainer('change', '#pageMenu', {
@@ -9809,3 +10583,39 @@ window.resolveLocalFileSystemURL(texportDirectory, function(dir) {
 	});
 });
 }
+
+///////<<<<<<<<<<<<============================= LOGBOOK PAGE =========================================>>>>>>>>>>>///////
+function filltaskworked()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(Querytaskworked, errorCB);
+	
+}
+
+function Querytaskworked(tx)
+{
+  tx.executeSql("SELECT * FROM DUTIES2TASKS ORDER BY Duty,OrdNum", [], QuerytaskworkedSuccess, errorCB);
+}
+
+function QuerytaskworkedSuccess(tx, results)
+{
+	var len = results.rows.length;
+	alert(len);
+	var selecthtml='<option value="0">Choose a task</option>';
+	if(len>0)
+	{
+		for (var i=0; i<len; i++){
+			 selecthtml+='<option value="'+results.rows.item(i).Duty+'">'+results.rows.item(i).TaskID+'</option>';
+             }
+		 $("#select_taskworked").html(selecthtml);	 
+	}
+	else
+	{
+	  navigator.notification.alert("No registered tasks", null, 'FieldTracker', 'Accept'); 
+	}
+	
+	
+}
+
+
+///////<<<<<<<<<<<<=============================END FUNCTION LOGBOOK PAGE  =========================================>>>>>>>>>>>///////

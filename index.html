@@ -114,40 +114,32 @@
       
       
       <!--Page Menu-->
-	<div data-role="page" id="pageMenu" class="Menupp" >
+	<div data-role="page" id="pageMenu" class="Menupp">
                 <div data-role="header" data-position="fixed" data-theme="b">
                     <h1></h1>
                     <a href="#nav-panel" data-icon="bars" data-iconpos="notext" id="amenu1">Menu</a>
                     <a href="#add-form" data-icon="user" data-iconpos="notext" id="add1">Add</a>
                 </div>
                 <div data-role="content" id="menucontentd">
-                <div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b">
-<form  style="width:70%; margin-left:20%; margin-top:32%;">
-
-   				<input data-role="button" type="button" id="mbtnchecklist" value="Checklists" data-theme="a" onClick="navbyapp('checklist')">
-                <input data-role="button" id="mbtnprocedures" type="button" value="Procedures" data-theme="a" onClick="navbyapp('procedurelaunch')">
-                 <input data-role="button" id="mbtnevaluations" type="button" value="Evaluations" data-theme="a" onClick="navbyapp('evaulationslaunch')">
-       			<input data-role="button" id="mbtndataqueris" type="button" value="Data Queries" data-theme="a" onClick="navbyapp('dataqueris')">
-   				<input data-role="button" id="mbtndatarejected" type="button" value="Rejected Procedures" data-theme="a" onClick="navbyapp('rejected')">
+                <img src="img/logbook.png" height="42" width="42">
+				<form  style="width:70%; margin-left:20%; margin-top:32%;">
+                <div class="ui-grid-b ui-responsive">
+                <div class="ui-block-a"><a href="navbyapp('logbook')" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div>
+                <div class="ui-block-b"><a href="navbyapp('procedurelaunch')" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div>
+                <div class="ui-block-c"><a href="navbyapp('library')" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div>
+                </div>
+                <div class="ui-grid-b ui-responsive">
+               <div class="ui-block-a"><a href="navbyapp('messages')" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div>
+       <div class="ui-block-b"><a href="navbyapp('certifications')" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div>
+                <div class="ui-block-c"><a href="navbyapp('dataqueris')" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div>
+                </div>
+                <div class="ui-grid-solo">
+                 <input data-role="button"  type="button" id="mbtndatarejected"  value="Rejected Procedures" data-theme="a" onClick="navbyapp('rejected')">
+                </div>
                 <input type="hidden" value="yes" id="hs" name="hs">
                     <div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div>
                     </form>
                     </div>
-             
-       
-        
-         
-          
-            
-           </div>
-           
-                
-             
-                
-              	
-        
-                    
-                </div>
                  <div data-role="panel" data-position="right" data-display="reveal" data-theme="a" id="add-form">
                     <form class="userform">
                         <h2 id="mainusername"></h2>
@@ -1680,6 +1672,109 @@
 </div>
 
 <!--Page Procedure Steps-->
+
+          <!--Page Logbook-->
+<div data-role="page" id="pageLogbook" class="normal" >
+	<div data-role="header" data-position="fixed" data-theme="b">
+		<h1><label id="hplogbook"><b>Logbook</b></label>
+        <label id="hplogusername">Darien Claxton: Level 3</label>
+        <label id="hplogdatez">September 10, 2017</label> </h1>
+         <a href="#menu-panelcc" data-icon="bars" data-iconpos="notext" id="amenu2">Menu</a>
+	</div>
+	<div data-role="content">
+    <input type="hidden" value="0" id="iduserlogbook" >
+    <input type="hidden" value="0" id="idtasklogbook" >
+    <div data-role="tabs" id="tabs">
+  <div data-role="navbar">
+    <ul>
+      <li><a href="#one" data-ajax="false">OJT</a></li>
+      <li><a href="#two" data-ajax="false">Classroom</a></li>
+      <li><a href="#three" data-ajax="false" >Summary</a></li>
+    </ul>
+  </div>
+  <div id="one" class="ui-body ui-body-a">
+<form>   
+<label for="select_taskworked" id="lbllog1">Task Worked On:</label>
+    <select name="select_taskworked" id="select_taskworked" onChange="">
+    </select>
+    <br>
+    <div style="width:50%; margin: 0 auto;">
+     <h3 style=" margin: 0 auto; text-align:center;" >Status Summary for This Task</h3>
+        <table data-role="table" data-filter="false" id="table-logbook"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
+    <thead>
+      <tr class="ui-bar-a">
+        <th data-priority="1" style="text-align: center" id="tablerequiredh">Required Hours</th>
+        <th data-priority="2" style="text-align: center" id="tablecompleted">Completed Hours</th>
+        <th data-priority="3" style="text-align: center" id="tablehours">Hours To Go</th>
+        <th data-priority="4" style="text-align: center" id="tabledone">% Done</th>   
+      </tr>
+    </thead>
+    <tbody id="bodycheck-list">
+     <tr><td id="revaluetd">105</td><td id="completedvaluetd">42</td><td id="hourstogovaluetd">63</td><td id="donevaluetd">40%</td></tr>
+    </tbody>
+  </table>
+  <br>
+    <h3 style=" margin: 0 auto; text-align:center;" >Personnel Worked With:</h3>
+    <select name="select_personnelworked" id="select_personnelworked" onChange="">
+        <option value="0">Marco Velarde</option>
+    </select>
+    <div class="ui-grid-d">
+    <div class="ui-block-a"></div>
+    <div class="ui-block-b" style="text-align:center;"><br><label  id="lblentrydateone"><b>Entry Date:</b></label></div>
+    <div class="ui-block-c"><input type="date" name="entryonevalue" id="entryonevalue" value=""></div>
+    <div class="ui-block-d"></div>
+    </div>
+    <br>
+    <br>
+    <div class="ui-grid-c">
+    <div class="ui-block-a" style="text-align:center;"><br><label  id="lblhoursentryone"><b>Hours for this entry:</b></label></div>
+    <div class="ui-block-b"><input type="number" name="hourentryone" pattern="[0-9]*" id="hourentryone" value=""></div>
+    <div class="ui-block-c" style="text-align:right;"><br><label  id="lblminutesenrtyone"><b>Minutes:&nbsp;&nbsp;</b></label></div>
+    <div class="ui-block-d"><input type="number" name="minutesentryone" pattern="[0-9]*" id="minutesentryone" value=""></div>
+    </div><!-- /grid-c -->
+    <button class="ui-btn">Submit</button>
+    </div>
+    
+
+</form>
+  </div>
+  <div id="two">
+    <ul data-role="listview" data-inset="true">
+        <li><a href="#">Acura</a></li>
+        <li><a href="#">Audi</a></li>
+        <li><a href="#">BMW</a></li>
+        <li><a href="#">Cadillac</a></li>
+        <li><a href="#">Ferrari</a></li>
+    </ul>
+  </div>
+   <div id="three">
+	<h1>SUMMARY</h1>
+  </div>
+</div>
+  
+	
+		
+	</div>
+	<div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+
+        </div>      
+	</div>
+     <div data-role="panel" data-position-fixed="true" data-display="push" data-theme="a"  id="menu-panelcc">
+      
+     
+        <ul data-role="listview">
+                <li data-icon="home"><a href="javascript:navbyapp('menu');" id="amenu3" >Menu</a></li>
+                <li data-icon="info"><a href="#" id="ahelp2">Help</a></li>
+                
+        </ul>
+        <br>
+        <button class="ui-btn ui-btn-b ui-mini" data-rel="close" id="acloseb2"  >Close Menu</button>
+    </div><!-- /panel -->
+
+</div>
+
+<!--Page Logbook-->
 
 
           

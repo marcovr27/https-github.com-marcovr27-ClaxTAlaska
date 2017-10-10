@@ -24,6 +24,12 @@
                                    /* offset horizontal: half of text area width */
 }
 
+/*icons */
+.ui-icon-myapp-logbook {
+	background-image: url(../img/logbook.png);
+}
+
+
 /* Landscape layout (with min-width) */
 @media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
     .app {
