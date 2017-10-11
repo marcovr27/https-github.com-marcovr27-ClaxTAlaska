@@ -13,6 +13,8 @@ var sendstepsarray; //Sync Variables
 var sendchecklistarray;//Sync Variables
 var sendmessages;//Sync Variables
 var sendsubmittedhours;//Sync Variables
+var synchours;
+var syncmessages;
 var pictureSource;   // picture source
 var destinationType; // sets the format of returned value
 var capture; // The global capture object

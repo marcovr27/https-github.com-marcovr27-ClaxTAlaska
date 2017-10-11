@@ -95,6 +95,250 @@ function QuerytocheckifdbSuccess(tx,results,typeofsync)
 	}
 	
 }
+//GET DATA FROM SERVER
+function GetservicedataMessages(typesinc)
+{
+	var ipserver=$("#ipsync").val();
+	synchours=typesinc;
+	var obj = {};
+    obj['UserID'] =sessionStorage.userid;
+	if(typesinc=="0")
+	{
+		$("#progressheader").html(" ");
+	//progressheader
+	$("#progressheader").html("Downloading data...");
+		$("#progressMessage").html("Waiting for server connection");
+		pbar.setValue(0);
+		//alert("listo para el post: "+ipserver+'//GetStructureData');
+	                $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetMessages',
+					data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						//alert(response.d);
+						//alert("WEb service works");
+						InsertDatabaseMessages(response.d);
+                        //alert(response.d.users);
+                       // var obj = jQuery.parseJSON(response.d.users);
+                       // $.each(obj, function (key, value) {
+                         //   alert(value.Username);//inserts users
+                        //});
+                       // $('#lblData').html(JSON.stringify());
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+							$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+                    console.log(xmlHttpRequest.responseText);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+		
+	}
+	else
+	{
+		
+	}	
+	
+}
+
+function InsertDatabaseMessages(newdatabase)
+{
+
+	$("#progressMessage").html("Successful connection");
+		pbar.setValue(1);
+	newmessagesdatatoinsert=newdatabase;
+	//alert(newdatabase);
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      db.transaction(QuerytoinsertCourses, errorCB);
+	
+}
+
+function QuerytoinsertCourses(tx)
+{
+	//alert("deleteoldrecords");
+	$("#progressMessage").html("Deleting old records");
+		pbar.setValue(2);
+	var idusera=sessionStorage.userid;		
+	
+	//ready to insert new records
+	alert("Insert new data MESSAGES");
+	$("#progressMessage").html("Ready to insert new records");
+	var query;
+	var obj = jQuery.parseJSON(newmessagesdatatoinsert.Messages);
+	//alert("Items "+obj.length);
+	var itemcount=0;
+	 try
+	 {
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+value.Status+'", "'+value.Date+'", "'+value.Title+'", "'+value.Category+'", "'+value.Message+'", "'+value.Priority+'", "'+value.UserToList+'","yes")';
+		//alert(query);
+		tx.executeSql(query);
+		itemcount++;
+     });
+	// alert("totalGroups2content: "+itemcount);
+	 
+	 	$("#progressMessage").html("Messages updated");
+	pbar.setValue(10);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating Messages "+error);
+			pbar.setValue(30);
+		 
+	 }
+	 
+	
+		 
+	 $("#progressMessage").html("Messages updated");
+		pbar.setValue(100);
+
+	$("#progressMessage").html("");
+		pbar.setValue(100);
+	if(synchours=="0")
+	{
+	  Getservicedata();		
+	}
+	else
+	{
+		
+	}
+		
+
+   //sendprocedures();	
+}
+
+//GET DATA FROM SERVER
+function GetservicedataSubmitHours(typesinc)
+{
+	var ipserver=$("#ipsync").val();
+	synchours=typesinc;
+	if(typesinc=="0")
+	{
+		$("#progressheader").html(" ");
+	//progressheader
+	$("#progressheader").html("Downloading data...");
+		$("#progressMessage").html("Waiting for server connection");
+		pbar.setValue(0);
+		 var obj = {};
+         obj['UserID'] =sessionStorage.userid;
+		//alert("listo para el post: "+ipserver+'//GetStructureData');
+	                $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetSubmittedHours',
+					data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						//alert(response.d);
+						//alert("WEb service works");
+						InsertDatabaseSubmitHours(response.d);
+                        //alert(response.d.users);
+                       // var obj = jQuery.parseJSON(response.d.users);
+                       // $.each(obj, function (key, value) {
+                         //   alert(value.Username);//inserts users
+                        //});
+                       // $('#lblData').html(JSON.stringify());
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+							$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+                    console.log(xmlHttpRequest.responseText);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+		
+	}
+	else
+	{
+		
+	}	
+	
+}
+
+function InsertDatabaseSubmitHours(newdatabase)
+{
+
+	$("#progressMessage").html("Successful connection");
+		pbar.setValue(1);
+	newhoursdatatoinsert=newdatabase;
+	//alert(newdatabase);
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      db.transaction(QuerytoinsertCourses, errorCB);
+	
+}
+
+function QuerytoinsertCourses(tx)
+{
+	//alert("deleteoldrecords");
+	$("#progressMessage").html("Deleting old records");
+		pbar.setValue(2);
+	var idusera=sessionStorage.userid;	
+	if(idusera!="")
+	{
+		alert("Deleting "+idusera);
+		tx.executeSql("DELETE FROM SUBMITTEDHOURS WHERE UserID='"+idusera+"'");
+	}	
+	
+	//ready to insert new records
+	alert("Insert new data SubmittedHours");
+	$("#progressMessage").html("Ready to insert new records");
+	var query;
+	var obj = jQuery.parseJSON(newhoursdatatoinsert.Courses);
+	//alert("Items "+obj.length);
+	var itemcount=0;
+	 try
+	 {
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Task,LevelNum,Item,Hours,Mins,PersonnelID,SupervisorID,RejectReason,ReviewDate,Sync) VALUES ("'+escapeDoubleQuotes(value.SubmitID)+'", "'+escapeDoubleQuotes(value.UserID)+'", "'+escapeDoubleQuotes(value.Type)+'", "'+value.Status+'", "'+value.SubmitDate+'", "'+value.EntryDate+'", "'+value.Task+'", "'+value.LevelNum+'", "'+value.Item+'", "'+value.Hours+'", "'+value.Mins+'", "'+value.PersonnelID+'", "'+value.SupervisorID+'", "'+value.RejectReason+'", "'+value.ReviewDate+'","yes")';
+		//alert(query);
+		tx.executeSql(query);
+		itemcount++;
+     });
+	// alert("totalGroups2content: "+itemcount);
+	 
+	 	$("#progressMessage").html("SubmittedHours updated");
+	pbar.setValue(10);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating SubmittedHours "+error);
+			pbar.setValue(30);
+		 
+	 }
+	 
+	
+		 
+	 $("#progressMessage").html("SubmittedHours updated");
+		pbar.setValue(100);
+
+	$("#progressMessage").html("");
+		pbar.setValue(100);
+	if(synchours=="0")
+	{
+	  GetservicedataMessages(0);		
+	}
+	else
+	{
+		
+	}
+		
+
+   //sendprocedures();	
+}
 
 //GET DATA FROM SERVER
 function GetservicedataCourses()
@@ -158,7 +402,7 @@ function QuerytoinsertCourses(tx)
 		pbar.setValue(2);
 	tx.executeSql("DELETE FROM COURSES");
 	//ready to insert new records
-	alert("Insert new data COURSES");
+	//alert("Insert new data COURSES");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newcoursesdatatoinsert.Courses);
@@ -168,7 +412,7 @@ function QuerytoinsertCourses(tx)
 	 {
     $.each(obj, function (key, value) {
 		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
-		query='INSERT INTO COURSES (ID,Description,DescriptionLang2,ContentType,DurationHours,DurationMins,Scope,Instructor,FileName) VALUES ("'+value.ID+'", "'+value.Description+'", "'+value.DescriptionLang2+'", "'+value.ContentType+'", "'+value.DurationHours+'", "'+value.DurationMins+'", "'+value.Scope+'", "'+value.Instructor+'","'+value.FileName+'")';
+		query='INSERT INTO COURSES (ID,Description,DescriptionLang2,ContentType,DurationHours,DurationMins,Scope,Instructor,FileName) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.Description)+'", "'+escapeDoubleQuotes(value.DescriptionLang2)+'", "'+value.ContentType+'", "'+value.DurationHours+'", "'+value.DurationMins+'", "'+value.Scope+'", "'+escapeDoubleQuotes(value.Instructor)+'","'+escapeDoubleQuotes(value.FileName)+'")';
 		//alert(query);
 		tx.executeSql(query);
 		itemcount++;
@@ -193,7 +437,7 @@ function QuerytoinsertCourses(tx)
 
 	$("#progressMessage").html("");
 		pbar.setValue(100);
-    Getservicedata();
+    GetservicedataSubmitHours(0);
    //sendprocedures();	
 }
 //GET DATA FROM SERVER
@@ -438,7 +682,7 @@ function QuerytoinsertTasks(tx)
 		 	 obj=jQuery.parseJSON(newtasksdatatoinsert.Levels2Items);
 			 //alert("Groups:"+obj.length);
 	     $.each(obj, function (key, value) {
-		query='INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES ("'+value.LevelNum+'","'+value.ID+'")';
+		query='INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES ("'+value.LevelNum+'","'+escapeDoubleQuotes(value.ID)+'")';
 		tx.executeSql(query);
 		 $("#progressMessage").html("Levels2Items updated");
 	pbar.setValue(20);
@@ -459,7 +703,7 @@ function QuerytoinsertTasks(tx)
 	  	 //alert("User2Groups:"+obj.length);
 	     $.each(obj, function (key, value) {
 		
-		query='INSERT INTO DUTIES2TASKS(UserID,ID) VALUES ("'+value.UserID+'","'+value.ID+'")';
+		query='INSERT INTO DUTIES2TASKS(UserID,ID) VALUES ("'+value.UserID+'","'+escapeDoubleQuotes(value.ID)+'")';
 		tx.executeSql(query);
      });
 	 
