@@ -158,7 +158,7 @@ function QuerytoinsertCourses(tx)
 		pbar.setValue(2);
 	tx.executeSql("DELETE FROM COURSES");
 	//ready to insert new records
-	//alert("Insert new data");
+	alert("Insert new data COURSES");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(QuerytoinsertCourses.Courses);
@@ -168,26 +168,26 @@ function QuerytoinsertCourses(tx)
 	 {
     $.each(obj, function (key, value) {
 		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
-		query='INSERT INTO GROUPS2CONTENT (GroupID,ID,Ord) VALUES ("'+value.GroupID+'", "'+value.ID+'","'+value.Ord+'")';
+		query='INSERT INTO COURSES (ID,Description,DescriptionLang2,ContentType,DurationHours,DurationMins,Scope,Instructor,FileName) VALUES ("'+value.ID+'", "'+value.Description+'", "'+value.DescriptionLang2+'", "'+value.ContentType+'", "'+value.DurationHours+'", "'+value.DurationMins+'", "'+value.Scope+'", "'+value.Instructor+'","'+value.FileName+'")';
 		tx.executeSql(query);
 		itemcount++;
      });
 	// alert("totalGroups2content: "+itemcount);
 	 
-	 	$("#progressMessage").html("Groups2Content updated");
+	 	$("#progressMessage").html("Courses updated");
 	pbar.setValue(10);
 	 }
 	 catch(error)
 	 {
 		 alert(error);
-		 $("#progressMessage").html("Error updating Groups2Content "+error);
+		 $("#progressMessage").html("Error updating Courses "+error);
 			pbar.setValue(30);
 		 
 	 }
 	 
 	
 		 
-	 $("#progressMessage").html("Groups updated");
+	 $("#progressMessage").html("Courses updated");
 		pbar.setValue(100);
 
 	$("#progressMessage").html("");
