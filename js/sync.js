@@ -100,7 +100,7 @@ function QuerytocheckifdbSuccess(tx,results,typeofsync)
 function GetservicedataCourses()
 {	
 	var ipserver=$("#ipsync").val();
-	alert("Get Courses");
+	//alert("Get Courses");
     //alert("Get Data from:"+ipserver);
 	
 $("#progressheader").html(" ");
@@ -161,7 +161,7 @@ function QuerytoinsertCourses(tx)
 	alert("Insert new data COURSES");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
-	var obj = jQuery.parseJSON(QuerytoinsertCourses.Courses);
+	var obj = jQuery.parseJSON(newcoursesdatatoinsert.Courses);
 	//alert("Items "+obj.length);
 	var itemcount=0;
 	 try
@@ -169,6 +169,7 @@ function QuerytoinsertCourses(tx)
     $.each(obj, function (key, value) {
 		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
 		query='INSERT INTO COURSES (ID,Description,DescriptionLang2,ContentType,DurationHours,DurationMins,Scope,Instructor,FileName) VALUES ("'+value.ID+'", "'+value.Description+'", "'+value.DescriptionLang2+'", "'+value.ContentType+'", "'+value.DurationHours+'", "'+value.DurationMins+'", "'+value.Scope+'", "'+value.Instructor+'","'+value.FileName+'")';
+		//alert(query);
 		tx.executeSql(query);
 		itemcount++;
      });
@@ -259,7 +260,7 @@ function QuerytoinsertGroups(tx)
 	tx.executeSql("DELETE FROM GROUP2SUPSRTI");
 	tx.executeSql("DELETE FROM GROUPS2CONTENT");
 	//ready to insert new records
-	alert("Insert new data GROUPS");
+	//alert("Insert new data GROUPS");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newgroupsdatatoinsert.Groups2Content);
@@ -405,7 +406,7 @@ function QuerytoinsertTasks(tx)
 	tx.executeSql("DELETE FROM LEVELS2ITEMS");
 	tx.executeSql("DELETE FROM DUTIES2TASKS");
 	//ready to insert new records
-	alert("Insert new data TASKS");
+	//alert("Insert new data TASKS");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newtasksdatatoinsert.Items);
