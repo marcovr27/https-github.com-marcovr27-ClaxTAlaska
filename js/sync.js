@@ -259,7 +259,7 @@ function QuerytoinsertGroups(tx)
 	tx.executeSql("DELETE FROM GROUP2SUPSRTI");
 	tx.executeSql("DELETE FROM GROUPS2CONTENT");
 	//ready to insert new records
-	//alert("Insert new data");
+	alert("Insert new data GROUPS");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newgroupsdatatoinsert.Groups2Content);
@@ -405,7 +405,7 @@ function QuerytoinsertTasks(tx)
 	tx.executeSql("DELETE FROM LEVELS2ITEMS");
 	tx.executeSql("DELETE FROM DUTIES2TASKS");
 	//ready to insert new records
-	//alert("Insert new data");
+	alert("Insert new data TASKS");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newtasksdatatoinsert.Items);
@@ -486,7 +486,7 @@ function QuerytoinsertTasks(tx)
 //Get DATA FROM FIRST SYNC
 function Getservicedata()
 {
-	
+	alert("old Sync");
 	
 	var ipserver=$("#ipsync").val();
     //alert("Get Data from:"+ipserver);
