@@ -218,17 +218,20 @@ function QuerytoinsertMessages(tx)
 //GET DATA FROM SERVER
 function GetservicedataSubmitHours(typesinc)
 {
+	alert("enter to submithous");
 	var ipserver=$("#ipsync").val();
 	synchours=typesinc;
 	if(typesinc=="0")
 	{
 		$("#progressheader").html(" ");
 	//progressheader
+	alert(sessionStorage.userid+" userid");
 	$("#progressheader").html("Downloading data...");
 		$("#progressMessage").html("Waiting for server connection");
 		pbar.setValue(0);
 		 var obj = {};
          obj['UserID'] =sessionStorage.userid;
+		 
 		//alert("listo para el post: "+ipserver+'//GetStructureData');
 	                $.ajax({
                     type: 'POST',
@@ -402,7 +405,7 @@ function QuerytoinsertCourses(tx)
 		pbar.setValue(2);
 	tx.executeSql("DELETE FROM COURSES");
 	//ready to insert new records
-	//alert("Insert new data COURSES");
+	alert("Insert new data COURSES");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newcoursesdatatoinsert.Courses);
