@@ -155,11 +155,11 @@ function InsertDatabaseMessages(newdatabase)
 	newmessagesdatatoinsert=newdatabase;
 	//alert(newdatabase);
 	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-      db.transaction(QuerytoinsertCourses, errorCB);
+      db.transaction(QuerytoinsertMessages, errorCB);
 	
 }
 
-function QuerytoinsertCourses(tx)
+function QuerytoinsertMessages(tx)
 {
 	//alert("deleteoldrecords");
 	$("#progressMessage").html("Deleting old records");
@@ -275,11 +275,11 @@ function InsertDatabaseSubmitHours(newdatabase)
 	newhoursdatatoinsert=newdatabase;
 	//alert(newdatabase);
 	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-      db.transaction(QuerytoinsertCourses, errorCB);
+      db.transaction(QuerytoinsertSubmitHours, errorCB);
 	
 }
 
-function QuerytoinsertCourses(tx)
+function QuerytoinsertSubmitHours(tx)
 {
 	//alert("deleteoldrecords");
 	$("#progressMessage").html("Deleting old records");
