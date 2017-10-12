@@ -1401,7 +1401,7 @@ function sendDataToServer()
  obj['Messages'] =JSON.stringify(sendmessages); 
  obj['SubmittedHours'] =JSON.stringify(sendsubmittedhours); 
  //var kaka=obj['procedures'];
- //alert("enviar datos"+ipserver+'//SetDeviceDataarray');
+ alert("enviar datos"+ipserver+'//SetDeviceDataarray');
  //alert(kaka);
   $.ajax({
                     type: 'POST',
@@ -1412,8 +1412,9 @@ function sendDataToServer()
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
 						pbar.setValue(100);
+					
 						sendmediaobj();// calling upload media
-                       // alert(response.d);
+                       alert(response.d);
            
                       
                     },
