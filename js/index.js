@@ -1932,7 +1932,14 @@ $(function(){
 }
 
 function escapeDoubleQuotes(str) {
-	 return str.replace(/"/gi, "''"); // thanks @slevithan!
+	     try {
+                return str.replace(/"/gi, "''")
+            }
+            catch (err) {
+               // alert(err.message);
+			   var stringe="";
+			   return stringe;
+            }
 }
 
 //Desicion button back report steps history
