@@ -416,7 +416,7 @@ function QuerytoinsertCourses(tx)
     $.each(obj, function (key, value) {
 		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
 		query='INSERT INTO COURSES (ID,Description,DescriptionLang2,ContentType,DurationHours,DurationMins,Scope,Instructor,FileName) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.Description)+'", "'+escapeDoubleQuotes(value.DescriptionLang2)+'", "'+value.ContentType+'", "'+value.DurationHours+'", "'+value.DurationMins+'", "'+value.Scope+'", "'+escapeDoubleQuotes(value.Instructor)+'","'+escapeDoubleQuotes(value.FileName)+'")';
-		alert(query);
+		//alert(query);
 		tx.executeSql(query);
 		itemcount++;
      });
