@@ -221,6 +221,7 @@ function GetservicedataSubmitHours(typesinc)
 	alert("enter to submithours");
 	var ipserver=$("#ipsync").val();
 	synchours=typesinc;
+	alert("synchours= "+synchours);
 	if(typesinc=="0")
 	{
 		$("#progressheader").html(" ");
@@ -305,7 +306,7 @@ function QuerytoinsertSubmitHours(tx)
 	 {
     $.each(obj, function (key, value) {
 		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
-		query='INSERT INTO SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Task,LevelNum,Item,Hours,Mins,PersonnelID,SupervisorID,RejectReason,ReviewDate,Sync) VALUES ("'+escapeDoubleQuotes(value.SubmitID)+'", "'+escapeDoubleQuotes(value.UserID)+'", "'+escapeDoubleQuotes(value.Type)+'", "'+value.Status+'", "'+value.SubmitDate+'", "'+value.EntryDate+'", "'+value.Task+'", "'+value.LevelNum+'", "'+value.Item+'", "'+value.Hours+'", "'+value.Mins+'", "'+value.PersonnelID+'", "'+value.SupervisorID+'", "'+value.RejectReason+'", "'+value.ReviewDate+'","yes")';
+		query='INSERT INTO SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Task,LevelNum,Item,Hours,Mins,PersonnelID,SupervisorID,RejectReason,ReviewDate,Sync) VALUES ("'+escapeDoubleQuotes(value.SubmitID)+'", "'+escapeDoubleQuotes(value.UserID)+'", "'+escapeDoubleQuotes(value.Type)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.SubmitDate+'", "'+value.EntryDate+'", "'+escapeDoubleQuotes(value.Task)+'", "'+value.LevelNum+'", "'+escapeDoubleQuotes(value.Item)+'", "'+value.Hours+'", "'+value.Mins+'", "'+value.PersonnelID+'", "'+value.SupervisorID+'", "'+value.RejectReason+'", "'+value.ReviewDate+'","yes")';
 		//alert(query);
 		tx.executeSql(query);
 		itemcount++;
@@ -330,14 +331,15 @@ function QuerytoinsertSubmitHours(tx)
 
 	$("#progressMessage").html("");
 		pbar.setValue(100);
-	if(synchours=="0")
-	{
-	  GetservicedataMessages(0);		
-	}
-	else
-	{
+		Getservicedata();
+	//if(synchours=="0")
+	//{
+	//  GetservicedataMessages(0);		
+	//}
+	//else
+	//{
 		
-	}
+	//}
 		
 
    //sendprocedures();	
@@ -405,7 +407,7 @@ function QuerytoinsertCourses(tx)
 		pbar.setValue(2);
 	tx.executeSql("DELETE FROM COURSES");
 	//ready to insert new records
-	alert("Insert new data COURSES");
+	//alert("Insert new data COURSES");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newcoursesdatatoinsert.Courses);
@@ -441,8 +443,8 @@ function QuerytoinsertCourses(tx)
 	$("#progressMessage").html("");
 		pbar.setValue(100);
     //GetservicedataSubmitHours(0);
-	Getservicedata();	
-   //sendprocedures();	
+	GetservicedataSubmitHours(0);
+	//Getservicedata();	
 }
 //GET DATA FROM SERVER
 
