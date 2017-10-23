@@ -218,7 +218,7 @@ function QuerytoinsertMessages(tx)
 //GET DATA FROM SERVER
 function GetservicedataSubmitHours(typesinc)
 {
-	alert("enter to submithous");
+	alert("enter to submithours");
 	var ipserver=$("#ipsync").val();
 	synchours=typesinc;
 	if(typesinc=="0")
