@@ -308,7 +308,9 @@ function QuerytoinsertSubmitHours(tx)
 	alert("Insert new data SubmittedHours");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
+	alert("newhoursvar "+newhoursdatatoinsert);
 	var obj = jQuery.parseJSON(newhoursdatatoinsert.SubmittedHours);
+	alert(obj);
 	alert("Itemssdsdsdsdsd "+obj.length);
 	var itemcount=0;
 	 try
