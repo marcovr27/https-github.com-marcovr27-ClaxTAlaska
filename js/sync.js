@@ -309,7 +309,7 @@ function QuerytoinsertSubmitHours(tx)
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newhoursdatatoinsert.SubmittedHours);
-	alert("Items "+obj.length);
+	alert("Itemssdsdsdsdsd "+obj.length);
 	var itemcount=0;
 	 try
 	 {
