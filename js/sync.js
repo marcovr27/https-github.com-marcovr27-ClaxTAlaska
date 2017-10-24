@@ -226,13 +226,22 @@ function GetservicedataSubmitHours(typesinc)
 	{
 		$("#progressheader").html(" ");
 	//progressheader
-	alert(sessionStorage.userid+" userid");
+	
 	$("#progressheader").html("Downloading data...");
 		$("#progressMessage").html("Waiting for server connection");
 		pbar.setValue(0);
 		 var obj = {};
-         obj['UserID'] =sessionStorage.userid;
-		 
+		 if(!!sessionStorage.userid)
+		 {
+			 obj['UserID'] =sessionStorage.userid;
+		 }
+		 else
+		 {
+			 obj['UserID'] ="";
+			 
+		 }
+         
+		 alert(obj['UserID']+" userid");
 		//alert("listo para el post: "+ipserver+'//GetStructureData');
 	                $.ajax({
                     type: 'POST',
