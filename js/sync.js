@@ -241,7 +241,7 @@ function GetservicedataSubmitHours(typesinc)
 			 
 		 }
          
-		 alert(obj['UserID']+" userid");
+		// alert(obj['UserID']+" userid");
 		//alert("listo para el post: "+ipserver+'//GetStructureData');
 	                $.ajax({
                     type: 'POST',
@@ -251,7 +251,7 @@ function GetservicedataSubmitHours(typesinc)
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
-						//alert(response.d);
+						alert(response.d);
 						//alert("WEb service works");
 						InsertDatabaseSubmitHours(response.d);
                         //alert(response.d.users);
