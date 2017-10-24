@@ -310,8 +310,8 @@ function QuerytoinsertSubmitHours(tx)
 	var query;
 	alert("newhoursvar "+newhoursdatatoinsert);
 	var obj = jQuery.parseJSON(newhoursdatatoinsert.SubmittedHours);
-	alert(obj);
-	alert("Itemssdsdsdsdsd "+obj.length);
+	//alert(obj);
+	//alert("Itemssdsdsdsdsd "+obj.length);
 	var itemcount=0;
 	 try
 	 {
