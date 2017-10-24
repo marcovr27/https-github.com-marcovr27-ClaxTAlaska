@@ -309,14 +309,14 @@ function QuerytoinsertSubmitHours(tx)
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newhoursdatatoinsert.Courses);
-	//alert("Items "+obj.length);
+	alert("Items "+obj.length);
 	var itemcount=0;
 	 try
 	 {
     $.each(obj, function (key, value) {
 		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
 		query='INSERT INTO SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Task,LevelNum,Item,Hours,Mins,PersonnelID,SupervisorID,RejectReason,ReviewDate,Sync) VALUES ("'+escapeDoubleQuotes(value.SubmitID)+'", "'+escapeDoubleQuotes(value.UserID)+'", "'+escapeDoubleQuotes(value.Type)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.SubmitDate+'", "'+value.EntryDate+'", "'+escapeDoubleQuotes(value.Task)+'", "'+value.LevelNum+'", "'+escapeDoubleQuotes(value.Item)+'", "'+value.Hours+'", "'+value.Mins+'", "'+value.PersonnelID+'", "'+value.SupervisorID+'", "'+value.RejectReason+'", "'+value.ReviewDate+'","yes")';
-		//alert(query);
+		alert(query);
 		tx.executeSql(query);
 		itemcount++;
      });
