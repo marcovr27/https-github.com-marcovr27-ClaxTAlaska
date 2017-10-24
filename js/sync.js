@@ -180,7 +180,7 @@ function QuerytoinsertMessages(tx)
 		tx.executeSql("DELETE FROM MESSAGES WHERE UserID='"+idusera+"'");
 	}
 	//ready to insert new records
-	alert("Insert new data MESSAGES");
+	//alert("Insert new data MESSAGES");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newmessagesdatatoinsert.Messages);
