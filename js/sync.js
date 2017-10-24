@@ -101,7 +101,16 @@ function GetservicedataMessages(typesinc)
 	var ipserver=$("#ipsync").val();
 	synchours=typesinc;
 	var obj = {};
-    obj['UserID'] =sessionStorage.userid;
+    	 var obj = {};
+		 if(!!sessionStorage.userid)
+		 {
+			 obj['UserID'] =sessionStorage.userid;
+		 }
+		 else
+		 {
+			 obj['UserID'] ="";
+			 
+		 }
 	if(typesinc=="0")
 	{
 		$("#progressheader").html(" ");
@@ -165,7 +174,11 @@ function QuerytoinsertMessages(tx)
 	$("#progressMessage").html("Deleting old records");
 		pbar.setValue(2);
 	var idusera=sessionStorage.userid;		
-	
+	if(!!sessionStorage.userid)
+	{
+		//alert("Deleting "+idusera);
+		tx.executeSql("DELETE FROM MESSAGES WHERE UserID='"+idusera+"'");
+	}
 	//ready to insert new records
 	alert("Insert new data MESSAGES");
 	$("#progressMessage").html("Ready to insert new records");
@@ -202,14 +215,9 @@ function QuerytoinsertMessages(tx)
 
 	$("#progressMessage").html("");
 		pbar.setValue(100);
-	if(synchours=="0")
-	{
+
 	  Getservicedata();		
-	}
-	else
-	{
-		
-	}
+
 		
 
    //sendprocedures();	
@@ -218,10 +226,9 @@ function QuerytoinsertMessages(tx)
 //GET DATA FROM SERVER
 function GetservicedataSubmitHours(typesinc)
 {
-	alert("enter to submithours");
 	var ipserver=$("#ipsync").val();
 	synchours=typesinc;
-	alert("synchours= "+synchours);
+	//alert("synchours= "+synchours);
 	if(typesinc=="0")
 	{
 		$("#progressheader").html(" ");
@@ -286,7 +293,7 @@ function InsertDatabaseSubmitHours(newdatabase)
 	$("#progressMessage").html("Successful connection");
 		pbar.setValue(1);
 	newhoursdatatoinsert=newdatabase;
-	alert(newdatabase);
+	//alert(newdatabase);
 	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
       db.transaction(QuerytoinsertSubmitHours, errorCB);
 	
@@ -300,15 +307,15 @@ function QuerytoinsertSubmitHours(tx)
 	var idusera=sessionStorage.userid;	
 	if(!!sessionStorage.userid)
 	{
-		alert("Deleting "+idusera);
+		//alert("Deleting "+idusera);
 		tx.executeSql("DELETE FROM SUBMITTEDHOURS WHERE UserID='"+idusera+"'");
 	}	
 	
 	//ready to insert new records
-	alert("Insert new data SubmittedHours");
+	//alert("Insert new data SubmittedHours");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
-	alert("newhoursvar "+newhoursdatatoinsert);
+	//alert("newhoursvar "+newhoursdatatoinsert);
 	var obj = jQuery.parseJSON(newhoursdatatoinsert.SubmittedHours);
 	//alert(obj);
 	//alert("Itemssdsdsdsdsd "+obj.length);
@@ -341,7 +348,8 @@ function QuerytoinsertSubmitHours(tx)
 
 	$("#progressMessage").html("");
 		pbar.setValue(100);
-		Getservicedata();
+		//Getservicedata();
+		GetservicedataMessages(0);
 	//if(synchours=="0")
 	//{
 	//  GetservicedataMessages(0);		
