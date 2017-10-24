@@ -258,7 +258,7 @@ function GetservicedataSubmitHours(typesinc)
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
-						alert(response.d);
+						//alert(response.d);
 						//alert("WEb service works");
 						InsertDatabaseSubmitHours(response.d);
                         //alert(response.d.users);
@@ -755,7 +755,7 @@ function QuerytoinsertTasks(tx)
 //Get DATA FROM FIRST SYNC
 function Getservicedata()
 {
-	alert("old Sync");
+	//alert("old Sync");
 	
 	var ipserver=$("#ipsync").val();
     //alert("Get Data from:"+ipserver);
