@@ -298,7 +298,7 @@ function QuerytoinsertSubmitHours(tx)
 	$("#progressMessage").html("Deleting old records");
 		pbar.setValue(2);
 	var idusera=sessionStorage.userid;	
-	if(idusera!="")
+	if(!!sessionStorage.userid)
 	{
 		alert("Deleting "+idusera);
 		tx.executeSql("DELETE FROM SUBMITTEDHOURS WHERE UserID='"+idusera+"'");
