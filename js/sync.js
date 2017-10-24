@@ -286,7 +286,7 @@ function InsertDatabaseSubmitHours(newdatabase)
 	$("#progressMessage").html("Successful connection");
 		pbar.setValue(1);
 	newhoursdatatoinsert=newdatabase;
-	//alert(newdatabase);
+	alert(newdatabase);
 	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
       db.transaction(QuerytoinsertSubmitHours, errorCB);
 	
@@ -308,7 +308,7 @@ function QuerytoinsertSubmitHours(tx)
 	alert("Insert new data SubmittedHours");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
-	var obj = jQuery.parseJSON(newhoursdatatoinsert.Courses);
+	var obj = jQuery.parseJSON(newhoursdatatoinsert.SubmittedHours);
 	alert("Items "+obj.length);
 	var itemcount=0;
 	 try
