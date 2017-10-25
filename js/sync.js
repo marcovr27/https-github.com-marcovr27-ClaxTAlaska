@@ -724,7 +724,7 @@ function QuerytoinsertTasks(tx)
 	  try
 	 {
 	  obj=jQuery.parseJSON(newtasksdatatoinsert.Duties2Tasks);
-	  	 //alert("User2Groups:"+obj.length);
+	  	 alert("Duties2Tasks:"+obj.length);
 	     $.each(obj, function (key, value) {
 		
 		query='INSERT INTO DUTIES2TASKS(UserID,ID) VALUES ("'+value.UserID+'","'+escapeDoubleQuotes(value.ID)+'")';
