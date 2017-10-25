@@ -750,7 +750,7 @@ function QuerytoinsertTasks(tx)
 	     $.each(obj, function (key, value) {
 		
 		query='INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES ("'+escapeDoubleQuotes(value.ID)+'","'+escapeDoubleQuotes(value.Name)+'","'+escapeDoubleQuotes(value.ReqHrsOJT)+'")';
-		alert(query);
+		//alert(query);
 		tx.executeSql(query);
      });
 	 
