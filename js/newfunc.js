@@ -1,5 +1,6 @@
 ///////<<<<<<<<<<<<============================= LOGBOOK PAGE =========================================>>>>>>>>>>>///////
 var taskSelectedlog;
+var hoursReqLog;
 function filltaskworked()
 {
 	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
@@ -15,12 +16,12 @@ function Querytaskworked(tx)
 function QuerytaskworkedSuccess(tx, results)
 {
 	var len = results.rows.length;
-	alert(len);
+	//alert(len);
 	var selecthtml='<option value="0">Choose a task</option>';
 	if(len>0)
 	{
 		for (var i=0; i<len; i++){
-			 selecthtml+='<option value="'+results.rows.item(i).Duty+'">'+results.rows.item(i).TaskID+'</option>';
+			 selecthtml+='<option value="'+results.rows.item(i).TaskID+'">'+results.rows.item(i).TaskID+'</option>';
              }
 		 $("#select_taskworked").html(selecthtml);	 
 	}
@@ -34,9 +35,34 @@ function QuerytaskworkedSuccess(tx, results)
 
 function TaskSelected()
 {
-	var Duty=$("#select_taskworked").val();
-	var taskID=$("#select_taskworked").text();
-	alert(taskID+" Duty: "+Duty);
+	var taskID=$("#select_taskworked").val();
+	taskSelectedlog=taskID;
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryInfoTask, errorCB);
+}
+
+function QueryInfoTask(tx)
+{
+	tx.executeSql("SELECT * FROM TASKS WHERE TaskID='"+taskSelectedlog+"'", [], QueryInfoTaskSuccess, errorCB);
+	
+}
+
+function QueryInfoTaskSuccess(tx, results)
+{
+	var len = results.rows.length;
+	//alert(len);
+	if(len>0)
+	{
+		hoursReqLog=results.rows.item(0).ReqHrsOJT;
+	    alert(hoursReqLog);
+		 
+	}
+	else
+	{
+	  navigator.notification.alert("Task not found", null, 'FieldTracker', 'Accept'); 
+	}
+	
+	
 }
 
 
