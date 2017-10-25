@@ -727,8 +727,8 @@ function QuerytoinsertTasks(tx)
 	  	 //alert("Duties2Tasks:"+obj.length);
 	     $.each(obj, function (key, value) {
 		
-		query='INSERT INTO DUTIES2TASKS(UserID,ID) VALUES ("'+value.UserID+'","'+escapeDoubleQuotes(value.ID)+'")';
-		alert(query);
+		query='INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES ("'+escapeDoubleQuotes(value.Duty)+'","'+escapeDoubleQuotes(value.TaskID)+'","'+escapeDoubleQuotes(value.OrdNum)+'")';
+		//alert(query);
 		tx.executeSql(query);
      });
 	 
