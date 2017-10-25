@@ -1,4 +1,5 @@
 ///////<<<<<<<<<<<<============================= LOGBOOK PAGE =========================================>>>>>>>>>>>///////
+var taskSelectedlog;
 function filltaskworked()
 {
 	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
@@ -29,6 +30,13 @@ function QuerytaskworkedSuccess(tx, results)
 	}
 	
 	
+}
+
+function TaskSelected()
+{
+	var Duty=$("#select_taskworked").val();
+	var taskID=$("#select_taskworked").text();
+	alert(taskID+" Duty: "+Duty);
 }
 
 
