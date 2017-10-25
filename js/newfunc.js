@@ -43,6 +43,7 @@ function TaskSelected()
 
 function QueryInfoTask(tx)
 {
+	alert("SELECT * FROM TASKS WHERE TaskID='"+taskSelectedlog+"'");
 	tx.executeSql("SELECT * FROM TASKS WHERE TaskID='"+taskSelectedlog+"'", [], QueryInfoTaskSuccess, errorCB);
 	
 }
