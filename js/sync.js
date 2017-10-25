@@ -742,6 +742,28 @@ function QuerytoinsertTasks(tx)
 			pbar.setValue(60);
 		 
 	 }
+	 
+	 	  try
+	 {
+	  obj=jQuery.parseJSON(newtasksdatatoinsert.Tasks);
+	  	 //alert("Duties2Tasks:"+obj.length);
+	     $.each(obj, function (key, value) {
+		
+		query='INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES ("'+escapeDoubleQuotes(value.ID)+'","'+escapeDoubleQuotes(value.Name)+'","'+escapeDoubleQuotes(value.ReqHrsOJT)+'")';
+		alert(query);
+		tx.executeSql(query);
+     });
+	 
+	$("#progressMessage").html("Duties2Tasks updated");
+	pbar.setValue(60);
+	 }
+	 	 catch(error)
+	 {
+		 
+		  $("#progressMessage").html("Error updating Duties2Tasks "+error);
+			pbar.setValue(60);
+		 
+	 }
 
 		 
 	 $("#progressMessage").html("Tasks updated");
