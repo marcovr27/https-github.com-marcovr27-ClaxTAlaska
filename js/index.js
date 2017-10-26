@@ -2857,6 +2857,9 @@ $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
 	//var namedate=monthname+" "+daynumber+", "+yearnumber;
 	$("#hplogdatez").html(monthname+" "+daynumber+", "+yearnumber);
 	filltaskworked();
+	FillPersonnel();
+	fillitemworked();
+	InfoLevel();
 });
 
 

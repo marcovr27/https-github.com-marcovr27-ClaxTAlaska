@@ -1709,14 +1709,13 @@
         <th data-priority="4" style="text-align: center" id="tabledone">% Done</th>   
       </tr>
     </thead>
-    <tbody id="bodycheck-list">
-     <tr><td id="revaluetd">105</td><td id="completedvaluetd">42</td><td id="hourstogovaluetd">63</td><td id="donevaluetd">40%</td></tr>
+    <tbody id="bodyevalre-list">
+     <tr><td id="revaluetd">0</td><td id="completedvaluetd">0</td><td id="hourstogovaluetd">0</td><td id="donevaluetd">0%</td></tr>
     </tbody>
   </table>
   <br>
     <h3 style=" margin: 0 auto; text-align:center;" >Personnel Worked With:</h3>
-    <select name="select_personnelworked" id="select_personnelworked" onChange="">
-        <option value="0">Marco Velarde</option>
+    <select name="select_personnelworked" id="select_personnelworked" onChange="PersonnelO()">
     </select>
     <div class="ui-grid-d">
     <div class="ui-block-a"></div>
@@ -1732,20 +1731,60 @@
     <div class="ui-block-c" style="text-align:right;"><br><label  id="lblminutesenrtyone"><b>Minutes:&nbsp;&nbsp;</b></label></div>
     <div class="ui-block-d"><input type="number" name="minutesentryone" pattern="[0-9]*" id="minutesentryone" value=""></div>
     </div><!-- /grid-c -->
-    <button class="ui-btn">Submit</button>
+    <input type="button" class="ui-btn" value="Submit" id="OJTButton" onclick="CheckHoursOJT()">
     </div>
     
 
 </form>
   </div>
-  <div id="two">
-    <ul data-role="listview" data-inset="true">
-        <li><a href="#">Acura</a></li>
-        <li><a href="#">Audi</a></li>
-        <li><a href="#">BMW</a></li>
-        <li><a href="#">Cadillac</a></li>
-        <li><a href="#">Ferrari</a></li>
-    </ul>
+  <div id="two" class="ui-body ui-body-a">
+  <form>
+  <label for="select_itemsworkedon" id="lbllogworked">Item Worked On:</label>
+    <select name="select_itemsworkedon" id="select_itemsworkedon" onChange="ItemSelected()">
+    </select>
+    <br>
+    <div style="width:50%; margin: 0 auto;">
+     <h3 style=" margin: 0 auto; text-align:center;" >Status Summary for This Level</h3>
+        <table data-role="table" data-filter="false" id="table-logbookItems"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
+    <thead>
+      <tr class="ui-bar-a">
+        <th data-priority="1" style="text-align: center" id="tablerequiredhitem">Required Hours</th>
+        <th data-priority="2" style="text-align: center" id="tablecompleteditem">Completed Hours</th>
+        <th data-priority="3" style="text-align: center" id="tablehoursitem">Hours To Go</th>
+        <th data-priority="4" style="text-align: center" id="tabledone"item>% Done</th>   
+      </tr>
+    </thead>
+    <tbody id="bodyitemtablelog-list">
+     <tr><td id="revalueitemtd">0</td><td id="completedvalueitemtd">0</td><td id="hourstogovalueitemtd">0</td><td id="donevalueitemtd">0%</td></tr>
+     <tr class="ui-bar-a">
+        <th data-priority="1" style="text-align: center" id="tablerequiredhitemtwo">Required Items</th>
+        <th data-priority="2" style="text-align: center" id="tablecompleteditemtwo">Completed Items</th>
+        <th data-priority="3" style="text-align: center" id="tablehoursitemtwo">Items To Go</th>
+        <th data-priority="4" style="text-align: center" id="tabledonetwo"item>% Done</th>   
+      </tr>
+      <tr><td id="revalueitemtwotd">0</td><td id="completedvalueitetwomtd">0</td><td id="hourstogovalueitemtwotd">0</td><td id="donevalueitemtwotd">0%</td></tr>
+    </tbody>
+  </table>
+  <br>
+    <div class="ui-grid-d">
+    <div class="ui-block-a"></div>
+    <div class="ui-block-b" style="text-align:center;"><br><label  id="lblentrydateoneitem"><b>Entry Date:</b></label></div>
+    <div class="ui-block-c"><input type="date" name="entryoneitemvalue" id="entryoneitemvalue" value=""></div>
+    <div class="ui-block-d"></div>
+    </div>
+    <br>
+    <br>
+    <div class="ui-grid-c">
+    <div class="ui-block-a" style="text-align:center;"><br><label  id="lblhoursentryoneitem"><b>Hours for this entry:</b></label></div>
+    <div class="ui-block-b"><input type="number" name="hourentryitemonec" pattern="[0-9]*" id="hourentryitemonec" value=""></div>
+    <div class="ui-block-c" style="text-align:right;"><br><label  id="lblminutesenrtyitemone"><b>Minutes:&nbsp;&nbsp;</b></label></div>
+    <div class="ui-block-d"><input type="number" name="minutesentryitemonec" pattern="[0-9]*" id="minutesentryitemonec" value=""></div>
+    </div><!-- /grid-c -->
+    <input type="button" class="ui-btn" value="Submit" id="ClassButton" onclick="CheckitemsValues()">
+    </div>
+  
+  </form>
+
   </div>
    <div id="three">
 	<h1>SUMMARY</h1>
@@ -1755,6 +1794,30 @@
 	
 		
 	</div>
+         <div data-role="popup" id="popupmuchtime" data-history="false" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+    <div data-role="header" data-theme="a">
+    <h1>
+    <img src="img/graphs/Logo_Small.png" style="height: 2em" />
+   <label id="hpopsubmitprocedure">Submitted Hours</label> </h1>
+    </div>
+    <div role="main" class="ui-content">
+        <h3 class="ui-title" id="q1submit">You have entered a value greater than the acceptable maximum of 10.5 hours. Submit anyway?</h3>
+        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" id="acancelmuchtime">Cancel</a>
+        <a href="javascript:SubmitOJT();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="acontinuemuchtime" data-transition="flow">Continue</a>
+    </div>
+</div>
+         <div data-role="popup" id="popupmuchtimeC" data-history="false" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+    <div data-role="header" data-theme="a">
+    <h1>
+    <img src="img/graphs/Logo_Small.png" style="height: 2em" />
+   <label id="hpopsubmitprocedure">Submitted Items</label> </h1>
+    </div>
+    <div role="main" class="ui-content">
+        <h3 class="ui-title" id="q1submit">You have entered a value greater than the acceptable maximum of 10.5 hours. Submit anyway?</h3>
+        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" id="acancelmuchtime">Cancel</a>
+        <a href="javascript:SubmitItem();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="acontinuemuchtime" data-transition="flow">Continue</a>
+    </div>
+</div>
 	<div data-role="footer" data-position="fixed">
         <div data-role="navbar">
 

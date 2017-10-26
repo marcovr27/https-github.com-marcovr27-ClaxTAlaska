@@ -749,18 +749,40 @@ function QuerytoinsertTasks(tx)
 	  	 //alert("Duties2Tasks:"+obj.length);
 	     $.each(obj, function (key, value) {
 		
-		query='INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES ("'+escapeDoubleQuotes(value.ID)+'","'+escapeDoubleQuotes(value.Name)+'","'+escapeDoubleQuotes(value.ReqHrsOJT)+'")';
+		query='INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES ("'+escapeDoubleQuotes(value.ID)+'","'+escapeDoubleQuotes(value.Name)+'","'+value.ReqHrsOJT+'")';
 		//alert(query);
 		tx.executeSql(query);
      });
 	 
-	$("#progressMessage").html("Duties2Tasks updated");
+	$("#progressMessage").html("TASKS updated");
 	pbar.setValue(60);
 	 }
 	 	 catch(error)
 	 {
 		 
-		  $("#progressMessage").html("Error updating Duties2Tasks "+error);
+		  $("#progressMessage").html("Error updating TASKS "+error);
+			pbar.setValue(60);
+		 
+	 }
+	 
+	   try
+	 {
+	  obj=jQuery.parseJSON(newtasksdatatoinsert.Levels);
+	  	 //alert("Duties2Tasks:"+obj.length);
+	     $.each(obj, function (key, value) {
+		
+		query='INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("'+value.LevelNum+'","'+value.Months+'","'+value.ReqHrsRTI+'","'+value.ReqHrsOJT+'")';
+		//alert(query);
+		tx.executeSql(query);
+     });
+	 
+	$("#progressMessage").html("Levels updated");
+	pbar.setValue(60);
+	 }
+	 	 catch(error)
+	 {
+		 
+		  $("#progressMessage").html("Error updating Levels"+error);
 			pbar.setValue(60);
 		 
 	 }
@@ -1646,6 +1668,7 @@ function Querytoupdatelocal(tx)
 	tx.executeSql("UPDATE MEDIA SET sync='yes'");
 	tx.executeSql("UPDATE SUBMITTEDPROCS SET sync='yes'");
 	tx.executeSql("UPDATE SUBMITTEDSTEPS SET sync='yes'");
+	tx.executeSql("UPDATE SUBMITTEDHOURS SET sync='yes'");
 	//alert("All updated");
 }
 
