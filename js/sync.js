@@ -262,9 +262,9 @@ function GetservicedataSubmitHours(typesinc)
 						//alert("WEb service works");
 						InsertDatabaseSubmitHours(response.d);
                         //alert(response.d.users);
-                       // var obj = jQuery.parseJSON(response.d.users);
-                       // $.each(obj, function (key, value) {
-                         //   alert(value.Username);//inserts users
+                        //var obj = jQuery.parseJSON(response.d.SubmittedHours);
+                        //$.each(obj, function (key, value) {
+                          // alert(value.SubmitID);//inserts users
                         //});
                        // $('#lblData').html(JSON.stringify());
                     },
@@ -289,7 +289,7 @@ function GetservicedataSubmitHours(typesinc)
 
 function InsertDatabaseSubmitHours(newdatabase)
 {
-
+   // alert("Enter To insert DAta Submitted");
 	$("#progressMessage").html("Successful connection");
 		pbar.setValue(1);
 	newhoursdatatoinsert=newdatabase;
@@ -301,7 +301,7 @@ function InsertDatabaseSubmitHours(newdatabase)
 
 function QuerytoinsertSubmitHours(tx)
 {
-	//alert("deleteoldrecords");
+	//alert("deleteoldrecords SubmittedHours");
 	$("#progressMessage").html("Deleting old records");
 		pbar.setValue(2);
 	var idusera=sessionStorage.userid;	
@@ -328,7 +328,7 @@ function QuerytoinsertSubmitHours(tx)
 		tx.executeSql(query);
 		itemcount++;
      });
-	// alert("totalGroups2content: "+itemcount);
+	// alert("totalSubmittedHours: "+itemcount);
 	 
 	 	$("#progressMessage").html("SubmittedHours updated");
 	pbar.setValue(10);
@@ -1331,9 +1331,6 @@ for (var i=0; i<results.rows.length; i++){
  row = results.rows.item(i);
  // alert(row.FaultID);
  array.push(JSON.stringify(row));
-
-
-
 }
 
 sendstepsarray=array;
@@ -1365,8 +1362,8 @@ function QuerytosendchecklistsSuccess(tx,results)
 	var array = [];
 	//alert(len);
 for (var i=0; i<results.rows.length; i++){
- row = results.rows.item(i);
-array.push(JSON.stringify(row));
+ 		row = results.rows.item(i);
+		array.push(JSON.stringify(row));
 
 
 
@@ -1396,17 +1393,18 @@ function QuerytosendMessages(tx)
 function QuerytosendMessagesSuccess(tx,results)
 {
 	var len = results.rows.length;
+	//alert("messages="+len);
 	var array = [];
 	//alert(len);
 for (var i=0; i<results.rows.length; i++){
  row = results.rows.item(i);
- // alert(row.FaultID);
+ // alert(row.Title);
  array.push(JSON.stringify(row));
 
 
 
 }
-
+//alert(array);
 sendmessages=array;
 	$("#progressMessage").html("Messages ready to send");
 	pbar.setValue(40);
@@ -1417,26 +1415,30 @@ sendmessages=array;
 
 function sendSubmittedHours()
 {
-	 sendmessages="";
+	//alert("submittedhours");
+	 sendsubmittedhours="";
 	 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-      db.transaction(QuerytosendSubmittedHours(), errorCB);
+      db.transaction(QuerytosendSubmittedHours, errorCB);
 	
 }
 
 function QuerytosendSubmittedHours(tx)
 {
 	var querytosend="SELECT * FROM SUBMITTEDHOURS WHERE Sync='no'";
-	tx.executeSql(querytosend, [], QuerytosendMessagesSuccess, errorCB);
+	tx.executeSql(querytosend, [], QuerytosendSubmittedHoursSuccess, errorCB);
 }
 
-function QuerytosendMessagesSuccess(tx,results)
+function QuerytosendSubmittedHoursSuccess(tx,results)
 {
+	
 	var len = results.rows.length;
+	//alert("SubmittedHours="+len);
 	var array = [];
+	
 	//alert(len);
 for (var i=0; i<results.rows.length; i++){
  row = results.rows.item(i);
- // alert(row.FaultID);
+ // alert(row.Title);
  array.push(JSON.stringify(row));
 
 

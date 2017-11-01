@@ -1724,7 +1724,7 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS MESSAGES (ID,UserIDTo,UserIDFrom,Statu
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS SUBMITOJT2USERS (SubmitID,UserID)');
 
-tx.executeSql('CREATE TABLE IF NOT EXISTS COURSES (ID,Description,DescriptionLang2,ContentType,DurationHours,DurationMins,Scope,Instructor,FileName)');
+tx.executeSql('CREATE TABLE IF NOT EXISTS COURSES (ID,Description,DescriptionLang2,ContentType,DurationHours,DurationMins,Scope,Instructor,FileName,FileSize)');
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS GROUP2SUPS (GroupID,ID)');
 //tx.executeSql('INSERT INTO GROUP2SUPS (GroupID,ID) VALUES ("D10T1","jbaca")');

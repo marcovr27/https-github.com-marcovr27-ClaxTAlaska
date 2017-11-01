@@ -110,7 +110,7 @@ function QueryCalculateOJTHours(tx)
 {
 	var iduser=sessionStorage.userid;	
 	//alert("SELECT * FROM SUBMITTEDHOURS WHERE UserID='"+iduser+"' AND Task='"+taskSelectedlog+"'");
-	tx.executeSql("SELECT * FROM SUBMITTEDHOURS WHERE UserID='"+iduser+"' AND Task='"+taskSelectedlog+"'", [], QueryCalculateOJTHoursSuccess, errorCB);
+	tx.executeSql("SELECT * FROM SUBMITTEDHOURS WHERE UserID='"+iduser+"' AND Task='"+taskSelectedlog+"' AND Status='Approved'", [], QueryCalculateOJTHoursSuccess, errorCB);
 }
 
 function QueryCalculateOJTHoursSuccess(tx,results)
@@ -170,10 +170,7 @@ function QuerySubmitOJT(tx)
 	//alert("task="+taskSelectedlog+" Personnel="+personnelOJT);
 	
 	if(taskSelectedlog!="")
-	{
-	  if(personnelOJT!="")
-	  {
-		  
+	{	  
 		  if(EntryDates!="")
 		  {
 			var dt = new Date();
@@ -200,14 +197,6 @@ function QuerySubmitOJT(tx)
 		  {
 			 navigator.notification.alert("Please Enter Entry Date", null, 'FieldTracker', 'Accept');  
 		  }
-
-		  
-	  }
-	  else
-	  {
-		  navigator.notification.alert("Please Select Personnel Worked With", null, 'FieldTracker', 'Accept'); 		  
-	  }
-
 		
 	}
 	else
@@ -358,7 +347,7 @@ function QueryInfoItem(tx)
 	var ItemSelected=$("#select_itemsworkedon").val();
 	var iduser=sessionStorage.userid;
 	var leveluser=sessionStorage.lvlname;
-	tx.executeSql("SELECT * FROM SUBMITTEDHOURS WHERE UserID='"+iduser+"' AND Item='"+ItemSelected+"' AND LevelNum='"+leveluser+"'", [], QueryInfoItemSuccess, errorCB);
+	tx.executeSql("SELECT * FROM SUBMITTEDHOURS WHERE UserID='"+iduser+"' AND Item='"+ItemSelected+"' AND LevelNum='"+leveluser+"' AND Status='Approved'", [], QueryInfoItemSuccess, errorCB);
 	
 }
 
