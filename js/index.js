@@ -1720,7 +1720,7 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS2ITEMS (LevelNum,ID)');
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Task,LevelNum,Item,Hours,Mins,PersonnelID,SupervisorID,RejectReason,ReviewDate,Sync)');
 
-tx.executeSql('CREATE TABLE IF NOT EXISTS MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync)');
+tx.executeSql('CREATE TABLE IF NOT EXISTS MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync,SentFT)');
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS SUBMITOJT2USERS (SubmitID,UserID)');
 
@@ -2869,6 +2869,32 @@ $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
 	FillPersonnel();
 	fillitemworked();
 	InfoLevel();
+});
+
+
+<!---------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------------------------------------------->
+
+<!---------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------------------------------------------->
+//ON CREATE 
+$(document).on( 'pagebeforeshow', '#pageMessages',function(){
+//fill username name,level and name
+//alert("startpagemessages");
+	var userfullname=sessionStorage.fname;
+	var leveluser=sessionStorage.lvlname;
+	var headstring=userfullname+": Level "+leveluser;
+	var monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+	var d = new Date();
+	var monthname=monthNames[d.getMonth()];
+	var daynumber=(d.getDate()) > 9 ? (d.getDate()) : "0" + (d.getDate());
+	var yearnumber=d.getFullYear();
+	//alert(monthname+" "+daynumber+", "+yearnumber);	
+	var headingName=
+	$("#hmstring").html(headingName);
+	GetMUserMessages("inbox");
 });
 
 

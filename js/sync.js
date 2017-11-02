@@ -177,7 +177,8 @@ function QuerytoinsertMessages(tx)
 	if(!!sessionStorage.userid)
 	{
 		//alert("Deleting "+idusera);
-		tx.executeSql("DELETE FROM MESSAGES WHERE UserID='"+idusera+"'");
+		tx.executeSql("DELETE FROM MESSAGES WHERE UserIDTO='"+idusera+"'");
+		tx.executeSql("DELETE FROM MESSAGES WHERE UserIDFrom='"+idusera+"'");
 	}
 	//ready to insert new records
 	//alert("Insert new data MESSAGES");
@@ -189,13 +190,13 @@ function QuerytoinsertMessages(tx)
 	 try
 	 {
     $.each(obj, function (key, value) {
-		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
-		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+value.Status+'", "'+value.Date+'", "'+value.Title+'", "'+value.Category+'", "'+value.Message+'", "'+value.Priority+'", "'+value.UserToList+'","yes")';
+	//alert('INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","yes")');
+		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","yes")';
 		//alert(query);
 		tx.executeSql(query);
 		itemcount++;
      });
-	// alert("totalGroups2content: "+itemcount);
+	// alert("Messages: "+itemcount);
 	 
 	 	$("#progressMessage").html("Messages updated");
 	pbar.setValue(10);
