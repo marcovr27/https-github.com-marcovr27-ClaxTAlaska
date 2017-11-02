@@ -1841,6 +1841,106 @@
 
 <!--Page Logbook-->
 
+<!--Page Messages Launch-->
+
+<div data-role="page" id="pageMessages" class="normal">
+	<div data-role="header" data-position="fixed" data-theme="b">
+		<h1>
+        <img src="img/graphs/Logo_Small.png" style="height: 2em" />
+       <label id="hmstring">Inbox</label> </h1>
+          <a href="#menu-panelMessage" data-icon="bars" data-iconpos="notext">Folders</a>
+       <!-- <a href="#filter-formMessage" data-icon="search" data-iconpos="notext">Filters</a>-->
+       <div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+     <a href="#" data-role="button" data-icon="recycle">Sync</a>
+      <a href="#filter-formMessage" data-role="button" data-iconpos="notext" data-icon="search">filter</a>
+    </div>
+	</div>
+	<div data-role="content">
+        <form>
+    <input id="filterTable-inputinboxm" data-type="search">
+</form>
+
+           <table data-role="table" data-filter="true" id="table-inboxmessages" data-input="#filterTable-inputinboxm"  class="ui-body-c ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
+    <thead>
+      <tr id="headtableprocedure" class="ui-bar-c">
+        <th data-priority="1" style="text-align: center" id="htableMdate">Date &nbsp;</th>
+        <th data-priority="2" style="text-align: center" id="htableMTo">To &nbsp;</th>
+		  <th data-priority="3" style="text-align: center" id="htableMSubject">Subject &nbsp;</th>
+     </tr>
+     </thead>
+     <tbody id="MessagesBodyTable">
+
+
+    </tbody>
+  </table>	
+
+	</div>
+	<div data-role="footer" data-position="fixed">
+      <div data-role="navbar">
+      		            <ul>
+        <li><a href="javascript:navbyapp('menu');" class="ui-btn-a" data-icon="back" data-iconpos="left">Back</a></li>
+         <li><a href="#" class="ui-btn-b" data-icon="plus" data-iconpos="left">New</a></li>
+        <li><a href="#" class="ui-btn-c"  data-icon="action" data-iconpos="right">Open</a></li>
+    </ul>
+      
+      </div>
+
+	</div>
+    
+             <div data-role="panel" data-position-fixed="true" data-display="push" data-theme="a"  id="menu-panelMessage">
+      
+     
+        <ul data-role="listview">
+                <li data-icon="carat-r"><a href="#" >Inbox</a></li>
+                <li data-icon="carat-r"><a href="#" >Read</a></li>
+				<li data-icon="carat-r"><a href="#" >Unread</a></li>
+				<li data-icon="carat-r"><a href="#" >Sent</a></li>
+				<li data-icon="carat-r"><a href="#" >Drafts</a></li>
+                
+        </ul>
+        <br>
+        <button class="ui-btn ui-btn-b ui-mini" data-rel="close" >Close Menu</button>
+    </div><!-- /panel -->
+
+     <div data-role="panel" data-position="right" data-display="reveal" data-theme="a" id="filter-formMessage">
+        <form class="userform">
+            <h4>Filters</h4>
+         
+         <input type="text" id="Smessagetext" name="Smessagetext" placeholder="Serach Text"/>
+         <label for="select_mfrom" id="lbltxtmfrom">From</label>
+    <select name="select_mfrom" id="select_mfrom" data-mini="true" onChange="">
+        <option value="0">[ALL]</option>
+    </select>
+           <label for="select_mto" id="lbltxtmto">To</label>
+    <select name="select_mto" id="select_mto" data-mini="true" onChange="">
+        <option value="0">[ALL]</option>
+    </select>
+           <label for="select_mCategory" id="lbltxtmcategory">Category</label>
+    <select name="select_mCategory" id="select_mCategory" data-mini="true" onChange="">
+        <option value="0">[ALL]</option>
+    </select>
+    <label for="select_mPrior" id="select_mPrior">Priority</label>
+    <select name="select_mPrior" id="select_mPrior" data-mini="true" onChange="">
+        <option value="0">[ALL]</option>
+        <option value="1">High</option>
+        <option value="2">Normal</option>
+    </select>
+    <strong>Data Sent<strong/>
+       <label for="datesubmitM">From</label>
+    <input type="date" data-clear-btn="false" name="datesubmitM" id="datesubmitM" onChange="" value="">
+       <label for="datesubmith">To</label>
+     <input type="date" data-clear-btn="false" name="datesubmitMF" id="datesubmiMF" onChange="" value="">
+   
+            <div class="ui-grid-a">
+                <div class="ui-block-a"><a href="#" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-b ui-mini" id="aback10">Back</a></div>
+               
+            </div>
+        </form>
+    </div><!-- /panel -->
+</div>
+
+<!--Page Procedure Launch-->
+
 
           
         <script type="text/javascript" src="cordova.js"></script>
@@ -1850,6 +1950,7 @@
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript" src="js/sync.js"></script>
         <script type="text/javascript" src="js/newfunc.js"></script>
+        <script type="text/javascript" src="js/messages.js"></script>
         <script type="text/javascript" src="js/xdate.js"></script>
   		<script type="text/javascript" src="js/xdate.i18n.js"></script>
 		<script type="text/javascript" src="js/mobipick.js"></script>

@@ -2086,6 +2086,15 @@ function navbyapp(namewindow)
         showLoadMsg: true
     });
 	}
+	else if (namewindow=="messages")
+	{		
+		$(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
+        transition: 'slidedown',
+        changeHash: false,
+        reverse: true,
+        showLoadMsg: true
+    });
+	}
 
 	
 
