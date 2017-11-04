@@ -461,7 +461,80 @@ function checkConnection() {
 
 ///////=============================<<<<<<<<<<<< END CHECK INTERNET CONNECTION >>>>>>>>>>>=========================================///////
 
+///////<<<<<<<<<<<<============================= CONTENT SIZE =========================================>>>>>>>>>>>///////
+
+$(document).on('pagecontainertransition', function(event, ui) {
+	var screen = $.mobile.getScreenHeight(),
+    header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight() - 1 : $(".ui-header").outerHeight(),
+    footer = $(".ui-footer").hasClass("ui-footer-fixed") ? $(".ui-footer").outerHeight() - 1 : $(".ui-footer").outerHeight(),
+	readnames=$("#readc1").outerHeight(),
+    contentCurrent = $(".ui-content").outerHeight() - $(".ui-content").height(),
+    content = screen - header - footer - contentCurrent;
+	var contenttabs=content-200;
+	var contentmessage=content-77-readnames;
+	var formcontentmessage=contentmessage-5;
+	if (window.innerHeight > window.innerWidth) {
+	//alert("p portrait");
+	$("#one").height(contenttabs);
+	$("#two").height(contenttabs);
+	$("#three").height(contenttabs);
+	}
+	else
+	{
+	$("#one").height(content);
+	$("#two").height(content);
+	$("#three").height(content);
+		
+	}
+	$("#readcontent").height(contentmessage);
+	$("#formreadcontent").height(formcontentmessage);
+	$("#textarea-readmessage").height(formcontentmessage-2);
+	var sumf=formcontentmessage-2;
+	$("#textarea-readmessage").css("height: "+sumf+" !important;");
+	//alert("hhh"+physicalScreenHeight);
+	//alert("realcontent="+content+"tabs="+contenttabs);
+});
+
+$(window).bind( 'resize', function(e){
+	var screen = $.mobile.getScreenHeight(),
+    header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight() - 1 : $(".ui-header").outerHeight(),
+    footer = $(".ui-footer").hasClass("ui-footer-fixed") ? $(".ui-footer").outerHeight() - 1 : $(".ui-footer").outerHeight(),
+	readnames=$("#readc1").outerHeight(),
+    contentCurrent = $(".ui-content").outerHeight() - $(".ui-content").height(),
+    content = screen - header - footer - contentCurrent;
+	var contenttabs=content-200;
+	var contentmessage=content-77-readnames;
+	var formcontentmessage=contentmessage-5;
+	if (window.innerHeight > window.innerWidth) {
+	//alert("p portrait");
+	$("#one").height(contenttabs);
+	$("#two").height(contenttabs);
+	$("#three").height(contenttabs);
+	}
+	else
+	{
+	$("#one").height(content);
+	$("#two").height(content);
+	$("#three").height(content);
+		
+	}
+	$("#readcontent").height(contentmessage);
+	$("#formreadcontent").height(formcontentmessage);
+	$("#textarea-readmessage").height(formcontentmessage-2);
+	var sumf=formcontentmessage-2;
+	$("#textarea-readmessage").css("height: "+sumf+" !important;");
+	//alert("hhh"+physicalScreenHeight);
+	//alert("realcontent="+content+"tabs="+contenttabs);
+//$(".ui-content").height(content);
+	
+});
+
+///////=============================<<<<<<<<<<<< END CONTENT SIZE >>>>>>>>>>>=========================================///////
+
+
+
 ///////<<<<<<<<<<<<============================= ORIENTATION CHANGE =========================================>>>>>>>>>>>///////
+
 function SetPortrait()
 {
 	//alert("PortraitFunction");
@@ -476,6 +549,36 @@ alert("Error locking the orientation :: "+ errMsg);
 }
 
 $(window).bind( 'orientationchange', function(e){
+	var screen = $.mobile.getScreenHeight(),
+    header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight() - 1 : $(".ui-header").outerHeight(),
+    footer = $(".ui-footer").hasClass("ui-footer-fixed") ? $(".ui-footer").outerHeight() - 1 : $(".ui-footer").outerHeight(),
+	readnames=$("#readc1").outerHeight(),
+    contentCurrent = $(".ui-content").outerHeight() - $(".ui-content").height(),
+    content = screen - header - footer - contentCurrent;
+	var contenttabs=content-200;
+	var contentmessage=content-77-readnames;
+	var formcontentmessage=contentmessage-5;
+	if (window.innerHeight > window.innerWidth) {
+	//alert("p portrait");
+	$("#one").height(contenttabs);
+	$("#two").height(contenttabs);
+	$("#three").height(contenttabs);
+	}
+	else
+	{
+	$("#one").height(content);
+	$("#two").height(content);
+	$("#three").height(content);
+		
+	}
+	$("#readcontent").height(contentmessage);
+	$("#formreadcontent").height(formcontentmessage);
+	$("#textarea-readmessage").height(formcontentmessage-2);
+	var sumf=formcontentmessage-2;
+	$("#textarea-readmessage").css("height: "+sumf+" !important;");
+	//alert("hhh"+physicalScreenHeight);
+	//alert("realcontent="+content+"tabs="+contenttabs);
+//$(".ui-content").height(content);
   //  if ($.event.special.orientationchange.orientation() == "portrait") {
 	  verifyrejected();
 	 var rejbtn=""; 
@@ -1720,7 +1823,9 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS2ITEMS (LevelNum,ID)');
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Task,LevelNum,Item,Hours,Mins,PersonnelID,SupervisorID,RejectReason,ReviewDate,Sync)');
 
-tx.executeSql('CREATE TABLE IF NOT EXISTS MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync,SentFT)');
+tx.executeSql('CREATE TABLE IF NOT EXISTS MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date DATETIME,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync,SentFT)');
+
+tx.executeSql('CREATE TABLE IF NOT EXISTS CATEGORIES (Name)');
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS SUBMITOJT2USERS (SubmitID,UserID)');
 
@@ -2849,6 +2954,7 @@ fillevaluationsteps();
 <!---------------------------------------------------------------------------------------------------------------------->
 <!---------------------------------------------------------------------------------------------------------------------->
 //ON CREATE 
+//loogbook 
 $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
 //fill username name,level and name
 	var userfullname=sessionStorage.fname;
@@ -2869,6 +2975,7 @@ $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
 	FillPersonnel();
 	fillitemworked();
 	InfoLevel();
+	$( "#onebt" ).addClass("ui-btn-active");
 });
 
 
@@ -2881,6 +2988,7 @@ $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
 $(document).on( 'pagebeforeshow', '#pageMessages',function(){
 //fill username name,level and name
 //alert("startpagemessages");
+    $("#IdMessageop").val("0");
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
 	var headstring=userfullname+": Level "+leveluser;
@@ -2891,14 +2999,51 @@ $(document).on( 'pagebeforeshow', '#pageMessages',function(){
 	var monthname=monthNames[d.getMonth()];
 	var daynumber=(d.getDate()) > 9 ? (d.getDate()) : "0" + (d.getDate());
 	var yearnumber=d.getFullYear();
+	//var pickerMs = $( "#datesubmitM", this );
+    //pickerMs.mobipick({dateFormat:GetDateFormat()});
+	//var pickerMfs = $( "#datesubmitMF", this );
+   // pickerMfs.mobipick({dateFormat:GetDateFormat()});
 	//alert(monthname+" "+daynumber+", "+yearnumber);	
-	var headingName=
+	var headingName="inbox";
 	$("#hmstring").html(headingName);
+	FillUsersTF();
+	FillCategoryF();
 	GetMUserMessages("inbox");
+	$('#table-inboxmessages').on('click','tr', function() {
+        $('#MessagesBodyTable tr').css({background: 'transparent'});
+		$('#MessagesBodyTable tr').css({color: 'black'});
+        $(this).css({background: 'blue'});
+		$(this).css({color: 'white'});
+		var idMessage=$(this).attr('data-name');
+		$("#IdMessageop").val(idMessage);
+		$("#headtableMessages").addClass("ui-bar-c");
+	 $("#table-inboxmessages").table("refresh");
+	 $("#table-inboxmessages").trigger('create');
+	
+    });
 });
 
 
 <!---------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------------------------------------------->
+//ON CREATE 
+$(document).on( 'pagebeforeshow', '#pageRead',function(){
+	var userfullname=sessionStorage.fname;
+	var leveluser=sessionStorage.lvlname;
+	FillMessageRead();
+});
+
+
+<!---------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------------------------------------------->
+//ON CREATE 
+$(document).on( 'pagebeforeshow', '#pageSendM',function(){
+	var userfullname=sessionStorage.fname;
+	var leveluser=sessionStorage.lvlname;
+});
+
+
 <!---------------------------------------------------------------------------------------------------------------------->
 
 ///////=============================<<<<<<<<<<<< END ON LOAD PAGES >>>>>>>>>>>=========================================///////

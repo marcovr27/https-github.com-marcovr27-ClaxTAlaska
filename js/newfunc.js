@@ -196,12 +196,15 @@ function QuerySubmitOJT(tx)
 		  else
 		  {
 			 navigator.notification.alert("Please Enter Entry Date", null, 'FieldTracker', 'Accept');  
+			 $( "#onebt" ).addClass("ui-btn-active");
+			 
 		  }
 		
 	}
 	else
 	{
 		  navigator.notification.alert("Please Select Task", null, 'FieldTracker', 'Accept'); 
+		  $( "#onebt" ).addClass("ui-btn-active");
 		
 		 
 	}
@@ -209,6 +212,7 @@ function QuerySubmitOJT(tx)
 }
 
  function onsuccessojt(button) {
+$( "#onebt" ).addClass("ui-btn-active");
 $("#entryonevalue").val("");	 
 $("#hourentryone").val("");
 $("#minutesentryone").val("");
@@ -264,6 +268,7 @@ function CheckHoursOJT()
 	else
 	{
 		navigator.notification.alert("Please Enter Hours for this entry", null, 'FieldTracker', 'Accept'); 
+		$( "#onebt" ).addClass("ui-btn-active");
 	}
 	//alert("hours"+hourstime+" mins"+minstime);
 
@@ -489,6 +494,7 @@ function CheckitemsValues()
 	else
 	{
 		navigator.notification.alert("Please Enter Hours for this entry", null, 'FieldTracker', 'Accept'); 
+		$( "#twobt" ).addClass("ui-btn-active");
 	}
 	//alert("hours"+hourstime+" mins"+minstime);
 	
@@ -522,7 +528,7 @@ function QuerySubmitItem(tx)
 			//var SubDate=dt.toYMD();
     		var TaskID=taskSelectedlog;
 			var query='INSERT INTO SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Item,LevelNum,Hours,Mins,Sync) VALUES("'+submitID+'","'+UseraID+'","C","Submitted","'+SubmitTime+'","'+InsertFormatDate(EntryDates)+'","'+ItemSelected+'","'+leveluser+'","'+hourstime+'","'+minstime+'","no")';
-			alert(query);
+			//alert(query);
 			tx.executeSql(query);  
 			 navigator.notification.confirm(
     					'Saved',      // mensaje (message)
@@ -535,6 +541,7 @@ function QuerySubmitItem(tx)
 		  else
 		  {
 			 navigator.notification.alert("Please Enter Entry Date", null, 'FieldTracker', 'Accept');  
+			 $( "#twobt" ).addClass("ui-btn-active");
 		  }
 
 		  
@@ -545,15 +552,19 @@ function QuerySubmitItem(tx)
 	else
 	{
 		  navigator.notification.alert("Please Select Item", null, 'FieldTracker', 'Accept'); 
+		  $( "#twobt" ).addClass("ui-btn-active");
 		
 		 
 	}
 }
 
  function onsuccessojtclass(button) {
+$( "#twobt" ).addClass("ui-btn-active");	 
+//$('#two').trigger('click');	 
 $("#entryoneitemvalue").val("");	 
 $("#hourentryitemonec").val("");
 $("#minutesentryitemonec").val("");
+$('#one').trigger('click');
 ItemSelected();
  }
 

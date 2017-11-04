@@ -1,3 +1,10 @@
+.sideByside .ui-block-a {
+    padding-right: 6px;
+}
+.sideByside .ui-block-b {
+    padding-left: 6px;
+}
+
 /* Portrait layout (default) */
 
 
@@ -215,6 +222,17 @@ margin: auto;
 	
 }
 
+.custom_TextArea {
+  height: auto !important; /* !important is used to force override. */
+}
+
+#pageReada .ui-content {
+    position : absolute;
+    top      : 10px;
+    right    : 0;
+    bottom   : 10px;
+    left     : 0;
+}
 		
 		
 

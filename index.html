@@ -24,7 +24,7 @@
     <input type="hidden"  id="btdata" name="btdata" value="Data Queries"/> 
     <input type="hidden"  id="btevuals" name="btevauls" value="Evaluations"/> 
     <input type="hidden"  id="btpro" name="btpro" value="Procedures"/> 
- 
+
 
        
     
@@ -1674,7 +1674,7 @@
 <!--Page Procedure Steps-->
 
           <!--Page Logbook-->
-<div data-role="page" id="pageLogbook" class="normal" >
+<div data-role="page" id="pageLogbook" class="LoginPage" >
 	<div data-role="header" data-position="fixed" data-theme="b">
 		<h1><label id="hplogbook"><b>Logbook</b></label>
         <label id="hplogusername">Darien Claxton: Level 3</label>
@@ -1687,18 +1687,20 @@
     <div data-role="tabs" id="tabs">
   <div data-role="navbar">
     <ul>
-      <li><a href="#one" data-ajax="false">OJT</a></li>
-      <li><a href="#two" data-ajax="false">Classroom</a></li>
-      <li><a href="#three" data-ajax="false" >Summary</a></li>
+      <li><a id="onebt" href="#one" data-ajax="false">OJT</a></li>
+      <li><a id="twobt" href="#two" data-ajax="false">Classroom</a></li>
+      <!--<li><a href="#three" data-ajax="false" >Summary</a></li>-->
     </ul>
   </div>
   <div id="one" class="ui-body ui-body-a">
-<form>   
+<form>  
+  <div class="ui-grid-solo" style="margin:20px;">
+ <div class="ui-block-a"> 
 <label for="select_taskworked" id="lbllog1">Task Worked On:</label>
     <select name="select_taskworked" id="select_taskworked" onChange="TaskSelected()">
-    </select>
+    </select></div></div>
     <br>
-    <div style="width:50%; margin: 0 auto;">
+    <div style="width:85%; margin: 0 auto;">
      <h3 style=" margin: 0 auto; text-align:center;" >Status Summary for This Task</h3>
         <table data-role="table" data-filter="false" id="table-logbook"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
     <thead>
@@ -1714,26 +1716,30 @@
     </tbody>
   </table>
   <br>
+    <br>
     <h3 style=" margin: 0 auto; text-align:center;" >Personnel Worked With:</h3>
+      <br>
     <select name="select_personnelworked" id="select_personnelworked" onChange="PersonnelO()">
     </select>
 <br>
 <br>
-      <div style="width:50%; margin: 0 auto;">
-  	  <div class="ui-grid-a">
-  	  <div  class="ui-block-a" style="width:30%"><label  id="lblentrydateone"><b>Entry Date:</b></label>  </div>
-      <div  class="ui-block-b" style="width:70%" ><input type="date" name="entryonevalue" id="entryonevalue" value=""></div>
-  	 </div> 
+      <div style="width:85%; margin: 0 auto;">
+  	  <div class="ui-grid-b">
+  	  <div  class="ui-block-a" style="width:15%"></div>
+      <div  class="ui-block-b" style="width:70%" ><label for="entryonevalue"  id="lblentrydateone"><b>Entry Date:</b></label><input type="date" name="entryonevalue" id="entryonevalue" value=""></div>
+  	  <div  class="ui-block-c" style="width:15%"></div>
+      </div> 
      </div>
     <br>
     <br>
     <div class="ui-grid-c">
-    <div class="ui-block-a" style="text-align:center;"><br><label  id="lblhoursentryone"><b>Hours for this entry:</b></label></div>
+    <div class="ui-block-a" style="text-align:right;"><br><label  id="lblhoursentryone"><b>Hours for this entry:</b></label></div>
     <div class="ui-block-b"><input type="number" name="hourentryone" pattern="[0-9]*" id="hourentryone" value=""></div>
     <div class="ui-block-c" style="text-align:right;"><br><label  id="lblminutesenrtyone"><b>Minutes:&nbsp;&nbsp;</b></label></div>
     <div class="ui-block-d"><input type="number" name="minutesentryone" pattern="[0-9]*" id="minutesentryone" value=""></div>
     </div><!-- /grid-c -->
-    <input type="button" class="ui-btn" value="Submit" id="OJTButton" onclick="CheckHoursOJT()">
+     <div class="ui-grid-solo" style="margin:20px;">
+    <div class="ui-block-a"><input type="button" class="ui-btn" value="Submit" id="OJTButton" onclick="CheckHoursOJT()"></div></div>
     </div>
     
 
@@ -1741,11 +1747,14 @@
   </div>
   <div id="two" class="ui-body ui-body-a">
   <form>
-  <label for="select_itemsworkedon" id="lbllogworked">Item Worked On:</label>
+  <div class="ui-grid-solo" style="margin:20px;">
+ <div class="ui-block-a"> <label for="select_itemsworkedon" id="lbllogworked">Item Worked On:</label>
     <select name="select_itemsworkedon" id="select_itemsworkedon" onChange="ItemSelected()">
-    </select>
+    </select></div>
+    </div>
     <br>
-    <div style="width:50%; margin: 0 auto;">
+    <br>
+    <div style="width:85%; margin: 0 auto;">
      <h3 style=" margin: 0 auto; text-align:center;" >Status Summary for This Level</h3>
         <table data-role="table" data-filter="false" id="table-logbookItems"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
     <thead>
@@ -1768,29 +1777,33 @@
     </tbody>
   </table>
   <br>
-     <br>
-  <div style="width:50%; margin: 0 auto;">
-  <div class="ui-grid-a">
-  <div  class="ui-block-a" style="width:30%;vertical-align: middle;"><label  id="lblentrydateoneitem"><b>Entry Date:</b></label></div><div  class="ui-block-b" style="width:70%;vertical-align: middle;" ><input type="date" name="entryoneitemvalue" id="entryoneitemvalue" value=""></div>
+<br>
+  <div style="width:85%; margin: 20 auto;">
+  <div class="ui-grid-b">
+  <div  class="ui-block-a" style="width:15%"></div>
+  <div  class="ui-block-b" style="width:70%;" ><label for="entryoneitemvalue"><b>Entry Date:&nbsp;&nbsp;</b></label><input type="date" name="entryoneitemvalue" id="entryoneitemvalue" value=""></div>
+  <div  class="ui-block-c" style="width:15%;"></div>
   </div> 
   </div>
     <br>
     <br>
     <div class="ui-grid-c">
-    <div class="ui-block-a" style="text-align:center;"><br><label  id="lblhoursentryoneitem"><b>Hours for this entry:</b></label></div>
+    <div class="ui-block-a" style="text-align:right;"><br><label  id="lblhoursentryoneitem"><b>Hours for this entry:&nbsp;&nbsp;</b></label></div>
     <div class="ui-block-b"><input type="number" name="hourentryitemonec" pattern="[0-9]*" id="hourentryitemonec" value=""></div>
     <div class="ui-block-c" style="text-align:right;"><br><label  id="lblminutesenrtyitemone"><b>Minutes:&nbsp;&nbsp;</b></label></div>
     <div class="ui-block-d"><input type="number" name="minutesentryitemonec" pattern="[0-9]*" id="minutesentryitemonec" value=""></div>
     </div><!-- /grid-c -->
-    <input type="button" class="ui-btn" value="Submit" id="ClassButton" onclick="CheckitemsValues()">
+    <div class="ui-grid-solo" style="margin:20px;">
+    <div class="ui-block-a"><a href="javascript:CheckitemsValues();" id="ClassButton"  class="ui-btn">Submit</a></div>
+    </div>
     </div>
   
   </form>
 
   </div>
-   <div id="three">
+   <!--<div id="three">
 	<h1>SUMMARY</h1>
-  </div>
+  </div>-->
 </div>
   
 	
@@ -1822,7 +1835,8 @@
 </div>
 	<div data-role="footer" data-position="fixed">
         <div data-role="navbar">
-
+	            <ul>
+        <li><a href="javascript:navbyapp('menu');" class="ui-btn-c" data-icon="back" data-iconpos="left">Back</a></li></ul>
         </div>      
 	</div>
      <div data-role="panel" data-position-fixed="true" data-display="push" data-theme="a"  id="menu-panelcc">
@@ -1841,9 +1855,125 @@
 
 <!--Page Logbook-->
 
+  <!-- Page ReadMessages -->
+	<div data-role="page" id="pageRead" class="normal" >
+    <input type="hidden" name="TypeMail" id="TypeMail" value="0">
+    <input type="hidden" name="IdMla" id="IdMla" value="0">
+                <div data-role="header" data-position="fixed" data-theme="b" style="height:60px;">
+                    <h1></h1>
+                     <a href="#pageMessages" data-icon="arrow-l" data-iconpos="notext">Back</a>
+       				 <!-- <a href="#" data-icon="delete" data-iconpos="left">Delete</a>-->
+     <div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+     <a href="#" data-role="button">Mark as Unread</a>
+      <a href="#" data-role="button" data-iconpos="left" data-icon="delete">Delete</a>
+    </div>
+                </div>
+                <div style="margin:0; padding:0; min-height:75px;" class="ui-bar ui-bar-a">
+                <label style="margin-top:15px; margin-bottom:15px; margin-left:8px; margin-right:8px; height:80%;  font-size: 20px; " align="left" id="SubjectMla" >Subject of email</label>
+                </div>
+                <div id="readc1" data-role="collapsible" data-collapsed="false" data-theme="c" data-collapsed="true" data-collapsed-icon="user" data-expanded-icon="carat-u">
+    			&nbsp;&nbsp;<h4 id="NameMla">Name</h4>
+                 <p id="UserMla">Username</p>
+                 <p id="DateMla">00/00/0000 00:00:00</p>
+                 <div class="ui-grid-c">
+    			 <div class="ui-block-a">
+                 <label id="CateMla">Category: General</label>
+				 </div>
+    			 <div class="ui-block-b">
+                 <label id="PrioMla">Priority: Normal</label>
+				 </div>
+                 <div class="ui-block-c"></div>
+                  <div class="ui-block-d"></div>
+				 </div><!-- /grid-a -->
+				</div>
+
+                <div data-role="content" id="readcontent">
+                 <form id="formreadcontent">
+                 <textarea name="textarea-readmessage" id="textarea-readmessage" class="ui-input-text ui-body-c  ui-shadow-inset"></textarea>
+             	</form>
+				</div>
+     
+                <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                             <ul>
+        <li><a href='javascript:OpenSendMessage("0");' data-icon="plus" data-iconpos="left" >New</a></li>
+        <li><a href='javascript:OpenSendMessage("1");'  class="ui-btn-b" data-icon="forward" data-iconpos="left" >Reply</a></li>
+        <li><a href='javascript:OpenSendMessage("2");'  data-icon="back" data-iconpos="refresh" >Reply All</a></li>
+        <li><a href='javascript:OpenSendMessage("3");'  class="ui-btn-b" data-icon="arrow-r" data-iconpos="left" >Forward</a></li>
+    </ul>
+    </div>
+                    
+                </div>
+                  
+	</div>
+     
+          <!-- Page ReadMessages -->
+          
+            <!-- Page New Messages -->
+	<div data-role="page" id="pageSendM" class="normal" >
+    <input type="hidden" name="TypeMail" id="TypeMail" value="0">
+    <input type="hidden" name="IdMla" id="IdMla" value="0">
+                <div data-role="header" data-position="fixed" data-theme="b" style="height:60px;">
+                    <h1><img src="img/graphs/Logo_Small.png" style="height: 1.5em" />
+       <label>New Message</label></h1>
+                     <a href="#pageMessages" data-icon="arrow-l" data-iconpos="notext">Back</a>
+       				 <!-- <a href="#" data-icon="delete" data-iconpos="left">Delete</a>-->      </div>
+
+                <div data-role="content" style="margin:0; padding:0;" id="readcontent">
+                 <form id="formreadcontent">
+                 <br>
+                 <div class="ui-grid-solo">
+                 <div class="ui-block-a">
+                <label from="inmessageto">&nbsp;&nbsp;&nbsp;To</label>
+                 <input type="text" name="inmessageto" id="inmessageto" value=""></div>
+                 </div>
+                 <div class="ui-grid-solo" style="margin-top:8px;">
+                 <div class="ui-block-a">
+                <label from="inmessageSubject">&nbsp;&nbsp;&nbsp;Subject</label>
+                 <input type="text" name="inmessageSubject" id="inmessageSubject" value=""></div>
+                 </div>
+                 <div class="ui-grid-solo" style="margin-top:8px;">
+                 <div class="ui-block-a">
+                 <label from="select_SendmCategory">&nbsp;&nbsp;&nbsp;Category</label>
+                 <select name="select_SendmCategory" id="select_SendmCategory" data-mini="true" onChange=''>
+    			</select>
+                 </div>
+                 </div>
+                 <div class="ui-grid-solo" style="margin-top:8px;">
+                 <div class="ui-block-a">
+                 <label from="select_SendmPriors">&nbsp;&nbsp;&nbsp;Priority</label><select name="select_SendmPriors" id="select_SendmPriors" data-mini="true">
+        			<option value="High">High</option>
+       				 <option value="Normal" selected>Normal</option>
+   				 </select>
+                 </div>
+                 </div>
+                 <div class="ui-grid-solo" style="margin-top:8px;">
+                 <div class="ui-block-a"><label from="textarea-senddmessage">&nbsp;&nbsp;&nbsp;Message</label>
+                 <textarea name="textarea-senddmessage" id="textarea-sendmessage" class="ui-input-text ui-body-c  ui-shadow-inset"></textarea></div>
+                 </div>
+                 
+                 
+             	</form>
+				</div>
+     
+                <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                             <ul>
+        <li><a href="javascript:navbyapp('messages');" data-icon="back" class="ui-btn-c" data-iconpos="left">Back</a></li>
+        <li><a href="#" class="ui-btn-b" data-icon="forward" data-iconpos="left" >Send</a></li>
+    </ul>
+    </div>
+                    
+                </div>
+                  
+	</div>
+     
+          <!-- Page New Messages -->
+
 <!--Page Messages Launch-->
 
 <div data-role="page" id="pageMessages" class="normal">
+<input type="hidden"  id="IdMessageop" name="IdMessageop" value="0"/> 
 	<div data-role="header" data-position="fixed" data-theme="b">
 		<h1>
         <img src="img/graphs/Logo_Small.png" style="height: 2em" />
@@ -1862,7 +1992,7 @@
 
            <table data-role="table" data-filter="true" id="table-inboxmessages" data-input="#filterTable-inputinboxm"  class="ui-body-c ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
     <thead>
-      <tr id="headtableprocedure" class="ui-bar-c">
+      <tr id="headtableMessages" class="ui-bar-c">
         <th data-priority="1" style="text-align: center" id="htableMdate">Date &nbsp;</th>
         <th data-priority="2" style="text-align: center" id="htableMTo">To &nbsp;</th>
 		  <th data-priority="3" style="text-align: center" id="htableMSubject">Subject &nbsp;</th>
@@ -1879,8 +2009,8 @@
       <div data-role="navbar">
       		            <ul>
         <li><a href="javascript:navbyapp('menu');" class="ui-btn-a" data-icon="back" data-iconpos="left">Back</a></li>
-         <li><a href="#" class="ui-btn-b" data-icon="plus" data-iconpos="left">New</a></li>
-        <li><a href="#" class="ui-btn-c"  data-icon="action" data-iconpos="right">Open</a></li>
+         <li><a href='javascript:OpenSendMessage("0");' class="ui-btn-b" data-icon="plus" data-iconpos="left">New</a></li>
+        <li><a href='javascript:OpenMessage("1");' class="ui-btn-c"  data-icon="action" data-iconpos="right">Open</a></li>
     </ul>
       
       </div>
@@ -1906,30 +2036,30 @@
         <form class="userform">
             <h4>Filters</h4>
          
-         <input type="text" id="Smessagetext" name="Smessagetext" placeholder="Serach Text"/>
+         <input type="text" id="Smessagetext" name="Smessagetext" placeholder="Serach Text" onChange='GetMUserMessages("")'/>
          <label for="select_mfrom" id="lbltxtmfrom">From</label>
-    <select name="select_mfrom" id="select_mfrom" data-mini="true" onChange="">
-        <option value="0">[ALL]</option>
+    <select name="select_mfrom" id="select_mfrom" data-mini="true" data-clear-btn="true" onChange='GetMUserMessages("")'>
+        <option value="0" selected>[ALL]</option>
     </select>
            <label for="select_mto" id="lbltxtmto">To</label>
-    <select name="select_mto" id="select_mto" data-mini="true" onChange="">
-        <option value="0">[ALL]</option>
+    <select name="select_mto" id="select_mto" data-mini="true" onChange='GetMUserMessages("")'>
+        <option value="0" selected>[ALL]</option>
     </select>
            <label for="select_mCategory" id="lbltxtmcategory">Category</label>
-    <select name="select_mCategory" id="select_mCategory" data-mini="true" onChange="">
-        <option value="0">[ALL]</option>
+    <select name="select_mCategory" id="select_mCategory" data-mini="true" onChange='GetMUserMessages("")'>
+        <option value="0" selected>[ALL]</option>
     </select>
-    <label for="select_mPrior" id="select_mPrior">Priority</label>
-    <select name="select_mPrior" id="select_mPrior" data-mini="true" onChange="">
-        <option value="0">[ALL]</option>
-        <option value="1">High</option>
-        <option value="2">Normal</option>
+    <label for="select_mPriors" id="select_mPriorlabel">Priority</label>
+    <select name="select_mPriors" id="select_mPriors" data-mini="true" onChange='GetMUserMessages("")'>
+        <option value="0" selected>[ALL]</option>
+        <option value="High">High</option>
+        <option value="Normal">Normal</option>
     </select>
-    <strong>Data Sent<strong/>
+    <strong>Date Sent<strong/>
        <label for="datesubmitM">From</label>
-    <input type="date" data-clear-btn="false" name="datesubmitM" id="datesubmitM" onChange="" value="">
-       <label for="datesubmith">To</label>
-     <input type="date" data-clear-btn="false" name="datesubmitMF" id="datesubmiMF" onChange="" value="">
+    <input type="date" data-clear-btn="false" name="datesubmitM" id="datesubmitM" onChange='GetMUserMessages("")' value="">
+       <label for="datesubmitMF">To</label>
+     <input type="date" data-clear-btn="false" name="datesubmitMF" id="datesubmitMF" onChange='GetMUserMessages("")' value="">
    
             <div class="ui-grid-a">
                 <div class="ui-block-a"><a href="#" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-b ui-mini" id="aback10">Back</a></div>
@@ -1939,7 +2069,14 @@
     </div><!-- /panel -->
 </div>
 
-<!--Page Procedure Launch-->
+<!--Page Message Launch-->
+
+
+
+
+
+
+
 
 
           

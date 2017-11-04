@@ -191,7 +191,7 @@ function QuerytoinsertMessages(tx)
 	 {
     $.each(obj, function (key, value) {
 	//alert('INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","yes")');
-		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","yes")';
+		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","'+escapeDoubleQuotes(value.UserIDToName)+'","'+escapeDoubleQuotes(value.UserIDFromName)+'","yes")';
 		//alert(query);
 		tx.executeSql(query);
 		itemcount++;
@@ -528,13 +528,36 @@ function QuerytoinsertGroups(tx)
 	tx.executeSql("DELETE FROM GROUP2SUPS");
 	tx.executeSql("DELETE FROM GROUP2SUPSRTI");
 	tx.executeSql("DELETE FROM GROUPS2CONTENT");
+	tx.executeSql("DELETE FROM CATEGORIES");
 	//ready to insert new records
 	//alert("Insert new data GROUPS");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
-	var obj = jQuery.parseJSON(newgroupsdatatoinsert.Groups2Content);
+	var obj = jQuery.parseJSON(newgroupsdatatoinsert.Categories);
 	//alert("Items "+obj.length);
 	var itemcount=0;
+		 try
+	 {
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		//alert('INSERT INTO CATEGORIES (Name) VALUES ("'+value.Name+'")');
+		query='INSERT INTO CATEGORIES (Name) VALUES ("'+value.Name+'")';
+		tx.executeSql(query);
+		itemcount++;
+     });
+	// alert("totalGroups2content: "+itemcount);
+	 
+	 	$("#progressMessage").html("Categories updated");
+	pbar.setValue(10);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating Categories "+error);
+			pbar.setValue(30);
+		 
+	 }
+	 itemcount=0;
 	 try
 	 {
     $.each(obj, function (key, value) {
