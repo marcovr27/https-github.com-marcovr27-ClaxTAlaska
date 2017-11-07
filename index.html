@@ -24,7 +24,18 @@
     <input type="hidden"  id="btdata" name="btdata" value="Data Queries"/> 
     <input type="hidden"  id="btevuals" name="btevauls" value="Evaluations"/> 
     <input type="hidden"  id="btpro" name="btpro" value="Procedures"/> 
-
+    <!--New Message -->
+    <input type="hidden"  name="typenew" id="typenew" value="0">
+    <input type="hidden"  id="TolistH" name="TolistH" value="0"/> 
+    <input type="hidden"  id="MessageH" name="MessageH" value="0"/> 
+    <input type="hidden"  id="SubjectH" name="SubjectH" value="0"/> 
+    <input type="hidden"  id="DateH" name="DateH" value="0"/>
+    <input type="hidden"  id="FromH" name="FromH" value="0"/>
+    <input type="hidden"  id="FromHName" name="FromHName" value="0"/>
+    <input type="hidden"  id="ToHName" name="ToHName" value="0"/>
+    <input type="hidden"  id="CategoryH" name="CategoryH" value="0"/>
+    <input type="hidden"  id="PriorityH" name="PriorityH" value="0"/>
+    <!--New MessageEnd -->
 
        
     
@@ -447,7 +458,7 @@
 	<div data-role="footer" data-position="fixed">
 		       <div data-role="navbar">
              <ul>
-        <li><a href="javascript:navbyapp('procedurelaunch');" data-icon="back" data-iconpos="left" id="aback11"></a></li>
+        <li><a href="javascript:navbyapp('procedurelaunch');" data-icon="back" data-iconpos="left" id="aback11">Back</a></li>
         <!--<li><a href="javascript:reportissue();" class="ui-btn-b" data-icon="alert" data-iconpos="right">Report Issue</a></li>-->
         <li><a href="javascript:submitprocedure();" class="ui-btn-c" data-icon="check" data-iconpos="right" id="asubmit1">Submit</a></li>
     </ul>
@@ -1864,17 +1875,16 @@
                      <a href="#pageMessages" data-icon="arrow-l" data-iconpos="notext">Back</a>
        				 <!-- <a href="#" data-icon="delete" data-iconpos="left">Delete</a>-->
      <div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
-     <a href="#" data-role="button">Mark as Unread</a>
-      <a href="#" data-role="button" data-iconpos="left" data-icon="delete">Delete</a>
+     <a href="javascript:MarkAsUnread();" data-role="button">Mark as Unread</a>
+      <a href="javascript:OpenDeleteModal();" data-role="button" data-iconpos="left" data-icon="delete">Delete</a>
     </div>
                 </div>
                 <div style="margin:0; padding:0; min-height:75px;" class="ui-bar ui-bar-a">
                 <label style="margin-top:15px; margin-bottom:15px; margin-left:8px; margin-right:8px; height:80%;  font-size: 20px; " align="left" id="SubjectMla" >Subject of email</label>
                 </div>
                 <div id="readc1" data-role="collapsible" data-collapsed="false" data-theme="c" data-collapsed="true" data-collapsed-icon="user" data-expanded-icon="carat-u">
-    			&nbsp;&nbsp;<h4 id="NameMla">Name</h4>
-                 <p id="UserMla">Username</p>
-                 <p id="DateMla">00/00/0000 00:00:00</p>
+                 <p style="margin-top:0px;" id="DateMla">00/00/0000 00:00:00</p>
+                 &nbsp;&nbsp;<h4 id="NameMla">Name</h4>
                  <div class="ui-grid-c">
     			 <div class="ui-block-a">
                  <label id="CateMla">Category: General</label>
@@ -1892,6 +1902,7 @@
                  <textarea name="textarea-readmessage" id="textarea-readmessage" class="ui-input-text ui-body-c  ui-shadow-inset"></textarea>
              	</form>
 				</div>
+                
      
                 <div data-role="footer" data-position="fixed">
                 <div data-role="navbar">
@@ -1903,29 +1914,43 @@
     </ul>
     </div>
                     
-                </div>
-                  
+    </div> 
+       <!--Pop up--->
+         <div data-role="popup" id="popupDeleteMessage" data-history="false" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+        <div data-role="header" data-theme="a">
+            <h1 >Delete Message?</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <h3 class="ui-title" >Are you sure you wish to delete this message?</h3>
+            <p>This action cannot be undone.</p>
+            <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+            <a href="javascript:DeleteMessageLocal();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-transition="flow">Delete</a>
+        </div>
+    </div>
+       
+                    
 	</div>
      
           <!-- Page ReadMessages -->
           
             <!-- Page New Messages -->
-	<div data-role="page" id="pageSendM" class="normal" >
-    <input type="hidden" name="TypeMail" id="TypeMail" value="0">
-    <input type="hidden" name="IdMla" id="IdMla" value="0">
+            
+	       <!-- Page New Messages -->
+	<div data-role="page" id="pageSMessage" class="normal" >
+    
                 <div data-role="header" data-position="fixed" data-theme="b" style="height:60px;">
                     <h1><img src="img/graphs/Logo_Small.png" style="height: 1.5em" />
        <label>New Message</label></h1>
                      <a href="#pageMessages" data-icon="arrow-l" data-iconpos="notext">Back</a>
        				 <!-- <a href="#" data-icon="delete" data-iconpos="left">Delete</a>-->      </div>
 
-                <div data-role="content" style="margin:0; padding:0;" id="readcontent">
-                 <form id="formreadcontent">
+                <div data-role="content" style="margin:0; padding:0;" id="newmcontent">
+                 <form>
                  <br>
                  <div class="ui-grid-solo">
                  <div class="ui-block-a">
                 <label from="inmessageto">&nbsp;&nbsp;&nbsp;To</label>
-                 <input type="text" name="inmessageto" id="inmessageto" value=""></div>
+                 <input type="text" name="inmessageto" id="inmessageto" value="" onClick="OpenToModal()" readonly></div>
                  </div>
                  <div class="ui-grid-solo" style="margin-top:8px;">
                  <div class="ui-block-a">
@@ -1948,8 +1973,8 @@
                  </div>
                  </div>
                  <div class="ui-grid-solo" style="margin-top:8px;">
-                 <div class="ui-block-a"><label from="textarea-senddmessage">&nbsp;&nbsp;&nbsp;Message</label>
-                 <textarea name="textarea-senddmessage" id="textarea-sendmessage" class="ui-input-text ui-body-c  ui-shadow-inset"></textarea></div>
+                 <div class="ui-block-a"><label from="textarea-sendmessage">&nbsp;&nbsp;&nbsp;Message</label>
+                 <textarea name="textarea-sendmessage" id="textarea-sendmessage" class="ui-input-text ui-body-c  ui-shadow-inset"></textarea></div>
                  </div>
                  
                  
@@ -1957,18 +1982,104 @@
 				</div>
      
                 <div data-role="footer" data-position="fixed">
-                <div data-role="navbar">
-                             <ul>
-        <li><a href="javascript:navbyapp('messages');" data-icon="back" class="ui-btn-c" data-iconpos="left">Back</a></li>
-        <li><a href="#" class="ui-btn-b" data-icon="forward" data-iconpos="left" >Send</a></li>
-    </ul>
+					<div data-role="navbar">
+						<ul>
+							<li><a href="javascript:navbyapp('messages');" data-icon="back" class="ui-btn-c" data-iconpos="left">Back</a></li>
+							<li><a href="#" class="ui-btn-b" data-icon="forward" data-iconpos="left" >Send</a></li>
+						</ul>
+					</div>
+               </div>     
+                   <!--Modal Name-->
+    <div data-role="popup" id="popupToUser" data-history="false" data-overlay-theme="a" data-theme="a" data-dismissible="true" style="max-width:600px;">
+    <div data-role="header" data-theme="b">
+    <h1>Select recipient(s)</h1>
     </div>
-                    
-                </div>
-                  
-	</div>
+    <div role="main" class="ui-content">
+    <input id="filterTable-userspop" data-type="search">
+    <div style="width: 100%; height: 500px; overflow: auto">
+       <table data-role="table" data-filter="true" data-input="#filterTable-userspop" id="table-recipients" class="ui-body-a  ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
+    <thead>
+      <tr class="ui-bar-c">
+        <th data-priority="1"></th>
+        <th data-priority="2"></th>
+    
+      </tr>
+    </thead>
+    <tbody id="recipientsbody">
+
+      
+
+    </tbody>
+  </table>
+  </div>
+         <a href="javascript:launcheval();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b"  data-transition="flow">All</a>
+        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">None</a>
+        
+    </div>
+</div>
+ <!--Modal Name END-->          
+		</div>
      
           <!-- Page New Messages -->
+          
+          
+<!--Page Library-->
+<div data-role="page" id="pageLibrary" class="normal" >
+	<div data-role="header" data-position="fixed" data-theme="b">
+		<h1><label id="hplibrary"><b>Library</b></label>
+        <label id="hplibrarygusername">Darien Claxton: Level 3</label>
+        <label id="hplibrarydate">September 10, 2017</label> </h1>
+         <a href="#menu-panelcc" data-icon="bars" data-iconpos="notext" id="amenu2">Menu</a>
+	</div>
+	<div data-role="content">
+      <input id="filterTable-libraryrifatela" data-type="search">
+     <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-collapsed="false">
+    <div data-role="collapsible" style="margin:0px;">
+        <h3>File Group</h3>
+    <ul data-role="listview">
+    <li><a href="#">File one</a></li>
+    <li><a href="#">File Two</a></li>
+	</ul>
+    </div>
+    <div data-role="collapsible" style="margin:0px;">
+        <h3>File Group</h3>
+    <ul data-role="listview" >
+    <li><a href="#">File one</a></li>
+    <li><a href="#">File Two</a></li>
+	</ul>
+    </div>
+    <div data-role="collapsible" style="margin:0px;">
+        <h3>File Group</h3>
+    <ul data-role="listview">
+    <li><a href="#">File one</a></li>
+    <li><a href="#">File Two</a></li>
+	</ul>
+    </div>
+</div>
+  		
+	</div>
+
+	<div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+	            <ul>
+        <li><a href="javascript:navbyapp('menu');" class="ui-btn-c" data-icon="back" data-iconpos="left">Back</a></li></ul>
+        </div>      
+	</div>
+     <div data-role="panel" data-position-fixed="true" data-display="push" data-theme="a"  id="menu-panelcc">
+      
+     
+        <ul data-role="listview">
+                <li data-icon="home"><a href="javascript:navbyapp('menu');" id="amenu3" >Menu</a></li>
+                <li data-icon="info"><a href="#" id="ahelp2">Help</a></li>
+                
+        </ul>
+        <br>
+        <button class="ui-btn ui-btn-b ui-mini" data-rel="close" id="acloseb2"  >Close Menu</button>
+    </div><!-- /panel -->
+
+</div>
+
+<!--Page Library-->
 
 <!--Page Messages Launch-->
 

@@ -116,30 +116,30 @@ function QueryMUserMessages(tx)
 	// end Filters
 	if(FilterMessages=="inbox" || FilterMessages=="")
 	{
-		query='SELECT * FROM MESSAGES WHERE UserIDTO="'+UseraID+'"'+filterquery;
-		$("#hmstring").html("inbox");
+		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND UserIDTO="'+UseraID+'"'+filterquery;
+		$("#hmstring").html("Inbox");
 		
 	}
 	else if (FilterMessages=="read")
 	{
-		query='SELECT * FROM MESSAGES WHERE UserIDTo="'+UseraID+'" AND Status="Read"'+filterquery;;
+		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND  UserIDTo="'+UseraID+'" AND Status="Read"'+filterquery;;
 		$("#hmstring").html("Read");
 		
 	}
 	else if (FilterMessages=="unread")
 	{
-		query='SELECT * FROM MESSAGES WHERE UserIDTo="'+UseraID+'" AND Status="Unread"'+filterquery;
+		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND  UserIDTo="'+UseraID+'" AND Status="Unread"'+filterquery;
 		$("#hmstring").html("Unread");
 	}
 	else if (FilterMessages=="sent")
 	{
-		query='SELECT * FROM MESSAGES WHERE UserIDFrom="'+UseraID+'" AND Sync="yes"'+filterquery;
+		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND  UserIDFrom="'+UseraID+'" AND Sync="yes"'+filterquery;
 		$("#hmstring").html("Sent");
 		type="1";
 	}
 	else if (FilterMessages=="drafts")
 	{
-		query='SELECT * FROM MESSAGES WHERE UserIDTo="'+UseraID+'" AND Sync="no" AND SentFT="no"'+filterquery;
+		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND  UserIDTo="'+UseraID+'" AND Sync="no" AND SentFT="no"'+filterquery;
 		$("#hmstring").html("Drafts");
 	}
 	//alert(query);
@@ -259,13 +259,24 @@ function FillMessageFSuccess(tx,results)
    // $("[data-role=content]").append($("#readcl").collapsible());
 	$("#IdMla").val(results.rows.item(0).ID);	
 	$("#SubjectMla").html(results.rows.item(0).Title);	
-	$("#NameMla").html("From: "+results.rows.item(0).UserIDFromName);
-	$("#UserMla").html(results.rows.item(0).UserIDFrom);
+	$("#SubjectH").val(results.rows.item(0).Title);
+	$("#NameMla").html("&nbsp;&nbsp;From: "+results.rows.item(0).UserIDFromName);
+	$("#FromHName").val(results.rows.item(0).UserIDFromName);
+	$("#FromH").val(results.rows.item(0).UserIDFrom);
+	$("#TolistH").val(results.rows.item(0).UserToList);
+	$("#ToHName").val(results.rows.item(0).UserIDToName);
+	//$("#UserMla").html(results.rows.item(0).UserIDFrom);
 	$("#DateMla").html(ShowFormatDateTime(results.rows.item(0).Date));
+	$("#DateH").val(ShowFormatDateTime(results.rows.item(0).Date));
 	$("#CateMla").html("Category: "+results.rows.item(0).Category);
+	$("#CategoryH").val(results.rows.item(0).Category);
 	$("#PrioMla").html("Priority: "+results.rows.item(0).Priority);
+	$("#PriorityH").val(results.rows.item(0).Priority);
 	$("#textarea-readmessage").val(results.rows.item(0).Message);
+	$("#MessageH").val(results.rows.item(0).Message);
+	MarkAsRead();
 	$('#readcl').attr('data-theme', 'c');
+	
 	//$('[data-role=collapsible-set]').collapsibleset().trigger('create');
 		
 	}
@@ -280,14 +291,174 @@ function FillMessageFSuccess(tx,results)
 //Open Send Message
 function OpenSendMessage(Type)
 {
-	$(':mobile-pagecontainer').pagecontainer('change', '#pageSendM', {
+	//alert("Open PageSEnd ="+Type);
+	$("#typenew").val(Type);
+    $(':mobile-pagecontainer').pagecontainer('change', '#pageSMessage', {
         				transition: 'flip',
         				changeHash: false,
         				reverse: true,
         				showLoadMsg: true
     					});
+		
+
+	
+
+}
+// Mark as unread
+function MarkAsUnread()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ QueryMarkAsUnread(tx) }, errorCB);
+	
 }
 
+function QueryMarkAsUnread(tx)
+{
+	var IDMessage=$("#IdMla").val();
+	var query='UPDATE MESSAGES SET Status="Unread" WHERE ID="'+IDMessage+'"';
+	tx.executeSql(query); 
+	
+}
+
+// Mark as unread
+function MarkAsRead()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ QueryMarkAsRead(tx) }, errorCB);
+	
+}
+
+function QueryMarkAsRead(tx)
+{
+	var IDMessage=$("#IdMla").val();
+	var query='UPDATE MESSAGES SET Status="Read" WHERE ID="'+IDMessage+'"';
+	tx.executeSql(query); 
+}
+	
+
+
+
+//Delete Message
+function DeleteMessageLocal()
+{
+	
+	var IDMessage=$("#IdMla").val();
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryDeleteMessageLocal, errorCB);
+	
+}
+
+function QueryDeleteMessageLocal(tx)
+{
+	var IDMessage=$("#IdMla").val();
+	var query='UPDATE MESSAGES SET Deleted="1" WHERE ID="'+IDMessage+'"';
+	tx.executeSql(query); 
+	$(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
+        				transition: 'flip',
+        				changeHash: false,
+        				reverse: true,
+        				showLoadMsg: true
+    					});
+
+	
+}
+
+//Open Mondal
+function OpenDeleteModal()
+{
+	$("#popupDeleteMessage").popup("open");
+}
+
+//fill message new
+function GetSendMessage()
+{
+		var xType=$("#typenew").val();
+	//alert("Tipo "+xType);
+	var oldmessage="";
+	var xtolist=$("#TolistH").val();
+	var xmessage=$("#MessageH").val();
+	var xsubject=$("#SubjectH").val();
+	var xdatem=$("#DateH").val();
+    var xfromm=$("#FromH").val();
+	var xcategory=$("#CategoryH").val();
+	var xpriority=$("#PriorityH").val();
+	var xToName=$("#ToHName").val();
+	var xFromName=$("#FromHName").val();
+	
+
+	if(xType=="1")
+	{
+		oldmessage="\n\n\n";
+		oldmessage+="-------Original Message------ "+"\n";
+		oldmessage+="From: "+xFromName+"\n";
+		oldmessage+="To: "+xToName+"\n";
+		oldmessage+="Subject: "+xsubject+"\n";
+		oldmessage+="Date: "+xdatem+"\n";
+		oldmessage+=xmessage;
+		$("#textarea-sendmessage").val(oldmessage);
+		
+	}
+	else if(xType=="2")
+	{
+		oldmessage="\n\n\n";
+		oldmessage+="-------Original Message------ "+"\n";
+		oldmessage+="From: "+xFromName+"\n";
+		oldmessage+="To: "+xToName+"\n";
+		oldmessage+="Subject: "+xsubject+"\n";
+		oldmessage+="Date: "+xdatem+"\n";
+		oldmessage+=xmessage;
+		$("#textarea-sendmessage").val(oldmessage);
+		
+	}
+	else if(xType=="3")
+	{
+		oldmessage="\n\n\n";
+		oldmessage+="-------Original Message------ "+"\n";
+		oldmessage+="From: "+xFromName+"\n";
+		oldmessage+="To: "+xToName+"\n";
+		oldmessage+="Subject: "+xsubject+"\n";
+		oldmessage+="Date: "+xdatem+"\n";
+		oldmessage+=xmessage;
+		$("#textarea-sendmessage").val(oldmessage);
+		
+	}
+
+	
+}
+
+function OpenToModal()
+{
+	$("#popupToUser").popup("open");
+}
+
+//Fill Recipients
+function fillrecipients()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(Queryfillrecipients, errorCB);
+	
+}
+
+function Queryfillrecipients(tx)
+{
+	tx.executeSql("SELECT USERS.FirstName, USERS.LastName, Users.Username FROM USERS ORDER BY LastName,FirstName", [], fillrecipientsSuccess, errorCB);
+	//SELECT USERS.FirstName, USERS.LastName, Users.Username FROM USERS
+}
+
+function fillrecipientsSuccess(tx,results)
+{
+	 var len = results.rows.length;
+	 var tb = $('#recipientsbody');
+	 var tablehtml="";
+	 for (var i=0; i<len; i++){
+		    tablehtml+='<tr><td><label id="lbl'+results.rows.item(i).Username+'" class="ui-icon-delete ui-shadow-icon" ><input type="checkbox"  name="'+results.rows.item(i).Username+'" id="'+results.rows.item(i).Username+'">'+results.rows.item(i).LastName+', &nbsp;'+results.rows.item(i).FirstName+'</label></td></tr>';
+	  }
+	 tb.empty().append(tablehtml);
+	 $("#table-recipients").table("refresh");
+	 $("#table-recipients").trigger('create');
+	  
+	
+}
 //Automatic Refresh Messages
 
 
@@ -302,7 +473,7 @@ function OpenSendMessage(Type)
 //Send Offline Messages
 
 
-//Delete Message
+
 
 
 //Delete WebService

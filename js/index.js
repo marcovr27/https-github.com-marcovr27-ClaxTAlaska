@@ -1823,7 +1823,7 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS2ITEMS (LevelNum,ID)');
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Task,LevelNum,Item,Hours,Mins,PersonnelID,SupervisorID,RejectReason,ReviewDate,Sync)');
 
-tx.executeSql('CREATE TABLE IF NOT EXISTS MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date DATETIME,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync,SentFT)');
+tx.executeSql("CREATE TABLE IF NOT EXISTS MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date DATETIME,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync,SentFT,Deleted DEFAULT '0' NOT NULL)");
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS CATEGORIES (Name)');
 
@@ -2194,6 +2194,15 @@ function navbyapp(namewindow)
 	else if (namewindow=="messages")
 	{		
 		$(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
+        transition: 'slidedown',
+        changeHash: false,
+        reverse: true,
+        showLoadMsg: true
+    });
+	}
+	else if (namewindow=="library")
+	{		
+		$(':mobile-pagecontainer').pagecontainer('change', '#pageLibrary', {
         transition: 'slidedown',
         changeHash: false,
         reverse: true,
@@ -3038,9 +3047,34 @@ $(document).on( 'pagebeforeshow', '#pageRead',function(){
 <!---------------------------------------------------------------------------------------------------------------------->
 <!---------------------------------------------------------------------------------------------------------------------->
 //ON CREATE 
-$(document).on( 'pagebeforeshow', '#pageSendM',function(){
+$(document).on( 'pagebeforeshow', '#pageSMessage',function(){
+	//GetSendMessage();
+    //alert("pagebeforeshow");
+	//fillSendMessage();
+	fillrecipients();
+	GetSendMessage();
+});
+
+
+<!---------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------------------------------------------->
+//ON CREATE 
+$(document).on( 'pagebeforeshow', '#pageLibrary',function(){
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
+	var headstring=userfullname+": Level "+leveluser;
+	var monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+	var d = new Date();
+	var monthname=monthNames[d.getMonth()];
+	var daynumber=(d.getDate()) > 9 ? (d.getDate()) : "0" + (d.getDate());
+	var yearnumber=d.getFullYear();
+	//alert(monthname+" "+daynumber+", "+yearnumber);	
+	$("#hplibrarygusername").html(headstring);
+	//var namedate=monthname+" "+daynumber+", "+yearnumber;
+	$("#hplibrarydate").html(monthname+" "+daynumber+", "+yearnumber);
+
 });
 
 
