@@ -1744,7 +1744,7 @@
     <br>
     <br>
     <div class="ui-grid-c">
-    <div class="ui-block-a" style="text-align:right;"><br><label  id="lblhoursentryone"><b>Hours for this entry:</b></label></div>
+    <div class="ui-block-a" style="text-align:right;"><br><label  id="lblhoursentryone"><b>Hours for this entry:&nbsp;&nbsp;</b></label></div>
     <div class="ui-block-b"><input type="number" name="hourentryone" pattern="[0-9]*" id="hourentryone" value=""></div>
     <div class="ui-block-c" style="text-align:right;"><br><label  id="lblminutesenrtyone"><b>Minutes:&nbsp;&nbsp;</b></label></div>
     <div class="ui-block-d"><input type="number" name="minutesentryone" pattern="[0-9]*" id="minutesentryone" value=""></div>
@@ -1918,7 +1918,7 @@
        <!--Pop up--->
          <div data-role="popup" id="popupDeleteMessage" data-history="false" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
         <div data-role="header" data-theme="a">
-            <h1 >Delete Message?</h1>
+            <h1>Message</h1>
         </div>
         <div role="main" class="ui-content">
             <h3 class="ui-title" >Are you sure you wish to delete this message?</h3>
@@ -1985,7 +1985,7 @@
 					<div data-role="navbar">
 						<ul>
 							<li><a href="javascript:navbyapp('messages');" data-icon="back" class="ui-btn-c" data-iconpos="left">Back</a></li>
-							<li><a href="#" class="ui-btn-b" data-icon="forward" data-iconpos="left" >Send</a></li>
+							<li><a href="javascript:SendMessageLocal();" class="ui-btn-b" data-icon="forward" data-iconpos="left" >Send</a></li>
 						</ul>
 					</div>
                </div>     
@@ -2012,8 +2012,9 @@
     </tbody>
   </table>
   </div>
-         <a href="javascript:launcheval();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b"  data-transition="flow">All</a>
-        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">None</a>
+         <a href="javascript:CheckAllusers();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">All</a>
+        <a href="javascript:UncheckAllusers();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">None</a>
+        &nbsp;<label id="lblquanttousers" data-theme="c" style="margin-right:5px; margin-left:5px;">0 selected</label>
         
     </div>
 </div>
@@ -2033,30 +2034,20 @@
 	</div>
 	<div data-role="content">
       <input id="filterTable-libraryrifatela" data-type="search">
-     <div data-role="collapsibleset" data-theme="a" data-content-theme="a" data-collapsed="false">
-    <div data-role="collapsible" style="margin:0px;">
-        <h3>File Group</h3>
-    <ul data-role="listview">
-    <li><a href="#">File one</a></li>
-    <li><a href="#">File Two</a></li>
-	</ul>
-    </div>
-    <div data-role="collapsible" style="margin:0px;">
-        <h3>File Group</h3>
-    <ul data-role="listview" >
-    <li><a href="#">File one</a></li>
-    <li><a href="#">File Two</a></li>
-	</ul>
-    </div>
-    <div data-role="collapsible" style="margin:0px;">
-        <h3>File Group</h3>
-    <ul data-role="listview">
-    <li><a href="#">File one</a></li>
-    <li><a href="#">File Two</a></li>
-	</ul>
-    </div>
-</div>
-  		
+    <ul data-role="listview" data-filter="true" data-inset="true" data-divider-theme="a">
+    <li data-role="list-divider">File Group one</li>
+    <li><a href="#">file one</a></li>
+    <li><a href="#">file two</a></li>
+    <li data-role="list-divider">File Group two</li>
+    <li><a href="#">file one</a></li>
+    <li><a href="#">file two</a></li>
+	<li><a href="#">file three</a></li>
+    <li data-role="list-divider">File Group three</li>
+    <li><a href="#">file one</a></li>
+    <li><a href="#">file two</a></li>
+	<li><a href="#">file three</a></li>
+    <li><a href="#">file four</a></li>
+	</ul>  		
 	</div>
 
 	<div data-role="footer" data-position="fixed">
@@ -2101,7 +2092,7 @@
     <input id="filterTable-inputinboxm" data-type="search">
 </form>
 
-           <table data-role="table" data-filter="true" id="table-inboxmessages" data-input="#filterTable-inputinboxm"  class="ui-body-c ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
+ <table data-role="table" data-filter="true" id="table-inboxmessages" data-input="#filterTable-inputinboxm"  class="ui-body-c ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
     <thead>
       <tr id="headtableMessages" class="ui-bar-c">
         <th data-priority="1" style="text-align: center" id="htableMdate">Date &nbsp;</th>

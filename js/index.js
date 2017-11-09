@@ -3051,8 +3051,12 @@ $(document).on( 'pagebeforeshow', '#pageSMessage',function(){
 	//GetSendMessage();
     //alert("pagebeforeshow");
 	//fillSendMessage();
+	var UseraID=sessionStorage.userid;
+    GetUserFullName(UseraID);
+	utolist_array = new Array();
+	utolist_arrayNames = new Array();
 	fillrecipients();
-	GetSendMessage();
+	
 });
 
 
