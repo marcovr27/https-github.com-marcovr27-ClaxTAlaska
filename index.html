@@ -1984,7 +1984,7 @@
                 <div data-role="footer" data-position="fixed">
 					<div data-role="navbar">
 						<ul>
-							<li><a href="javascript:navbyapp('messages');" data-icon="back" class="ui-btn-c" data-iconpos="left">Back</a></li>
+							<li><a href="javascript:SaveDraft();" data-icon="back" class="ui-btn-c" data-iconpos="left">Back</a></li>
 							<li><a href="javascript:SendMessageLocal();" class="ui-btn-b" data-icon="forward" data-iconpos="left" >Send</a></li>
 						</ul>
 					</div>
@@ -2014,6 +2014,7 @@
   </div>
          <a href="javascript:CheckAllusers();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">All</a>
         <a href="javascript:UncheckAllusers();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">None</a>
+         <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Ok</a>
         &nbsp;<label id="lblquanttousers" data-theme="c" style="margin-right:5px; margin-left:5px;">0 selected</label>
         
     </div>
@@ -2128,6 +2129,7 @@
 				<li data-icon="carat-r"><a href='javascript:GetMUserMessages("unread");' >Unread</a></li>
 				<li data-icon="carat-r"><a href='javascript:GetMUserMessages("sent");' >Sent</a></li>
 				<li data-icon="carat-r"><a href='javascript:GetMUserMessages("drafts");' >Drafts</a></li>
+                <li data-icon="carat-r"><a href='javascript:GetMUserMessages("needsync");' >Need Sync</a></li>
                 
         </ul>
         <br>

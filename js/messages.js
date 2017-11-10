@@ -1,6 +1,10 @@
 var utolist_array = new Array();
 var utolist_arrayNames = new Array();
 var tofullname="";
+var replytofullname="";
+var draftmessage="0";
+var readto="0";
+var DarftID="0";
 
 //Fill Filters
 
@@ -18,7 +22,9 @@ function QueryFillUsersTF(tx)
 }
 function FillUsersTFSuccess(tx,results)
 {
+	
 	 var len = results.rows.length;
+	 //alert("totalusers="+len);
 	 var selecthtml='<option value="0">[ALL]</option>';
 	 var namze="";
 	 for (var i=0; i<len; i++){
@@ -118,31 +124,53 @@ function QueryMUserMessages(tx)
 	// end Filters
 	if(FilterMessages=="inbox" || FilterMessages=="")
 	{
-		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND UserIDTO="'+UseraID+'"'+filterquery;
+		draftmessage="0";
+		readto="0";
+		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND UserIDTO="'+UseraID+'"'+filterquery+' ORDER BY Date DESC';
 		$("#hmstring").html("Inbox");
 		
 	}
 	else if (FilterMessages=="read")
 	{
-		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND  UserIDTo="'+UseraID+'" AND Status="Read"'+filterquery;;
+		draftmessage="0";
+		readto="0";
+		query='SELECT * FROM MESSAGES WHERE Deleted="0"  AND  UserIDTo="'+UseraID+'" AND Status="Read"'+filterquery+' ORDER BY Date DESC';
 		$("#hmstring").html("Read");
 		
 	}
 	else if (FilterMessages=="unread")
 	{
-		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND  UserIDTo="'+UseraID+'" AND Status="Unread"'+filterquery;
+		draftmessage="0";
+		readto="0";
+		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND UserIDTo="'+UseraID+'" AND Status="Unread"'+filterquery+' ORDER BY Date DESC';
 		$("#hmstring").html("Unread");
 	}
 	else if (FilterMessages=="sent")
 	{
-		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND  UserIDFrom="'+UseraID+'" AND Sync="yes"'+filterquery;
+		draftmessage="0";
+		readto="1";
+		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND UserIDFrom="'+UseraID+'" AND Sync="yes"'+filterquery+' ORDER BY Date DESC';
+		//alert(query);
 		$("#hmstring").html("Sent");
 		type="1";
 	}
 	else if (FilterMessages=="drafts")
 	{
-		query='SELECT * FROM MESSAGES WHERE Deleted="0" AND  UserIDTo="'+UseraID+'" AND Sync="no" AND SentFT="no"'+filterquery;
+		draftmessage="1";
+		readto="0";
+		query='SELECT * FROM MESSAGES WHERE Deleted="0"  AND Sync="nn" AND SentFT="yes"'+filterquery+' ORDER BY Date DESC';
+		type="1";
+		//query="SELECT * FROM MESSAGES";
 		$("#hmstring").html("Drafts");
+	}
+	else if (FilterMessages=="needsync")
+	{
+		draftmessage="0";
+		readto="1";
+			query='SELECT * FROM MESSAGES WHERE Deleted="0"  AND SentFT="no" AND UserIDFrom="'+UseraID+'" AND Sync="no"'+filterquery+' ORDER BY Date DESC';
+			type="1";
+		//query="SELECT * FROM MESSAGES";
+		$("#hmstring").html("Need Sync");
 	}
 	//alert(query);
 	//tx.executeSql(query, [], QueryMMessagesSuccess, errorCB);
@@ -213,8 +241,9 @@ function OpenMessage(Type)
 	}
 	else if(Type=="1")
 	{
-		//alert("entro");
-		if(IDRow!="0")
+		if(draftmessage=="0")
+		{
+					if(IDRow!="0")
 		{
 					  $(':mobile-pagecontainer').pagecontainer('change', '#pageRead', {
         				transition: 'flip',
@@ -230,6 +259,26 @@ function OpenMessage(Type)
 			//alert("no acepto");
 			navigator.notification.alert("Please Select a Message", null, 'FieldTracker', 'Accept');
 		}
+			
+		}
+		else
+		{
+		if(IDRow!="0")
+		{
+				
+               
+			   DraftToHidden();
+			
+		}
+		else
+		{
+			//alert("no acepto");
+			navigator.notification.alert("Please Select a Message", null, 'FieldTracker', 'Accept');
+		}
+			
+		}
+		//alert("entro");
+
 
 		
 	}
@@ -259,10 +308,19 @@ function FillMessageFSuccess(tx,results)
 	{
 	//var collapsible = '<h4 id="NameMla">'+results.rows.item(0).UserIDFromName+'</h4><p id="UserMla">'+results.rows.item(0).UserIDFrom+'</p><p id="DateMla">'+ShowFormatDateTime(results.rows.item(0).Date)+'</p><div class="ui-grid-c"><div class="ui-block-a"><label id="CateMla">Category: '+results.rows.item(0).Category+'</label></div><div class="ui-block-b"><label id="PrioMla">Priority: '+results.rows.item(0).Priority+'</label></div><div class="ui-block-c"></div><div class="ui-block-d"></div></div>';
    // $("[data-role=content]").append($("#readcl").collapsible());
+    DarftID="0";
+	//alert("readto="+readto);
 	$("#IdMla").val(results.rows.item(0).ID);	
 	$("#SubjectMla").html(results.rows.item(0).Title);	
 	$("#SubjectH").val(results.rows.item(0).Title);
-	$("#NameMla").html("&nbsp;&nbsp;From: "+results.rows.item(0).UserIDFromName);
+	if(readto=="0")
+	{
+	  $("#NameMla").html("&nbsp;&nbsp;From: "+results.rows.item(0).UserIDFromName);
+	}
+	else
+	{
+	  $("#NameMla").html("&nbsp;&nbsp;To: "+results.rows.item(0).UserIDToName);
+	}
 	$("#FromHName").val(results.rows.item(0).UserIDFromName);
 	$("#FromH").val(results.rows.item(0).UserIDFrom);
 	$("#TolistH").val(results.rows.item(0).UserToList);
@@ -317,8 +375,13 @@ function MarkAsUnread()
 function QueryMarkAsUnread(tx)
 {
 	var IDMessage=$("#IdMla").val();
-	var query='UPDATE MESSAGES SET Status="Unread" WHERE ID="'+IDMessage+'"';
-	tx.executeSql(query); 
+	if(readto=="0")
+	{
+		var query='UPDATE MESSAGES SET Status="Unread", Sync="no" WHERE ID="'+IDMessage+'"';
+	    tx.executeSql(query); 
+		
+	}
+	
 	
 }
 
@@ -333,8 +396,11 @@ function MarkAsRead()
 function QueryMarkAsRead(tx)
 {
 	var IDMessage=$("#IdMla").val();
+	if(readto=="0")
+	{
 	var query='UPDATE MESSAGES SET Status="Read" WHERE ID="'+IDMessage+'"';
 	tx.executeSql(query); 
+	}
 }
 	
 
@@ -353,7 +419,9 @@ function DeleteMessageLocal()
 function QueryDeleteMessageLocal(tx)
 {
 	var IDMessage=$("#IdMla").val();
-	var query='UPDATE MESSAGES SET Deleted="1" WHERE ID="'+IDMessage+'"';
+	if(readto=="0")
+	{
+			var query='UPDATE MESSAGES SET Deleted="1", Sync="no" WHERE ID="'+IDMessage+'"';
 	tx.executeSql(query); 
 	$(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
         				transition: 'flip',
@@ -361,6 +429,21 @@ function QueryDeleteMessageLocal(tx)
         				reverse: true,
         				showLoadMsg: true
     					});
+
+	}
+	else
+	{
+			var query='DELETE FROM MESSAGES WHERE ID="'+IDMessage+'"';
+	tx.executeSql(query); 
+	$(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
+        				transition: 'flip',
+        				changeHash: false,
+        				reverse: true,
+        				showLoadMsg: true
+    					});
+		
+	}
+
 
 	
 }
@@ -374,6 +457,9 @@ function OpenDeleteModal()
 //fill message new
 function GetSendMessage()
 {
+	$('#table-recipients').find('input[type="checkbox"]:checked').each(function () {
+	$(this).prop('checked', false).checkboxradio('refresh');
+	});
 		var xType=$("#typenew").val();
 	//alert("Tipo "+xType);
 	var oldmessage="";
@@ -390,6 +476,7 @@ function GetSendMessage()
 
 	if(xType=="1")
 	{
+		DarftID="0"
 		oldmessage="\n\n\n";
 		oldmessage+="-------Original Message------ "+"\n";
 		oldmessage+="From: "+xFromName+"\n";
@@ -403,6 +490,7 @@ function GetSendMessage()
 	}
 	else if(xType=="2")
 	{
+		DarftID="0"
 		oldmessage="\n\n\n";
 		oldmessage+="-------Original Message------ "+"\n";
 		oldmessage+="From: "+xFromName+"\n";
@@ -416,6 +504,7 @@ function GetSendMessage()
 	}
 	else if(xType=="3")
 	{
+		DarftID="0"
 		oldmessage="\n\n\n";
 		oldmessage+="-------Original Message------ "+"\n";
 		oldmessage+="From: "+xFromName+"\n";
@@ -425,6 +514,18 @@ function GetSendMessage()
 		oldmessage+=xmessage;
 		$("#textarea-sendmessage").val(oldmessage);
 		$("#inmessageSubject").val("FW: "+xsubject);
+		utolist_arrayNames = new Array();
+		$("#inmessageto").val("");	
+		utolist_array = new Array();
+		$("#lblquanttousers").html("0 selected");
+		
+	}
+	else if(xType=="4")
+	{
+
+		oldmessage+=xmessage;
+		$("#textarea-sendmessage").val(oldmessage);
+		FillUserTolist("1");
 		
 	}
 
@@ -476,7 +577,11 @@ function FillToList(iduser)
 	if(jointolist)
 	{
 		//alert("add");
-		utolist_array.push(iduser);
+		if(iduser!="")
+		{
+		 utolist_array.push(iduser);
+		}
+
 	}
 	else
 	{
@@ -511,22 +616,28 @@ function QueryGetNamesListToSuccess(tx,results)
 	 var names="";
 	 var ids="";
 	 var TxtTo="";
+	 utolist_arrayNames = new Array();
 	 
-	 for (var i=0; i<len; i++)
-	 {
-		 names=results.rows.item(i).LastName+', '+results.rows.item(i).FirstName;
-		// alert(names);
-		 ids=results.rows.item(i).Username;
+	
+	
 		 utolist_array.forEach( function(valor, indice, array) {
-			 if(valor==ids)
-			 {
+		
+			  for (var i=0; i<len; i++)
+	 			{
+						 	 names=results.rows.item(i).LastName+', '+results.rows.item(i).FirstName;
+		 						ids=results.rows.item(i).Username;
+							 if(valor==ids)
+			 				{
 				// alert("igual");
-				
-				 TxtTo+=names+"; "
-			 }
+				            utolist_arrayNames.push(names);
+				 			TxtTo+=names+"; "
+			 				}
+					
+	 			}
+	
     		//console.log("En el índice " + indice + " hay este valor: " + valor);
 		 });
-	 }
+	 
 	 //alert(TxtTo);
 	 $("#inmessageto").val(TxtTo);	
 }
@@ -550,13 +661,20 @@ function QueryCheckAllusersSuccess(tx,results)
 	 var ids="";
 	 var TxtTo="";
 	 utolist_array = new Array();
+	 utolist_arrayNames = new Array();
 	 for (var i=0; i<len; i++)
 	 {
 		 names=results.rows.item(i).LastName+', '+results.rows.item(i).FirstName;
 		 ids=results.rows.item(i).Username;
 		 $("#chklt"+ids).prop('checked', true).checkboxradio('refresh');
-		 utolist_array.push(ids);
+		 if(ids!="")
+		 {
+			  utolist_array.push(ids);
+		 utolist_arrayNames.push(names);
 		 TxtTo+=names+"; "
+			 
+		 }
+		
 
 	 }
 	 //alert(TxtTo);
@@ -575,6 +693,7 @@ function UncheckAllusers()
 	});
 	$("#inmessageto").val("");
 	utolist_array = new Array();
+	 utolist_arrayNames = new Array();
 	 var quantusersids= utolist_array.length;
 	 $("#lblquanttousers").html(quantusersids+" selected");
 	 //$('#table-recipients').find('input:checkbox').prop('checked', false);
@@ -587,6 +706,7 @@ function FillUserTolist(option)
 	var usersList=$("#TolistH").val();
 	var fromh=$("#FromH").val();
 	var fromhname=$("#FromHName").val();
+	//var toh=$("#FromH").val();
 	var UseraID=sessionStorage.userid;
 	var Subject=$("#SubjectH").val();
 	if(usersList.length>0)
@@ -598,22 +718,22 @@ function FillUserTolist(option)
 		{
 			//solo emisor
 			//alert(fromh);
+			//alert(readto+" readto");
+				if(readto=="0")
+			{
 			utolist_array.push(fromh);
-			$("#chklt"+fromh).prop('checked', true).checkboxradio('refresh');
-			$("#table-recipients").table("refresh");
 			 $("#inmessageto").val(fromhname+";");
+			 utolist_arrayNames.push(fromhname);
 			var quantusersids= utolist_array.length;
 	       $("#lblquanttousers").html(quantusersids+" selected");
 		   $("#inmessageSubject").val("RE: "+Subject);
-		
-		}
-		else
-		{
-			$("#chklt"+fromh).prop('checked', true).checkboxradio('refresh');
-			//Emisor
-			utolist_array.push(fromh);
-
-			for (var i=0; i<res.length; i++)
+		   //GetReplyUserFullName(fromh);
+		   $("#chklt"+fromh).prop('checked', true).checkboxradio('refresh');
+			$("#table-recipients").table("refresh");
+			}
+			else
+			{
+				for (var i=0; i<res.length; i++)
 	 		{
 				//alert(res[i]);
 				if(UseraID!=res[i])
@@ -629,6 +749,58 @@ function FillUserTolist(option)
 	        $("#lblquanttousers").html(quantusersids+" selected");
 			 $("#inmessageSubject").val("RE: "+Subject);
 			GetNamesListTo();
+				
+			}
+		 
+		
+		}
+		else
+		{
+			
+				if(readto=="0")
+			{
+			$("#chklt"+fromh).prop('checked', true).checkboxradio('refresh');
+			//Emisor
+			if(fromh!="")
+			{
+				utolist_array.push(fromh);	
+				
+			}
+			 	
+			}
+			
+			for (var i=0; i<res.length; i++)
+	 		{
+				//alert(res[i]);
+				if(UseraID!=res[i])
+				{
+						
+					if(res[i]!="")
+					{
+							utolist_array.push(res[i]);
+					$("#chklt"+res[i]).prop('checked',true).checkboxradio('refresh');
+					$("#table-recipients").table("refresh");
+						
+					}//otros
+				
+				}
+				
+			}
+			var quantusersids= utolist_array.length;
+	        $("#lblquanttousers").html(quantusersids+" selected");
+			var xtipo=$("#typenew").val();
+			if(xtipo=="4")
+			{
+							 $("#inmessageSubject").val(Subject);
+							 GetNamesListTo();
+				
+			}
+			else
+			{
+				 $("#inmessageSubject").val("RE: "+Subject);
+				  GetNamesListTo();
+			}
+
 		
 		}
 		
@@ -640,7 +812,7 @@ function FillUserTolist(option)
 function SendMessageLocal()
 {
 	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-    db.transaction(function(tx){ QuerySendMessageLocal(tx) }, errorCB);
+    db.transaction(function(tx){ QuerySendMessageLocal(tx) }, errorCBSEND);
 }
 
 function QuerySendMessageLocal(tx)
@@ -657,26 +829,69 @@ function QuerySendMessageLocal(tx)
 	var nowpriority=$("#select_SendmPriors").val();;
 	var message=$("#textarea-sendmessage").val();
 	var nowUserTolist="";
+	
+	if(nowtitle=="")
+	{
+		nowtitle="(No subject)";
+	}
 	//var nowuser=GetUserFullName(UseraID);
 	//alert(nowuser);
-	utolist_array.forEach( function(valor, indice, array) {
+	if(utolist_array.length>0)
+	{
+		utolist_array.forEach( function(valor, indice, array) {
 			nowUserTolist+=valor+";"			
     		//console.log("En el índice " + indice + " hay este valor: " + valor);
 		 });
-	alert(nowUserTolist);
+	//alert(nowUserTolist);
     var query="";
 	var totoname="";
    		utolist_array.forEach( function(valor, indice, array) {
 		UserIDTo=valor;
 		totoname=utolist_arrayNames[indice];
-		alert(totoname);
-		idMessage=sessionStorage.userid+new Date().getTime() + Math.random();	
-		query='INSERT INTO (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync) VALUES ("'+idMessage+'","'+UserIDTo+'","'+UserIDFrom+'","'+Mstatus+'","'+nowdate+'","'+nowtitle+'","'+nowcat+'","'+message+'","'+nowpriority+'","'+nowUserTolist+'","'+totoname+'","'+tofullname+'","no")'
-		alert(query);			
+		//Delete if exists Draft
+		
+		tx.executeSql('DELETE FROM MESSAGES WHERE ID="'+DarftID+'"');
+		//alert(totoname);
+		idMessage=sessionStorage.userid+new Date().getTime() + Math.random();
+			
+		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync,SentFT,Deleted) VALUES ("'+idMessage+'","'+UserIDTo+'","'+UserIDFrom+'","'+Mstatus+'","'+nowdate+'","'+nowtitle+'","'+nowcat+'","'+escapeDoubleQuotes(message)+'","'+nowpriority+'","'+nowUserTolist+'","'+totoname+'","'+tofullname+'","no","no","0")';
+		//alert(query);
+		if(UserIDTo!=sessionStorage.userid)
+		{
+			tx.executeSql(query);
+		}
+			
     		//console.log("En el índice " + indice + " hay este valor: " + valor);
 		 });	 
+		  navigator.notification.confirm(
+    					'Saved',      // mensaje (message)
+    						onsuccessendlocal,      // función 'callback' a llamar con el índice del botón pulsado (confirmCallback)
+   							 'FieldTracker',            // titulo (title)
+        				'Accept'          // botones (buttonLabels)
+        				);
+		
+	}
+	else
+	{
+		navigator.notification.alert("Please select one or more recipients", null, 'FieldTracker', 'Accept');
+	}
+	
 	 
 	
+}
+
+function onsuccessendlocal(button)
+{
+	   $(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
+        transition: 'pop',
+        changeHash: false,
+        reverse: true,
+        showLoadMsg: true
+    });
+	
+}
+function errorCBSEND(err) {
+    alert("Error processing SQL: "+err.code);
 }
 
 //GetNames
@@ -701,6 +916,146 @@ function QueryGetUserFullNameSuccess(tx,results)
 		fullnames=results.rows.item(i).LastName+", "+results.rows.item(i).FirstName;
 	}
             tofullname=fullnames;
+}
+
+
+function GetReplyUserFullName(Idusera)
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+	db.transaction(function(tx){ QueryGetReplyUserFullName(tx,Idusera) }, errorCB);
+}
+
+function QueryGetReplyUserFullName(tx,Idusera)
+{
+	var query="SELECT * FROM USERS WHERE Username='"+Idusera+"'";
+	tx.executeSql(query, [], QueryGetReplyUserFullNameSuccess, errorCB);
+}
+
+function QueryGetReplyUserFullNameSuccess(tx,results)
+{
+	var len = results.rows.length;
+	var fullnames="";
+	for (var i=0; i<len; i++)
+	{
+		fullnames=results.rows.item(i).LastName+", "+results.rows.item(i).FirstName;
+	}
+            replytofullname=fullnames;
+			utolist_arrayNames.push(fullnames);
+}
+
+function SaveDraft()
+{
+	//alert("savedarft");
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ QuerySaveDraft(tx) }, errorCBSEND);
+}
+
+function QuerySaveDraft(tx)
+{
+		var UseraID=sessionStorage.userid;
+	var dt = new Date();
+	var idMessage=sessionStorage.userid+new Date().getTime() + Math.random();
+	var UserIDTo="";
+	var UserIDFrom=UseraID;
+	var Mstatus="Unread";
+	var nowdate=dt.toYMDhrs();
+	var nowtitle=$("#inmessageSubject").val();
+	var nowcat=$("#select_SendmCategory").val();;
+	var nowpriority=$("#select_SendmPriors").val();;
+	var message=$("#textarea-sendmessage").val();
+	var nowUserTolist="";
+	
+	//var nowuser=GetUserFullName(UseraID);
+	//alert(nowuser);
+	if(utolist_array.length>0)
+	{
+		utolist_array.forEach( function(valor, indice, array) {
+			nowUserTolist+=valor+";"			
+    		//console.log("En el índice " + indice + " hay este valor: " + valor);
+		 });
+	//alert(nowUserTolist);
+    var query="";
+	var totoname="";
+   		utolist_array.forEach( function(valor, indice, array) {
+		UserIDTo=valor;
+		totoname=utolist_arrayNames[indice];
+		//alert(totoname);
+		idMessage=sessionStorage.userid+new Date().getTime() + Math.random();	
+		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync,SentFT,Deleted) VALUES ("'+idMessage+'","'+UserIDTo+'","'+UserIDFrom+'","'+Mstatus+'","'+nowdate+'","'+nowtitle+'","'+nowcat+'","'+escapeDoubleQuotes(message)+'","'+nowpriority+'","'+nowUserTolist+'","'+totoname+'","'+tofullname+'","nn","yes","0")';
+		//alert(query);
+		tx.executeSql(query);		
+    		//console.log("En el índice " + indice + " hay este valor: " + valor);
+		 });	 
+	 $(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
+        				transition: 'flip',
+        				changeHash: false,
+        				reverse: true,
+        				showLoadMsg: true
+    					});
+		
+	}
+	else
+	{
+		 $(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
+        				transition: 'flip',
+        				changeHash: false,
+        				reverse: true,
+        				showLoadMsg: true
+    					});
+	}
+
+	
+}
+
+function DraftToHidden()
+{
+	//alert("openDraft");
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryDraftToHidden, errorCB);
+}
+
+function QueryDraftToHidden(tx)
+{
+	var IDRow=$("#IdMessageop").val();
+	tx.executeSql("SELECT * FROM MESSAGES WHERE ID='"+IDRow+"'", [],QueryDraftToHiddenSuccess, errorCB);
+	
+}
+
+function QueryDraftToHiddenSuccess(tx,results)
+{
+	var len = results.rows.length;
+	//alert(len+"entro");
+	if(len>0)
+	{
+	$("#IdMla").val(results.rows.item(0).ID);	
+	DarftID=results.rows.item(0).ID;
+	$("#SubjectMla").html(results.rows.item(0).Title);	
+	$("#SubjectH").val(results.rows.item(0).Title);
+	$("#NameMla").html("&nbsp;&nbsp;To: "+results.rows.item(0).UserIDToName);
+	$("#FromHName").val(results.rows.item(0).UserIDFromName);
+	$("#FromH").val(results.rows.item(0).UserIDFrom);
+	$("#TolistH").val(results.rows.item(0).UserToList);
+	$("#ToHName").val(results.rows.item(0).UserIDToName);
+	$("#DateMla").html(ShowFormatDateTime(results.rows.item(0).Date));
+	$("#DateH").val(ShowFormatDateTime(results.rows.item(0).Date));
+	$("#CateMla").html("Category: "+results.rows.item(0).Category);
+	$("#CategoryH").val(results.rows.item(0).Category);
+	$("#PrioMla").html("Priority: "+results.rows.item(0).Priority);
+	$("#PriorityH").val(results.rows.item(0).Priority);
+	$("#textarea-readmessage").val(results.rows.item(0).Message);
+	$("#MessageH").val(results.rows.item(0).Message);
+	readto=1;
+	OpenSendMessage("4");
+	
+	//$('[data-role=collapsible-set]').collapsibleset().trigger('create');
+		
+	}
+	else
+	{
+		navigator.notification.alert("Message not found", null, 'FieldTracker', 'Accept');
+		
+	}
+	
 }
 
 //Automatic Refresh Messages

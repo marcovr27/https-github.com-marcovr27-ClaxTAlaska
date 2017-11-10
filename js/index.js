@@ -114,6 +114,15 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
+		document.addEventListener("backbutton", function(e){
+       if($.mobile.activePage.is('#pageSMessage')){
+           e.preventDefault();
+		   SaveDraft();
+       }
+       else {
+           navigator.app.backHistory()
+       }
+    }, false);
       
 		//request the persistent file system
 		 window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, onFileSystemSuccess, onFileSystemFail);
@@ -3055,6 +3064,10 @@ $(document).on( 'pagebeforeshow', '#pageSMessage',function(){
     GetUserFullName(UseraID);
 	utolist_array = new Array();
 	utolist_arrayNames = new Array();
+	$("#inmessageto").val("");
+	$("#inmessageSubject").val("");
+	$("#textarea-sendmessage").val("");
+	 $("#lblquanttousers").html("0 selected");
 	fillrecipients();
 	
 });

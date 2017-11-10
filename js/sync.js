@@ -177,8 +177,8 @@ function QuerytoinsertMessages(tx)
 	if(!!sessionStorage.userid)
 	{
 		//alert("Deleting "+idusera);
-		tx.executeSql("DELETE FROM MESSAGES WHERE UserIDTO='"+idusera+"'");
-		tx.executeSql("DELETE FROM MESSAGES WHERE UserIDFrom='"+idusera+"'");
+		tx.executeSql("DELETE FROM MESSAGES WHERE UserIDTO='"+idusera+"' AND SentFT='no'");
+		tx.executeSql("DELETE FROM MESSAGES WHERE UserIDFrom='"+idusera+"' AND SentFT='no'");
 	}
 	//ready to insert new records
 	//alert("Insert new data MESSAGES");
@@ -191,7 +191,7 @@ function QuerytoinsertMessages(tx)
 	 {
     $.each(obj, function (key, value) {
 	//alert('INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","yes")');
-		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","'+escapeDoubleQuotes(value.UserIDToName)+'","'+escapeDoubleQuotes(value.UserIDFromName)+'","yes")';
+		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync,SentFT) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","'+escapeDoubleQuotes(value.UserIDToName)+'","'+escapeDoubleQuotes(value.UserIDFromName)+'","yes","no")';
 		//alert(query);
 		tx.executeSql(query);
 		itemcount++;
@@ -1410,7 +1410,7 @@ function sendMessages()
 
 function QuerytosendMessages(tx)
 {
-	var querytosend="SELECT * FROM MESSAGES WHERE Sync='no'";
+	var querytosend="SELECT * FROM MESSAGES WHERE Sync='no' AND SentFT='no'";
 	tx.executeSql(querytosend, [], QuerytosendMessagesSuccess, errorCB);
 }
 
@@ -1695,6 +1695,7 @@ function Querytoupdatelocal(tx)
 	tx.executeSql("UPDATE SUBMITTEDPROCS SET sync='yes'");
 	tx.executeSql("UPDATE SUBMITTEDSTEPS SET sync='yes'");
 	tx.executeSql("UPDATE SUBMITTEDHOURS SET sync='yes'");
+	tx.executeSql("UPDATE MESSAGES SET sync='yes' WHERE SentFT='0'");
 	//alert("All updated");
 }
 
