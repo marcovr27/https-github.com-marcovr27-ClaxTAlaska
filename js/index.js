@@ -108,6 +108,7 @@ var app = {
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
+		//alert("device ready");
     },
     // deviceready Event Handler
     //
@@ -125,18 +126,22 @@ var app = {
     }, false);
       
 		//request the persistent file system
+		//alert("requestfilesystem");
 		 window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, onFileSystemSuccess, onFileSystemFail);
 		 backupfolder();
 		// SET CAMERA GLOBAL VARIABLES
-		 pictureSource=navigator.camera.PictureSourceType;
-    	 destinationType=navigator.camera.DestinationType;
-	 	 capture=navigator.device.capture;
+		//alert("getcameras");
+		pictureSource=navigator.camera.PictureSourceType;
+    	destinationType=navigator.camera.DestinationType;
+	 	// capture=navigator.device.capture;
 		 //CHECK IF EXISTS DATABASE IF NOT CREATE DATABASE
+		// alert("go to dabase");
 		 checkdatabase();
-	
+	     // alert("checkconnection function");
 		// alert(SubmitDate);
 		 setInterval(function(){checkConnection()}, 45000);
 		 app.receivedEvent('deviceready');
+		// alert("all is ready");
 		 
     },
     // Update DOM on a Received Event
@@ -1972,7 +1977,7 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS TEMPRESPONSES (SubmitID,ProcID,StepID,
 	 // Transaction error callback
 	function errorCBIN(tx, err) {
       // alert("Error processing SQL:: "+err);
-	  // alert("DB Error: "+err.message + "\nCode="+err.code);
+	   alert("DB Error: "+err.message + "\nCode="+err.code);
     }
 		function errorCBlan(tx, err) {
        //alert(err.code)

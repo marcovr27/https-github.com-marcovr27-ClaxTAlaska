@@ -398,7 +398,7 @@ function QueryMarkAsRead(tx)
 	var IDMessage=$("#IdMla").val();
 	if(readto=="0")
 	{
-	var query='UPDATE MESSAGES SET Status="Read" WHERE ID="'+IDMessage+'"';
+	var query='UPDATE MESSAGES SET Status="Read",Sync="no" WHERE ID="'+IDMessage+'"';
 	tx.executeSql(query); 
 	}
 }
