@@ -94,6 +94,50 @@ function QueryLibraryGetFilesTwo(tx,results,resultstwo)
 	
 }
 
+
+
+//OpenFile
+
+var onSuccessYa = function(data) {
+    alert('message: ' + data.message);
+};
+
+function onErrorYa(error) {
+    alert('message: ' + error.message);
+}
+
+
+function OpenFile()
+{
+			// What directory should we place this in?
+if (cordova.file.documentsDirectory !== null) {
+    // iOS, OSX
+    DownloadDirectory = cordova.file.documentsDirectory;
+} else if (cordova.file.sharedDirectory !== null) {
+    // BB10
+   DownloadDirectory = cordova.file.sharedDirectory;
+} else if (cordova.file.externalRootDirectory !== null) {
+    // Android, BB10
+    DownloadDirectory = cordova.file.externalRootDirectory;
+} else {
+    // iOS, Android, BlackBerry 10, windows
+    DownloadDirectory = cordova.file.DataDirectory;
+} 
+DownloadDirectory+="FieldTracker/"+"5minutestops2.png";
+	//window.cordova.plugins.FileOpener.canOpenFile(DownloadDirectory, onSuccessOpen, onErrorOpen);
+	window.cordova.plugins.FileOpener.openFile(DownloadDirectory, onSuccessYa, onErrorYa);
+}
+var onSuccessOpen = function(data) {
+    alert('extension: ' + data.extension + '\n' +
+          'canBeOpen: ' + data.canBeOpen);
+};
+
+// onError Callback receives a json object
+//
+function onErrorOpen(error) {
+    alert('message: '  + error.message);
+}
+
 //Download File
 function downloadFile(){
 		// What directory should we place this in?
@@ -111,7 +155,7 @@ if (cordova.file.documentsDirectory !== null) {
     DownloadDirectory = cordova.file.DataDirectory;
 } 
 DownloadDirectory+="FieldTracker"
-alert(DownloadDirectory);
+//alert(DownloadDirectory);
 downloadFileN(DownloadDirectory,"pavimentacion_nogales_son.pdf","http://www.becc.org/uploads/files/pavimentacion_nogales_son.pdf");
 
 

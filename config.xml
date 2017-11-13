@@ -56,6 +56,7 @@
     <plugin name="cordova-plugin-file" version="4.3.3" />
 	<plugin name="cordova-plugin-file-transfer" version="1.6.3" />
    <!-- <plugin name="cordova-plugin-file-transfer" />-->
+   <plugin name="cordova-plugin-fileopener" version="1.0.5" src="https://github.com/Smile-SA/cordova-plugin-fileopener" />
     <plugin name="cordova-plugin-geolocation" />
     <plugin name="cordova-plugin-globalization" />
     <plugin name="cordova-plugin-inappbrowser" />

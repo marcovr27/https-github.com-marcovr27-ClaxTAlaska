@@ -98,6 +98,7 @@ function QuerytocheckifdbSuccess(tx,results,typeofsync)
 //GET DATA FROM SERVER
 function GetservicedataMessages(typesinc)
 {
+	alert("Post To GetMessages");
 	var ipserver=$("#ipsync").val();
 	synchours=typesinc;
 	var obj = {};
@@ -171,6 +172,7 @@ function InsertDatabaseMessages(newdatabase)
 function QuerytoinsertMessages(tx)
 {
 	//alert("deleteoldrecords");
+	alert("Insert new data GetMessages");
 	$("#progressMessage").html("Deleting old records");
 		pbar.setValue(2);
 	var idusera=sessionStorage.userid;		
@@ -229,6 +231,7 @@ function GetservicedataSubmitHours(typesinc)
 {
 	var ipserver=$("#ipsync").val();
 	synchours=typesinc;
+	alert("Post To GetSubmittedHours");
 	//alert("synchours= "+synchours);
 	if(typesinc=="0")
 	{
@@ -311,7 +314,7 @@ function QuerytoinsertSubmitHours(tx)
 		//alert("Deleting "+idusera);
 		tx.executeSql("DELETE FROM SUBMITTEDHOURS WHERE UserID='"+idusera+"'");
 	}	
-	
+	alert("Insert new data GetSubmittedHours");
 	//ready to insert new records
 	//alert("Insert new data SubmittedHours");
 	$("#progressMessage").html("Ready to insert new records");
@@ -370,7 +373,7 @@ function GetservicedataCourses()
 	var ipserver=$("#ipsync").val();
 	//alert("Get Courses");
     //alert("Get Data from:"+ipserver);
-	
+	alert("Post To GetCoursesdata");
 $("#progressheader").html(" ");
 	//progressheader
 	$("#progressheader").html("Downloading data...");
@@ -426,7 +429,7 @@ function QuerytoinsertCourses(tx)
 		pbar.setValue(2);
 	tx.executeSql("DELETE FROM COURSES");
 	//ready to insert new records
-	//alert("Insert new data COURSES");
+	alert("Insert new data GetCoursesdata");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newcoursesdatatoinsert.Courses);
@@ -471,7 +474,7 @@ function GetservicedataGroups()
 {	
 	var ipserver=$("#ipsync").val();
     //alert("Get Data from:"+ipserver);
-	
+	alert("Post To GetGroupsData");
 $("#progressheader").html(" ");
 	//progressheader
 	$("#progressheader").html("Downloading data...");
@@ -530,7 +533,7 @@ function QuerytoinsertGroups(tx)
 	tx.executeSql("DELETE FROM GROUPS2CONTENT");
 	tx.executeSql("DELETE FROM CATEGORIES");
 	//ready to insert new records
-	//alert("Insert new data GROUPS");
+	alert("Insert new data GetGroupsData");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newgroupsdatatoinsert.Categories);
@@ -641,8 +644,8 @@ function GetservicedataTasks()
 	
 	
 	var ipserver=$("#ipsync").val();
-    //alert("Get Data from:"+ipserver);
-	
+    alert("Now starting get Data from:"+ipserver);
+	alert("Post To GetTaskData");
 $("#progressheader").html(" ");
 	//progressheader
 	$("#progressheader").html("Downloading data...");
@@ -700,7 +703,7 @@ function QuerytoinsertTasks(tx)
 	tx.executeSql("DELETE FROM LEVELS2ITEMS");
 	tx.executeSql("DELETE FROM DUTIES2TASKS");
 	//ready to insert new records
-	//alert("Insert new data TASKS");
+	alert("Insert new data GetTaskData");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newtasksdatatoinsert.Items);
@@ -830,7 +833,7 @@ function Getservicedata()
 	
 	var ipserver=$("#ipsync").val();
     //alert("Get Data from:"+ipserver);
-	
+	alert("Post To GetStructureData");
 $("#progressheader").html(" ");
 	//progressheader
 	$("#progressheader").html("Downloading data...");
@@ -880,6 +883,7 @@ function InsertDatabase(newdatabase)
 
 function Querytoinsertusers(tx)
 {
+	alert("Insert new data GetStructureData");
 	//alert("deleteoldrecords");
 	$("#progressMessage").html("Deleting old records");
 		pbar.setValue(2);
@@ -1296,7 +1300,7 @@ function Querytoinsertusers(tx)
 //SEND DATA TO SERVER
 function sendprocedures()
 {
-	
+	alert("starting");
 	    showUpModal();
 	 	$("#progressheader").html("Collecting data...");
 		$("#progressMessage").html("Preparing data to send");
@@ -1483,6 +1487,7 @@ sendDataToServer();
 function sendDataToServer()
 {
 	//alert("entro a enviar datos");
+	alert("fieldtracker data collected and ready to send");
 	var ipserver=$("#ipsync").val();
 		$("#progressheader").html("Uploading Data...");
 		$("#progressMessage").html("Preparing data to send");
