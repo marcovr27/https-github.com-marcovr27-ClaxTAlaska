@@ -560,9 +560,11 @@ function QuerytoinsertGroups(tx)
 	 itemcount=0;
 	 try
 	 {
+	obj=jQuery.parseJSON(newgroupsdatatoinsert.Groups2Content);
     $.each(obj, function (key, value) {
 		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
-		query='INSERT INTO GROUPS2CONTENT (GroupID,ID,Ord) VALUES ("'+value.GroupID+'", "'+value.ID+'","'+value.Ord+'")';
+		query='INSERT INTO GROUPS2CONTENT (GroupID,ID,Ord) VALUES ("'+escapeDoubleQuotes(value.GroupID)+'", "'+escapeDoubleQuotes(value.ID)+'","'+escapeDoubleQuotes(value.Ord)+'")';
+		//alert(query);
 		tx.executeSql(query);
 		itemcount++;
      });

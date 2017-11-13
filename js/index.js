@@ -20,6 +20,7 @@ var destinationType; // sets the format of returned value
 var capture; // The global capture object
 var SyncDB=false; //Show if the database is updated
 var texportDirectory = "";
+var DownloadDirectory = "";
 var tsubdir = "EvalArcs";
 var arrayresponses = [];
 var tt=0;
@@ -487,6 +488,7 @@ $(document).on('pagecontainertransition', function(event, ui) {
 	var contenttabs=content-200;
 	var contentmessage=content-77-readnames;
 	var formcontentmessage=contentmessage-5;
+	$("#librarycontent").height(content);
 	if (window.innerHeight > window.innerWidth) {
 	//alert("p portrait");
 	$("#one").height(contenttabs);
@@ -519,6 +521,7 @@ $(window).bind( 'resize', function(e){
 	var contenttabs=content-200;
 	var contentmessage=content-77-readnames;
 	var formcontentmessage=contentmessage-5;
+	$("#librarycontent").height(content);
 	if (window.innerHeight > window.innerWidth) {
 	//alert("p portrait");
 	$("#one").height(contenttabs);
@@ -572,6 +575,7 @@ $(window).bind( 'orientationchange', function(e){
 	var contenttabs=content-200;
 	var contentmessage=content-77-readnames;
 	var formcontentmessage=contentmessage-5;
+	$("#librarycontent").height(content);
 	if (window.innerHeight > window.innerWidth) {
 	//alert("p portrait");
 	$("#one").height(contenttabs);
@@ -1977,7 +1981,7 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS TEMPRESPONSES (SubmitID,ProcID,StepID,
 	 // Transaction error callback
 	function errorCBIN(tx, err) {
       // alert("Error processing SQL:: "+err);
-	   alert("DB Error: "+err.message + "\nCode="+err.code);
+	   //alert("DB Error: "+err.message + "\nCode="+err.code);
     }
 		function errorCBlan(tx, err) {
        //alert(err.code)
@@ -3096,6 +3100,7 @@ $(document).on( 'pagebeforeshow', '#pageLibrary',function(){
 	$("#hplibrarygusername").html(headstring);
 	//var namedate=monthname+" "+daynumber+", "+yearnumber;
 	$("#hplibrarydate").html(monthname+" "+daynumber+", "+yearnumber);
+	OpenLibrary();
 
 });
 

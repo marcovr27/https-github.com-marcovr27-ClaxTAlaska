@@ -2026,29 +2026,23 @@
           
           
 <!--Page Library-->
-<div data-role="page" id="pageLibrary" class="normal" >
+<div data-role="page" id="pageLibrary" class="normal">
 	<div data-role="header" data-position="fixed" data-theme="b">
 		<h1><label id="hplibrary"><b>Library</b></label>
         <label id="hplibrarygusername">Darien Claxton: Level 3</label>
         <label id="hplibrarydate">September 10, 2017</label> </h1>
          <a href="#menu-panelcc" data-icon="bars" data-iconpos="notext" id="amenu2">Menu</a>
 	</div>
-	<div data-role="content">
-      <input id="filterTable-libraryrifatela" data-type="search">
-    <ul data-role="listview" data-filter="true" data-inset="true" data-divider-theme="a">
-    <li data-role="list-divider">File Group one</li>
-    <li><a href="#">file one</a></li>
-    <li><a href="#">file two</a></li>
-    <li data-role="list-divider">File Group two</li>
-    <li><a href="#">file one</a></li>
-    <li><a href="#">file two</a></li>
-	<li><a href="#">file three</a></li>
-    <li data-role="list-divider">File Group three</li>
-    <li><a href="#">file one</a></li>
-    <li><a href="#">file two</a></li>
-	<li><a href="#">file three</a></li>
-    <li><a href="#">file four</a></li>
-	</ul>  		
+	<div data-role="content" id="librarycontent" class="ui-body ui-body-a">
+    <form>
+    <input data-type="search" id="searchForCollapsibleSet">
+</form>
+    <div data-role="collapsibleset" data-filter="true" data-inset="true" id="collapsiblesetForFilter" data-input="#searchForCollapsibleSet" data-mini="true">
+        
+    </div>
+ <!--<input type="button" name="iddownload" name="iddownload" value="Download file" onClick="downloadFile()"/>-->
+	
+   		
 	</div>
 
 	<div data-role="footer" data-position="fixed">
@@ -2192,6 +2186,7 @@
         <script type="text/javascript" src="js/sync.js"></script>
         <script type="text/javascript" src="js/newfunc.js"></script>
         <script type="text/javascript" src="js/messages.js"></script>
+        <script type="text/javascript" src="js/library.js"></script>
         <script type="text/javascript" src="js/xdate.js"></script>
   		<script type="text/javascript" src="js/xdate.i18n.js"></script>
 		<script type="text/javascript" src="js/mobipick.js"></script>
