@@ -597,3 +597,35 @@ function finishsynclib()
 	
 }
 
+/////TEST SYNC
+function TestSync()
+{
+	var url = $("#ipsettinginit").val();
+		 $.ajax({
+                type: 'POST',
+                url: url + '//HelloTest',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (response) {
+                    if(response.d=="Hello World")
+					{
+						 navigator.notification.alert("Connected to "+url);
+						
+					}
+					else
+					{
+						alert(response.d);
+					}
+                    
+
+
+                },
+                error: function (xmlHttpRequest, textStatus, errorThrown) {
+                    navigator.notification.alert("Error sending data:" + xmlHttpRequest.responseXML + " Status: " + textStatus + "==>" + xmlHttpRequest.statusText + " thrown: " + errorThrown);
+                    //setTimeout(function () { $("#generic-dialog").dialog("close"); }, 2000);
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+            });
+}
