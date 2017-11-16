@@ -5,6 +5,7 @@ var replytofullname="";
 var draftmessage="0";
 var readto="0";
 var DarftID="0";
+var Toback="";
 
 //Fill Filters
 
@@ -69,7 +70,7 @@ function FillCategoryFSuccess(tx,results)
 	
 }
 //Get Messages
-var FilterMessages="inbox";
+
 function GetMUserMessages(filterm)
 {
 	   if(filterm!="")
@@ -381,6 +382,7 @@ function QueryMarkAsUnread(tx)
 	    tx.executeSql(query); 
 		
 	}
+	//SilenceStartSync();
 	
 	
 }
@@ -401,6 +403,7 @@ function QueryMarkAsRead(tx)
 	var query='UPDATE MESSAGES SET Status="Read",Sync="no" WHERE ID="'+IDMessage+'"';
 	tx.executeSql(query); 
 	}
+	//SilenceStartSync();
 }
 	
 
@@ -423,6 +426,7 @@ function QueryDeleteMessageLocal(tx)
 	{
 			var query='UPDATE MESSAGES SET Deleted="1", Sync="no" WHERE ID="'+IDMessage+'"';
 	tx.executeSql(query); 
+	//SilenceStartSync();
 	$(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
         				transition: 'flip',
         				changeHash: false,
@@ -435,6 +439,7 @@ function QueryDeleteMessageLocal(tx)
 	{
 			var query='DELETE FROM MESSAGES WHERE ID="'+IDMessage+'"';
 	tx.executeSql(query); 
+	//SilenceStartSync();
 	$(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
         				transition: 'flip',
         				changeHash: false,
@@ -882,6 +887,7 @@ function QuerySendMessageLocal(tx)
 
 function onsuccessendlocal(button)
 {
+	//SilenceStartSync();
 	   $(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
         transition: 'pop',
         changeHash: false,
@@ -1058,27 +1064,434 @@ function QueryDraftToHiddenSuccess(tx,results)
 	
 }
 
-//Automatic Refresh Messages
+//Sync Messages Modal 
+
+function StartSync()
+{
+var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+db.transaction(GetStartSync, errorCB);
+}
+
+function GetStartSync(tx)
+{
+	var querytosend="SELECT * FROM SETTINGS";
+	tx.executeSql(querytosend, [], function(tx,results){ GetStartSyncSuccess(tx,results) }, errorCB);
+	
+}
+
+function GetStartSyncSuccess(tx,results)
+{
+	var len = results.rows.length;
+	if(len>0)
+	{
+		$("#ipsync").val(results.rows.item(0).IP);
+		SyncModalMessages();
+	}
+	else
+	{
+		 $(':mobile-pagecontainer').pagecontainer('change', '#pageSettingsInit', {
+        transition: 'flip',
+        changeHash: false,
+        reverse: true,
+        showLoadMsg: true
+    });
+		
+	}
+}
+
+function SyncModalMessages()
+{
+	var ipserver=$("#ipsync").val();
+	//alert("sync");
+	 showUpModal();
+	 	$("#progressheader").html("Connecting...");
+		$("#progressMessage").html("Waiting for server connection");
+		pbar.setValue(0);
+		sendmessages="";
+		 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      	db.transaction(QuerytosendMessaModal, errorCB);
+}
+function QuerytosendMessaModal(tx)
+{
+	var querytosend="SELECT * FROM MESSAGES WHERE Sync='no' AND SentFT='no'";
+	tx.executeSql(querytosend, [], QuerytosendMessaModalSuccess, errorCB);
+}
+
+function QuerytosendMessaModalSuccess(tx,results)
+{
+	var len = results.rows.length;
+	//alert("messages="+len);
+	var array = [];
+	//alert(len);
+for (var i=0; i<results.rows.length; i++){
+ row = results.rows.item(i);
+ // alert(row.Title);
+ array.push(JSON.stringify(row));
 
 
-//Sync All Messages
+
+}
+//alert(array);
+sendmessages=array;
+	$("#progressMessage").html("Messages ready to send");
+	pbar.setValue(20);	
+	SendMessageToServer();
+}
+
+function SendMessageToServer()
+{
+		var ipserver=$("#ipsync").val();
+		$("#progressheader").html("Uploading Data...");
+		$("#progressMessage").html("Preparing data to send");
+		pbar.setValue(30);
+	var obj = {};
+	 obj['Messages'] =JSON.stringify(sendmessages); 
+	   $.ajax({
+                    type: 'POST',
+				    url: ipserver+'//SetMessages',
+                    data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						pbar.setValue(100);
+					
+						DownloadMesagesModal();
+           
+                      
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                    $("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
+                    //setTimeout(function () { $("#generic-dialog").dialog("close"); }, 2000);
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+                });
+	
+}
+
+function DownloadMesagesModal()
+{
+	var ipserver=$("#ipsync").val();
+	$("#progressheader").html("Connecting...");
+		$("#progressMessage").html("Waiting for server connection");
+		pbar.setValue(0);
+		var obj = {};
+		 if(!!sessionStorage.userid)
+		 {
+			 obj['UserID'] =sessionStorage.userid;
+		 }
+		 else
+		 {
+			 obj['UserID'] ="";
+			 
+		 }
+			             $("#progressheader").html(" ");
+	//progressheader
+	$("#progressheader").html("Downloading data...");
+		$("#progressMessage").html("Post To GetMessages");
+		pbar.setValue(0);
+		//alert("listo para el post: "+ipserver+'//GetStructureData');
+	                $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetMessages',
+					data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						//alert(response.d);
+						//alert("WEb service works");
+						InsertDatabaseMessaModal(response.d);
+                        //alert(response.d.users);
+                       // var obj = jQuery.parseJSON(response.d.users);
+                       // $.each(obj, function (key, value) {
+                         //   alert(value.Username);//inserts users
+                        //});
+                       // $('#lblData').html(JSON.stringify());
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+							$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
+							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 10000 );
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+	
+}
+
+function InsertDatabaseMessaModal(newdatabase)
+{
+	$("#progressheader").html("Connected");
+	$("#progressMessage").html("Successful connection");
+	pbar.setValue(70);
+	newmessagesdatatoinsert=newdatabase;
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QuerytoinsertMModal, errorCB);
+}
+
+function QuerytoinsertMModal(tx)
+{
+	$("#progressMessage").html("Deleting old records");
+	$("#progressheader").html("Insert New data");
+	var idusera=sessionStorage.userid;		
+	if(!!sessionStorage.userid)
+	{
+		//alert("Deleting "+idusera);
+		tx.executeSql("DELETE FROM MESSAGES WHERE UserIDTO='"+idusera+"' AND SentFT='no'");
+		tx.executeSql("DELETE FROM MESSAGES WHERE UserIDFrom='"+idusera+"' AND SentFT='no'");
+	}
+	//ready to insert new records
+	//alert("Insert new data MESSAGES");
+	$("#progressMessage").html("Ready to insert new records");
+	var query;
+	var obj = jQuery.parseJSON(newmessagesdatatoinsert.Messages);
+	//alert("Items "+obj.length);
+	var itemcount=0;
+	 try
+	 {
+    $.each(obj, function (key, value) {
+	//alert('INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","yes")');
+		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync,SentFT) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","'+escapeDoubleQuotes(value.UserIDToName)+'","'+escapeDoubleQuotes(value.UserIDFromName)+'","yes","no")';
+		//alert(query);
+		tx.executeSql(query);
+		itemcount++;
+     });
+	// alert("Messages: "+itemcount);
+	 
+	 	$("#progressMessage").html("Messages updated");
+	pbar.setValue(10);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating Messages "+error);
+			pbar.setValue(30);
+		 
+	 }
+	 
+	
+		 
+	 $("#progressMessage").html("Messages updated");
+		pbar.setValue(100);
+
+	$("#progressMessage").html("");
+		pbar.setValue(100);
+		$("#progressheader").html("Sync completed");
+		updatelocaldatabaseMessages();
+		finishMModal();
+
+}
+
+function finishMModal()
+{
+	pbar.setValue(100);
+	setTimeout( function(){ 
+	 	$(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
+ 	 	transition: 'flip',
+		changeHash: false,
+		reverse: true,
+		showLoadMsg: true
+		});
+	}, 3000 );
+}
+	
+
+//SILENCE SYNC
+function SilenceStartSync()
+{
+var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+db.transaction(GetSilenceStartSync, errorCB);
+}
+
+function GetSilenceStartSync(tx)
+{
+	var querytosend="SELECT * FROM SETTINGS";
+	tx.executeSql(querytosend, [], function(tx,results){ GetSilenceStartSyncSuccess(tx,results) }, errorCB);
+	
+}
+
+function GetSilenceStartSyncSuccess(tx,results)
+{
+	var len = results.rows.length;
+	if(len>0)
+	{
+		$("#ipsync").val(results.rows.item(0).IP);
+		SyncSilenceMessages();
+	}
+}
+
+function SyncSilenceMessages()
+{
+	var ipserver=$("#ipsync").val();
+		sendmessages="";
+		 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      	db.transaction(QuerytoSilenceMessages, errorCB);
+}
+function QuerytoSilenceMessages(tx)
+{
+	var querytosend="SELECT * FROM MESSAGES WHERE Sync='no' AND SentFT='no'";
+	tx.executeSql(querytosend, [], QuerytoSilenceMessagesSuccess, errorCB);
+}
+
+function QuerytoSilenceMessagesSuccess(tx,results)
+{
+	var len = results.rows.length;
+	//alert("messages="+len);
+	var array = [];
+	//alert(len);
+for (var i=0; i<results.rows.length; i++){
+ row = results.rows.item(i);
+ // alert(row.Title);
+ array.push(JSON.stringify(row));
 
 
 
+}
+//alert(array);
+sendmessages=array;
+SilenceMessageToServer();
+}
 
+function SilenceMessageToServer()
+{
+		var ipserver=$("#ipsync").val();
 
+	var obj = {};
+	 obj['Messages'] =JSON.stringify(sendmessages); 
+	   $.ajax({
+                    type: 'POST',
+				    url: ipserver+'//SetMessages',
+                    data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+					
+						DownloadMesagesSilence();
+           
+                      
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                   // $("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
+                    //setTimeout(function () { $("#generic-dialog").dialog("close"); }, 2000);
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+                });
+	
+}
 
+function DownloadMesagesSilence()
+{
+	var ipserver=$("#ipsync").val();
+		var obj = {};
+		 if(!!sessionStorage.userid)
+		 {
+			 obj['UserID'] =sessionStorage.userid;
+		 }
+		 else
+		 {
+			 obj['UserID'] ="";
+			 
+		 }
 
-//Send Offline Messages
+	                $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetMessages',
+					data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						//alert(response.d);
+						//alert("WEb service works");
+						InsertDatabaseMessaSil(response.d);
+                        //alert(response.d.users);
+                       // var obj = jQuery.parseJSON(response.d.users);
+                       // $.each(obj, function (key, value) {
+                         //   alert(value.Username);//inserts users
+                        //});
+                       // $('#lblData').html(JSON.stringify());
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+							//$("#progressheader").html("Can not connect to server");
+							//$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
+							//setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 10000 );
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+	
+}
 
+function InsertDatabaseMessaSil(newdatabase)
+{
 
+	newmessagesdatatoinsert=newdatabase;
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QuerytoinsertMSil, errorCB);
+}
 
+function QuerytoinsertMSil(tx)
+{
 
+	var idusera=sessionStorage.userid;		
+	if(!!sessionStorage.userid)
+	{
+		//alert("Deleting "+idusera);
+		tx.executeSql("DELETE FROM MESSAGES WHERE UserIDTO='"+idusera+"' AND SentFT='no'");
+		tx.executeSql("DELETE FROM MESSAGES WHERE UserIDFrom='"+idusera+"' AND SentFT='no'");
+	}
+	var query;
+	var obj = jQuery.parseJSON(newmessagesdatatoinsert.Messages);
+	//alert("Items "+obj.length);
+	var itemcount=0;
+	 try
+	 {
+    $.each(obj, function (key, value) {
+	//alert('INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,Sync) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","yes")');
+		query='INSERT INTO MESSAGES (ID,UserIDTo,UserIDFrom,Status,Date,Title,Category,Message,Priority,UserToList,UserIDToName,UserIDFromName,Sync,SentFT) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.UserIDTo)+'", "'+escapeDoubleQuotes(value.UserIDFrom)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.Date+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Category)+'", "'+escapeDoubleQuotes(value.Message)+'", "'+escapeDoubleQuotes(value.Priority)+'", "'+escapeDoubleQuotes(value.UserToList)+'","'+escapeDoubleQuotes(value.UserIDToName)+'","'+escapeDoubleQuotes(value.UserIDFromName)+'","yes","no")';
+		//alert(query);
+		tx.executeSql(query);
+		itemcount++;
+     });
 
-//Delete WebService
+	 }
+	 catch(error)
+	 {
+		 //alert(error);
+		 
+	 }
+	 if(FilterMessages=="inbox")
+	{
+		GetMUserMessages("inbox");
+	}
+	else
+	{
+		GetMUserMessages(FilterMessages);
+	}
+    updatelocaldatabaseMessages();
 
+}
 
-//Update Drafts
+function updatelocaldatabaseMessages()
+{
+		var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      db.transaction(QuerytoupdatelocalMessages, errorCB);
+}
+
+function QuerytoupdatelocalMessages(tx)
+{
+	tx.executeSql("UPDATE MESSAGES SET sync='yes' WHERE SentFT='0'");
+	//alert("All updated");
+}
+
 
 
 

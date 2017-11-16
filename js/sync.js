@@ -98,11 +98,9 @@ function QuerytocheckifdbSuccess(tx,results,typeofsync)
 //GET DATA FROM SERVER
 function GetservicedataMessages(typesinc)
 {
-	alert("Post To GetMessages");
 	var ipserver=$("#ipsync").val();
 	synchours=typesinc;
 	var obj = {};
-    	 var obj = {};
 		 if(!!sessionStorage.userid)
 		 {
 			 obj['UserID'] =sessionStorage.userid;
@@ -117,7 +115,7 @@ function GetservicedataMessages(typesinc)
 		$("#progressheader").html(" ");
 	//progressheader
 	$("#progressheader").html("Downloading data...");
-		$("#progressMessage").html("Waiting for server connection");
+		$("#progressMessage").html("Post To GetMessages");
 		pbar.setValue(0);
 		//alert("listo para el post: "+ipserver+'//GetStructureData');
 	                $.ajax({
@@ -140,9 +138,9 @@ function GetservicedataMessages(typesinc)
                     },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
-							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
-							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
-                    console.log(xmlHttpRequest.responseText);
+							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
+							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 10000 );
+                    console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
                    // alert("Error");
@@ -172,7 +170,7 @@ function InsertDatabaseMessages(newdatabase)
 function QuerytoinsertMessages(tx)
 {
 	//alert("deleteoldrecords");
-	alert("Insert new data GetMessages");
+	//alert("Insert new data GetMessages");
 	$("#progressMessage").html("Deleting old records");
 		pbar.setValue(2);
 	var idusera=sessionStorage.userid;		
@@ -231,7 +229,6 @@ function GetservicedataSubmitHours(typesinc)
 {
 	var ipserver=$("#ipsync").val();
 	synchours=typesinc;
-	alert("Post To GetSubmittedHours");
 	//alert("synchours= "+synchours);
 	if(typesinc=="0")
 	{
@@ -239,7 +236,7 @@ function GetservicedataSubmitHours(typesinc)
 	//progressheader
 	
 	$("#progressheader").html("Downloading data...");
-		$("#progressMessage").html("Waiting for server connection");
+		$("#progressMessage").html("Post To GetSubmittedHours");
 		pbar.setValue(0);
 		 var obj = {};
 		 if(!!sessionStorage.userid)
@@ -264,6 +261,7 @@ function GetservicedataSubmitHours(typesinc)
                     success: function (response) {
 						//alert(response.d);
 						//alert("WEb service works");
+						$("#progressMessage").html("GetSubmittedHours success");
 						InsertDatabaseSubmitHours(response.d);
                         //alert(response.d.users);
                         //var obj = jQuery.parseJSON(response.d.SubmittedHours);
@@ -274,9 +272,9 @@ function GetservicedataSubmitHours(typesinc)
                     },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
-							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
 							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
-                    console.log(xmlHttpRequest.responseText);
+                    console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
                    // alert("Error");
@@ -314,7 +312,7 @@ function QuerytoinsertSubmitHours(tx)
 		//alert("Deleting "+idusera);
 		tx.executeSql("DELETE FROM SUBMITTEDHOURS WHERE UserID='"+idusera+"'");
 	}	
-	alert("Insert new data GetSubmittedHours");
+	//alert("Insert new data GetSubmittedHours");
 	//ready to insert new records
 	//alert("Insert new data SubmittedHours");
 	$("#progressMessage").html("Ready to insert new records");
@@ -373,11 +371,11 @@ function GetservicedataCourses()
 	var ipserver=$("#ipsync").val();
 	//alert("Get Courses");
     //alert("Get Data from:"+ipserver);
-	alert("Post To GetCoursesdata");
+	//alert("Post To GetCoursesdata");
 $("#progressheader").html(" ");
 	//progressheader
 	$("#progressheader").html("Downloading data...");
-		$("#progressMessage").html("Waiting for server connection");
+		$("#progressMessage").html("Post To GetCoursesdata");
 		pbar.setValue(0);
 		//alert("listo para el post: "+ipserver+'//GetStructureData');
 	                $.ajax({
@@ -399,9 +397,9 @@ $("#progressheader").html(" ");
                     },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
-							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
 							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
-                    console.log(xmlHttpRequest.responseText);
+                    console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
                    // alert("Error");
@@ -429,7 +427,7 @@ function QuerytoinsertCourses(tx)
 		pbar.setValue(2);
 	tx.executeSql("DELETE FROM COURSES");
 	//ready to insert new records
-	alert("Insert new data GetCoursesdata");
+	//alert("Insert new data GetCoursesdata");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newcoursesdatatoinsert.Courses);
@@ -474,11 +472,11 @@ function GetservicedataGroups()
 {	
 	var ipserver=$("#ipsync").val();
     //alert("Get Data from:"+ipserver);
-	alert("Post To GetGroupsData");
+	//alert("");
 $("#progressheader").html(" ");
 	//progressheader
 	$("#progressheader").html("Downloading data...");
-		$("#progressMessage").html("Waiting for server connection");
+		$("#progressMessage").html("Post To GetGroupsData");
 		pbar.setValue(0);
 		//alert("listo para el post: "+ipserver+'//GetStructureData');
 	                $.ajax({
@@ -500,9 +498,9 @@ $("#progressheader").html(" ");
                     },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
-							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
 							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
-                    console.log(xmlHttpRequest.responseText);
+                    console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
                    // alert("Error");
@@ -533,7 +531,7 @@ function QuerytoinsertGroups(tx)
 	tx.executeSql("DELETE FROM GROUPS2CONTENT");
 	tx.executeSql("DELETE FROM CATEGORIES");
 	//ready to insert new records
-	alert("Insert new data GetGroupsData");
+	//alert("Insert new data GetGroupsData");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newgroupsdatatoinsert.Categories);
@@ -644,12 +642,10 @@ function GetservicedataTasks()
 	
 	
 	var ipserver=$("#ipsync").val();
-    alert("Now starting get Data from:"+ipserver);
-	alert("Post To GetTaskData");
 $("#progressheader").html(" ");
 	//progressheader
 	$("#progressheader").html("Downloading data...");
-		$("#progressMessage").html("Waiting for server connection");
+		$("#progressMessage").html("Post To GetTaskData");
 		pbar.setValue(0);
 		//alert("listo para el post: "+ipserver+'//GetStructureData');
 	                $.ajax({
@@ -671,9 +667,9 @@ $("#progressheader").html(" ");
                     },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
-							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
 							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
-                    console.log(xmlHttpRequest.responseText);
+                    console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
                    // alert("Error");
@@ -703,7 +699,7 @@ function QuerytoinsertTasks(tx)
 	tx.executeSql("DELETE FROM LEVELS2ITEMS");
 	tx.executeSql("DELETE FROM DUTIES2TASKS");
 	//ready to insert new records
-	alert("Insert new data GetTaskData");
+	//alert("Insert new data GetTaskData");
 	$("#progressMessage").html("Ready to insert new records");
 	var query;
 	var obj = jQuery.parseJSON(newtasksdatatoinsert.Items);
@@ -833,11 +829,11 @@ function Getservicedata()
 	
 	var ipserver=$("#ipsync").val();
     //alert("Get Data from:"+ipserver);
-	alert("Post To GetStructureData");
+	//alert("");
 $("#progressheader").html(" ");
 	//progressheader
 	$("#progressheader").html("Downloading data...");
-		$("#progressMessage").html("Waiting for server connection");
+		$("#progressMessage").html("Post To GetStructureData");
 		pbar.setValue(0);
 		//alert("listo para el post: "+ipserver+'//GetStructureData');
 	                $.ajax({
@@ -859,9 +855,9 @@ $("#progressheader").html(" ");
                     },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
-							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseXML+" Status: "+textStatus+" thrown: "+errorThrown);
 							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
-                    console.log(xmlHttpRequest.responseText);
+                    console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
                    // alert("Error");
@@ -883,7 +879,7 @@ function InsertDatabase(newdatabase)
 
 function Querytoinsertusers(tx)
 {
-	alert("Insert new data GetStructureData");
+	//alert("Insert new data GetStructureData");
 	//alert("deleteoldrecords");
 	$("#progressMessage").html("Deleting old records");
 		pbar.setValue(2);
@@ -1300,7 +1296,7 @@ function Querytoinsertusers(tx)
 //SEND DATA TO SERVER
 function sendprocedures()
 {
-	alert("starting");
+	
 	    showUpModal();
 	 	$("#progressheader").html("Collecting data...");
 		$("#progressMessage").html("Preparing data to send");
@@ -1487,7 +1483,7 @@ sendDataToServer();
 function sendDataToServer()
 {
 	//alert("entro a enviar datos");
-	alert("fieldtracker data collected and ready to send");
+
 	var ipserver=$("#ipsync").val();
 		$("#progressheader").html("Uploading Data...");
 		$("#progressMessage").html("Preparing data to send");
@@ -1499,6 +1495,7 @@ function sendDataToServer()
  obj['submittedcustomvalues'] ="[]";
  obj['Messages'] =JSON.stringify(sendmessages); 
  obj['SubmittedHours'] =JSON.stringify(sendsubmittedhours); 
+ $("#progressMessage").html("Connecting to "+ipserver);
  //var kaka=obj['procedures'];
  //alert("enviar datos"+ipserver+'//SetDeviceDataarray');
  //alert(kaka);
@@ -1518,15 +1515,15 @@ function sendDataToServer()
                       
                     },
                     error: function (xmlHttpRequest, textStatus, errorThrown) {
-                    alert("Error sending data:" +xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+                    $("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
                     //setTimeout(function () { $("#generic-dialog").dialog("close"); }, 2000);
-                    console.log(xmlHttpRequest.responseText);
+                    console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
                 }
                 });
 				
-					$("#progressMessage").html("successful sending data");
+					
 		
 		//setTimeout( function(){ 
 		//

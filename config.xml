@@ -67,6 +67,7 @@
 	<plugin name="cordova-plugin-screen-orientation" version="2.0.1" />
 	<plugin name="cordova-plugin-whitelist" version="1" />
  	<allow-intent href="http://*/*" />
+	<allow-intent href="http://rdmwebt01.teckcominco.loc/Fieldtracker/" />
  	<allow-intent href="https://*/*" />
   	<allow-intent href="tel:*" />
  	<allow-intent href="sms:*" />

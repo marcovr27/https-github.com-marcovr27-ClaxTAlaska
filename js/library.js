@@ -1,5 +1,12 @@
 // Library
 var GroupsList_array = new Array();
+var resultsonfile;
+var CountDownloads=0;
+var CountNow=0;
+var CountReady=0;
+var FileNameD="";
+var RemoteUR="";
+var jandlet;
 
 function OpenLibrary()
 {
@@ -68,7 +75,7 @@ function QueryLibraryGetFilesTwo(tx,results,resultstwo)
 			if(results.rows.item(y).GroupID==resultstwo.rows.item(i).GroupID)
 			{
 				countfiles=countfiles+1;
-			htmlfiles+='<li>'+results.rows.item(y).Description+'</li>';
+			htmlfiles+='<li><a href="javascript:OpenFile('+"'"+results.rows.item(y).FileName+"'"+');">'+results.rows.item(y).Description+'</a></li>';
 		descfiles+=','+results.rows.item(y).Description;
 				
 			}
@@ -99,15 +106,16 @@ function QueryLibraryGetFilesTwo(tx,results,resultstwo)
 //OpenFile
 
 var onSuccessYa = function(data) {
-    alert('message: ' + data.message);
+   //alert('message: ' + data.message);
+   //return true;
 };
 
 function onErrorYa(error) {
-    alert('message: ' + error.message);
+    //alert('message: ' + error.message);
+	 navigator.notification.alert("Please Check file on app folder or download", null, 'FieldTracker', 'Accept');
 }
 
-
-function OpenFile()
+function ifCheckFile(FileNames)
 {
 			// What directory should we place this in?
 if (cordova.file.documentsDirectory !== null) {
@@ -123,23 +131,53 @@ if (cordova.file.documentsDirectory !== null) {
     // iOS, Android, BlackBerry 10, windows
     DownloadDirectory = cordova.file.DataDirectory;
 } 
-DownloadDirectory+="FieldTracker/"+"5minutestops2.png";
-	//window.cordova.plugins.FileOpener.canOpenFile(DownloadDirectory, onSuccessOpen, onErrorOpen);
-	window.cordova.plugins.FileOpener.openFile(DownloadDirectory, onSuccessYa, onErrorYa);
+DownloadDirectory+="FieldTracker/"+FileNames;
+	window.cordova.plugins.FileOpener.canOpenFile(DownloadDirectory, onSuccessYa, onErrorYa);
+	//alert(onSuccessYa+"mira si abrio");
+	//window.cordova.plugins.FileOpener.openFile(DownloadDirectory, onSuccessOpen, onErrorOpen);
+
+	
 }
+
 var onSuccessOpen = function(data) {
     alert('extension: ' + data.extension + '\n' +
-          'canBeOpen: ' + data.canBeOpen);
+         'canBeOpen: ' + data.canBeOpen);
+		  
 };
 
 // onError Callback receives a json object
 //
 function onErrorOpen(error) {
     alert('message: '  + error.message);
+	
 }
 
+
+function OpenFile(FileNames)
+{
+			// What directory should we place this in?
+if (cordova.file.documentsDirectory !== null) {
+    // iOS, OSX
+    DownloadDirectory = cordova.file.documentsDirectory;
+} else if (cordova.file.sharedDirectory !== null) {
+    // BB10
+   DownloadDirectory = cordova.file.sharedDirectory;
+} else if (cordova.file.externalRootDirectory !== null) {
+    // Android, BB10
+    DownloadDirectory = cordova.file.externalRootDirectory;
+} else {
+    // iOS, Android, BlackBerry 10, windows
+    DownloadDirectory = cordova.file.DataDirectory;
+} 
+DownloadDirectory+="FieldTracker/"+FileNames;
+//alert(DownloadDirectory);
+//window.cordova.plugins.FileOpener.canOpenFile(DownloadDirectory, onSuccessOpen, onErrorOpen);
+window.cordova.plugins.FileOpener.openFile(DownloadDirectory, onSuccessYa, onErrorYa);
+}
+
+
 //Download File
-function downloadFile(){
+function downloadFile(fileName,RemoteURL){
 		// What directory should we place this in?
 if (cordova.file.documentsDirectory !== null) {
     // iOS, OSX
@@ -156,7 +194,7 @@ if (cordova.file.documentsDirectory !== null) {
 } 
 DownloadDirectory+="FieldTracker"
 //alert(DownloadDirectory);
-downloadFileN(DownloadDirectory,"pavimentacion_nogales_son.pdf","http://www.becc.org/uploads/files/pavimentacion_nogales_son.pdf");
+downloadFileN(DownloadDirectory,fileName,RemoteURL);
 
 
 }
@@ -184,11 +222,378 @@ function download(remoteURL, fileEntry) {
         remoteURL,
         fileURL,
         function (entry) {
-            alert("download complete: " + entry.fullPath);
+			CountDownloads++;
+			pbar.setValue(100);
+            //alert("download complete: " + entry.fullPath);
         },
         function (error) {
-            alert("download error source " + error.source);
-            alert("download error target " + error.target);
-            alert("upload error code" + error.code);
+			CountDownloads++;
+			pbar.setValue(10);
+            alert("download error source " + error.source+" download error target " + error.target+ "upload error code" + error.code);
         });
 }
+
+//Sync 
+
+function opensynclib()
+{
+	CountDownloads=0;
+	CountNow=0;
+	CountReady=0;
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(GetLibrarySync, errorCB);
+}
+
+function GetLibrarySync(tx)
+{
+	var querytosend="SELECT * FROM SETTINGS";
+	//alert(querytosend);
+	tx.executeSql(querytosend, [], function(tx,results){ GetLibrarySyncSuccess(tx,results) }, errorCB);
+}
+
+function GetLibrarySyncSuccess(tx,results)
+{
+	//alert(len);
+	var len = results.rows.length;
+	if(len>0)
+	{
+		$("#ipsync").val(results.rows.item(0).IP);
+		RemoteUR=results.rows.item(0).IP;
+		SyncLibrary();
+	}
+	else
+	{
+		 $(':mobile-pagecontainer').pagecontainer('change', '#pageSettingsInit', {
+        transition: 'flip',
+        changeHash: false,
+        reverse: true,
+        showLoadMsg: true
+    });
+		
+	}
+}
+
+function SyncLibrary()
+{
+	var ipserver=$("#ipsync").val();
+	//alert("sync");
+	 showUpModal();
+	 	$("#progressheader").html("Connecting...");
+		$("#progressMessage").html("Waiting for server connection");
+		pbar.setValue(0);
+			                $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetLibrary',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						//alert(response.d);
+						//alert("WEb service works");
+						InsertDatabaseLib(response.d);
+                        //alert(response.d.users);
+                       // var obj = jQuery.parseJSON(response.d.users);
+                       // $.each(obj, function (key, value) {
+                         //   alert(value.Username);//inserts users
+                        //});
+                       // $('#lblData').html(JSON.stringify());
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+							$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+                    console.log(xmlHttpRequest.responseText);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+	
+}
+
+function InsertDatabaseLib(newdatabase)
+{
+	$("#progressheader").html("Connected");
+	$("#progressMessage").html("Successful connection");
+	pbar.setValue(10);
+	newlibrarydatatoinsert=newdatabase;
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QuerytoinsertLibrary, errorCB);
+}
+
+function QuerytoinsertLibrary(tx)
+{
+	$("#progressMessage").html("Deleting old records");
+	pbar.setValue(2);
+	tx.executeSql("DELETE FROM COURSES");
+	tx.executeSql("DELETE FROM GROUPS2CONTENT");
+	tx.executeSql("DELETE FROM USERS2GROUPS");
+	tx.executeSql("DELETE FROM GROUPS");
+	var obj = jQuery.parseJSON(newlibrarydatatoinsert.Courses);
+		var itemcount=0;
+	 try
+	 {
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO COURSES (ID,Description,DescriptionLang2,ContentType,DurationHours,DurationMins,Scope,Instructor,FileName) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.Description)+'", "'+escapeDoubleQuotes(value.DescriptionLang2)+'", "'+value.ContentType+'", "'+value.DurationHours+'", "'+value.DurationMins+'", "'+value.Scope+'", "'+escapeDoubleQuotes(value.Instructor)+'","'+escapeDoubleQuotes(value.FileName)+'")';
+		//alert(query);
+		tx.executeSql(query);
+		itemcount++;
+     });
+	// alert("totalGroups2content: "+itemcount);
+	// alert("1");
+	 	$("#progressMessage").html("Courses updated");
+	pbar.setValue(40);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating Courses "+error);
+			pbar.setValue(40);
+		 
+	 }
+	 	 itemcount=0;
+	 try
+	 {
+	obj=jQuery.parseJSON(newlibrarydatatoinsert.Groups2Content);
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO GROUPS2CONTENT (GroupID,ID,Ord) VALUES ("'+escapeDoubleQuotes(value.GroupID)+'", "'+escapeDoubleQuotes(value.ID)+'","'+escapeDoubleQuotes(value.Ord)+'")';
+		//alert(query);
+		tx.executeSql(query);
+		itemcount++;
+     });
+	// alert("totalGroups2content: "+itemcount);
+	// alert("2");
+	 	$("#progressMessage").html("Groups2Content updated");
+	pbar.setValue(50);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating Groups2Content "+error);
+			pbar.setValue(50);
+		 
+	 }
+	 
+	 	  try
+	 {
+	  obj=jQuery.parseJSON(newlibrarydatatoinsert.Users2groups);
+	  	 //alert("User2Groups:"+obj.length);
+	     $.each(obj, function (key, value) {
+		
+		query='INSERT INTO USERS2GROUPS (UserID,ID) VALUES ("'+value.UserID+'","'+value.ID+'")';
+		tx.executeSql(query);
+     });
+	// alert("3");
+	$("#progressMessage").html("Users2groups updated");
+	pbar.setValue(60);
+	 }
+	 	 catch(error)
+	 {
+		 alert(error);
+		  $("#progressMessage").html("Error updating Users2groups "+error);
+			pbar.setValue(60);
+		 
+	 }
+	 
+	 	 try
+	 {
+		 	 obj=jQuery.parseJSON(newlibrarydatatoinsert.Groups);
+			 //alert("Groups:"+obj.length);
+	     $.each(obj, function (key, value) {
+		query='INSERT INTO GROUPS (AreaID,GroupID,Description) VALUES ("'+escapeDoubleQuotes(value.AreaID)+'","'+escapeDoubleQuotes(value.GroupID)+'","'+escapeDoubleQuotes(value.Description)+'")';
+		tx.executeSql(query);
+	
+     });
+	 	 $("#progressMessage").html("Groups updated");
+	pbar.setValue(100);
+		 //alert("4");
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		  $("#progressMessage").html("Error updating Groups "+error);
+			pbar.setValue(20);
+		 
+	 }
+	 GetTableFiles();
+	 
+}
+
+function GetTableFiles()
+{
+	$("#progressheader").html("Download Files...");
+	$("#progressMessage").html("Waiting for server connection");
+	pbar.setValue(0);
+	var ipserver=$("#ipsync").val();
+	var obj = {};
+		 if(!!sessionStorage.userid)
+		 {
+			 obj['UserID'] =sessionStorage.userid;
+		 }
+		 else
+		 {
+			 obj['UserID'] ="";
+			 
+		 }
+	 $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetUrls',
+					data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						//alert(response.d);
+						//alert("WEb service works");
+						InsertDatabaseurls(response.d);
+                        //alert(response.d.users);
+                       // var obj = jQuery.parseJSON(response.d.users);
+                       // $.each(obj, function (key, value) {
+                         //   alert(value.Username);//inserts users
+                        //});
+                       // $('#lblData').html(JSON.stringify());
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+							$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+                    console.log(xmlHttpRequest.responseText);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+}
+
+function InsertDatabaseurls(newdatabase)
+{
+	$("#progressMessage").html("Successful connection");
+	pbar.setValue(15);
+	newfilesdatatoinsert=newdatabase;
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(Querytoinsertfilesinfo, errorCB);
+	
+}
+
+function Querytoinsertfilesinfo(tx)
+{
+	tx.executeSql("DELETE FROM FILESDATA");
+	$("#progressMessage").html("Updating Media Data");
+	var obj = jQuery.parseJSON(newfilesdatatoinsert.MediaFiles);
+	var itemcount=0;
+	 try
+	 {
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO FILESDATA (FileID,FileUrl,FileName) VALUES ("'+escapeDoubleQuotes(value.FileID)+'","'+escapeDoubleQuotes(value.FileUrl)+'","'+escapeDoubleQuotes(value.FileName)+'")';
+		//alert(query);
+		tx.executeSql(query);
+		var filenamesc=escapeDoubleQuotes(value.FileName);
+		//alert(filenamesc+"==>"+filenamesc);
+		//downloadFile(filenamesc,value.FileUrl);
+     });
+	// alert("totalGroups2content: "+itemcount);
+	// alert("1");
+	 	$("#progressMessage").html("Media Data updated");
+	pbar.setValue(100);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error Media Files "+error);
+			pbar.setValue(70);
+		 
+	 }
+	 	 itemcount=0;
+	//newlibrarydatatoinsert
+	FtpDownFiles();
+}
+
+function FtpDownFiles()
+{
+	$("#progressMessage").html("Downloading Files");
+	pbar.setValue(0);
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryFtpDownFiles, errorCB);
+}
+
+function QueryFtpDownFiles(tx)
+{
+	var UseraID=sessionStorage.userid;
+	tx.executeSql('SELECT * FROM FILESDATA', [], QueryFtpDownFilesSuccess, errorCB);
+	
+}
+
+function QueryFtpDownFilesSuccess(tx,results)
+{
+	if (cordova.file.documentsDirectory !== null) {
+    // iOS, OSX
+    DownloadDirectory = cordova.file.documentsDirectory;
+} else if (cordova.file.sharedDirectory !== null) {
+    // BB10
+   DownloadDirectory = cordova.file.sharedDirectory;
+} else if (cordova.file.externalRootDirectory !== null) {
+    // Android, BB10
+    DownloadDirectory = cordova.file.externalRootDirectory;
+} else {
+    // iOS, Android, BlackBerry 10, windows
+    DownloadDirectory = cordova.file.DataDirectory;
+} 
+DownloadDirectory+="FieldTracker/";
+var downloadfile="";	
+var len=results.rows.length;
+CountReady=len;
+	for (var i=0; i<len; i++){
+		downloadfile=DownloadDirectory+results.rows.item(i).FileName;
+		FileNameD=results.rows.item(i).FileName;
+		var resfilema = FileNameD.replace(" ","%20");
+		pbar.setValue(0);
+		$("#progressMessage").html("Downloading File:"+resfilema);
+		var resUR = RemoteUR.replace("/ServiceFt.asmx", "/library/"+resfilema);
+		//alert(resUR);
+		downloadFile(FileNameD,resUR);
+		//window.cordova.plugins.FileOpener.canOpenFile(downloadfile, function(data){
+          //         alert('extension: ' + data.extension + '\n' +
+         //'canBeOpen: ' + data.canBeOpen);
+	         
+			//}, function(error){
+			//	 alert('message: '  + error.message);
+				
+			//	});				
+	}
+	
+	jandlet=setInterval(function(){ 
+	var sumsss=CountDownloads+CountNow;
+	//alert("suma="+sumsss);
+	if(CountReady==sumsss)
+	{
+		//alert("finalizar");
+		finishsynclib();
+	}
+	//{
+		//alert("clear");
+		//clearInterval(handle);
+	//}
+	 }, 3000);
+}
+
+
+function finishsynclib()
+{
+	//alert("finish");
+    clearInterval(jandlet);
+	pbar.setValue(100);
+	$("#progressheader").html("Sync completed");
+	setTimeout( function(){ 
+	 	$(':mobile-pagecontainer').pagecontainer('change', '#pageLibrary', {
+ 	 	transition: 'flip',
+		changeHash: false,
+		reverse: true,
+		showLoadMsg: true
+		});
+	}, 3000 );
+	
+}
+

@@ -8,6 +8,8 @@ var newgroupsdatatoinsert;
 var newcoursesdatatoinsert;
 var newhoursdatatoinsert;
 var newmessagesdatatoinsert;
+var newlibrarydatatoinsert;
+var newfilesdatatoinsert;
 var sendproceduresarray; //Sync Variables
 var sendstepsarray; //Sync Variables
 var sendchecklistarray;//Sync Variables
@@ -22,6 +24,7 @@ var SyncDB=false; //Show if the database is updated
 var texportDirectory = "";
 var DownloadDirectory = "";
 var tsubdir = "EvalArcs";
+var FilterMessages="inbox";
 var arrayresponses = [];
 var tt=0;
 var pbar = jQMProgressBar('progressbar')
@@ -930,6 +933,7 @@ function QuerywritehtmltSuccess(tx,results,language)
 		 tx.executeSql('CREATE TABLE IF NOT EXISTS STEPS2COMPS (StepID,CompID)');
 		 tx.executeSql('CREATE TABLE IF NOT EXISTS SETTINGS (Language,IP,SyncTime,LastSync,DateFormat)');
 		 tx.executeSql('CREATE TABLE IF NOT EXISTS LANGUAGES (Language,OrderNum)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS FILESDATA (FileID,FileUrl,FileName)');
 		// tx.executeSql('DROP TABLE IF EXISTS MEASUREMENTS');
 		 tx.executeSql('CREATE TABLE IF NOT EXISTS MEASUREMENTS (MeasID,MeasDesc,Units,FieldType,MinValue,MaxValue)');
 //		 tx.executeSql('INSERT INTO MEASUREMENTS (MeasID,MeasDesc,Units,FieldType,MinValue,MaxValue) VALUES ("TEMP","Motor Temperature","F","T","50","100")');
@@ -3035,7 +3039,15 @@ $(document).on( 'pagebeforeshow', '#pageMessages',function(){
 	$("#hmstring").html(headingName);
 	FillUsersTF();
 	FillCategoryF();
-	GetMUserMessages("inbox");
+	if(FilterMessages=="inbox")
+	{
+		GetMUserMessages("inbox");
+	}
+	else
+	{
+		GetMUserMessages(FilterMessages);
+	}
+	
 	$('#table-inboxmessages').on('click','tr', function() {
         $('#MessagesBodyTable tr').css({background: 'transparent'});
 		$('#MessagesBodyTable tr').css({color: 'black'});
@@ -3098,6 +3110,9 @@ $(document).on( 'pagebeforeshow', '#pageLibrary',function(){
 	var yearnumber=d.getFullYear();
 	//alert(monthname+" "+daynumber+", "+yearnumber);	
 	$("#hplibrarygusername").html(headstring);
+     CountDownloads=0;
+	 CountNow=0;
+	 CountReady=0;
 	//var namedate=monthname+" "+daynumber+", "+yearnumber;
 	$("#hplibrarydate").html(monthname+" "+daynumber+", "+yearnumber);
 	OpenLibrary();
