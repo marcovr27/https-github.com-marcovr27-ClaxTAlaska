@@ -606,6 +606,7 @@ function TestSync()
                 url: url + '//HelloTest',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
+				crossDomain: true,
                 success: function (response) {
                     if(response.d=="Hello World")
 					{

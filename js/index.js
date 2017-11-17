@@ -15,12 +15,14 @@ var sendstepsarray; //Sync Variables
 var sendchecklistarray;//Sync Variables
 var sendmessages;//Sync Variables
 var sendsubmittedhours;//Sync Variables
+var sendMessagealone;//Sync Variables
 var synchours;
 var syncmessages;
 var pictureSource;   // picture source
 var destinationType; // sets the format of returned value
 var capture; // The global capture object
 var SyncDB=false; //Show if the database is updated
+var IntervalMessagesP="";
 var texportDirectory = "";
 var DownloadDirectory = "";
 var tsubdir = "EvalArcs";
@@ -2325,6 +2327,8 @@ translatehtml();
 
 //ON CREATE PAGE MENU
 $(document).on( 'pagebeforeshow', '#pageMenu',function(){
+		clearInterval(IntervalMessagesP);
+	IntervalMessagesP="";
 	
 	verifyrejected();
 	var rejbtn="";
@@ -2987,6 +2991,8 @@ fillevaluationsteps();
 //ON CREATE 
 //loogbook 
 $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
+		clearInterval(IntervalMessagesP);
+	IntervalMessagesP="";
 //fill username name,level and name
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
@@ -3030,6 +3036,8 @@ $(document).on( 'pagebeforeshow', '#pageMessages',function(){
 	var monthname=monthNames[d.getMonth()];
 	var daynumber=(d.getDate()) > 9 ? (d.getDate()) : "0" + (d.getDate());
 	var yearnumber=d.getFullYear();
+	IsSyncMessages=false;
+	IntervalMessagesP= setInterval(function(){ SilenceStartSync(); }, 59000);
 	//var pickerMs = $( "#datesubmitM", this );
     //pickerMs.mobipick({dateFormat:GetDateFormat()});
 	//var pickerMfs = $( "#datesubmitMF", this );
@@ -3068,6 +3076,8 @@ $(document).on( 'pagebeforeshow', '#pageMessages',function(){
 <!---------------------------------------------------------------------------------------------------------------------->
 //ON CREATE 
 $(document).on( 'pagebeforeshow', '#pageRead',function(){
+		clearInterval(IntervalMessagesP);
+	IntervalMessagesP="";
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
 	FillMessageRead();
@@ -3078,6 +3088,8 @@ $(document).on( 'pagebeforeshow', '#pageRead',function(){
 <!---------------------------------------------------------------------------------------------------------------------->
 //ON CREATE 
 $(document).on( 'pagebeforeshow', '#pageSMessage',function(){
+		clearInterval(IntervalMessagesP);
+	IntervalMessagesP="";
 	//GetSendMessage();
     //alert("pagebeforeshow");
 	//fillSendMessage();
@@ -3098,6 +3110,8 @@ $(document).on( 'pagebeforeshow', '#pageSMessage',function(){
 <!---------------------------------------------------------------------------------------------------------------------->
 //ON CREATE 
 $(document).on( 'pagebeforeshow', '#pageLibrary',function(){
+	clearInterval(IntervalMessagesP);
+	IntervalMessagesP="";
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
 	var headstring=userfullname+": Level "+leveluser;

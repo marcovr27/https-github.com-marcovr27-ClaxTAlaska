@@ -6,6 +6,8 @@ var draftmessage="0";
 var readto="0";
 var DarftID="0";
 var Toback="";
+var IsSyncMessages=false;
+var IntervalMessagesP="";
 
 //Fill Filters
 
@@ -335,7 +337,11 @@ function FillMessageFSuccess(tx,results)
 	$("#PriorityH").val(results.rows.item(0).Priority);
 	$("#textarea-readmessage").val(results.rows.item(0).Message);
 	$("#MessageH").val(results.rows.item(0).Message);
-	MarkAsRead();
+	if(results.rows.item(0).Status=="Unread")
+	{
+	  MarkAsRead();
+		
+	}
 	$('#readcl').attr('data-theme', 'c');
 	
 	//$('[data-role=collapsible-set]').collapsibleset().trigger('create');
@@ -380,9 +386,9 @@ function QueryMarkAsUnread(tx)
 	{
 		var query='UPDATE MESSAGES SET Status="Unread", Sync="no" WHERE ID="'+IDMessage+'"';
 	    tx.executeSql(query); 
+		StartSyncSendMessage();
 		
 	}
-	//SilenceStartSync();
 	
 	
 }
@@ -402,6 +408,7 @@ function QueryMarkAsRead(tx)
 	{
 	var query='UPDATE MESSAGES SET Status="Read",Sync="no" WHERE ID="'+IDMessage+'"';
 	tx.executeSql(query); 
+	StartSyncSendMessage();
 	}
 	//SilenceStartSync();
 }
@@ -426,7 +433,7 @@ function QueryDeleteMessageLocal(tx)
 	{
 			var query='UPDATE MESSAGES SET Deleted="1", Sync="no" WHERE ID="'+IDMessage+'"';
 	tx.executeSql(query); 
-	//SilenceStartSync();
+	StartSyncSendMessage();
 	$(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
         				transition: 'flip',
         				changeHash: false,
@@ -875,6 +882,7 @@ function QuerySendMessageLocal(tx)
         				'Accept'          // botones (buttonLabels)
         				);
 		
+		
 	}
 	else
 	{
@@ -887,7 +895,8 @@ function QuerySendMessageLocal(tx)
 
 function onsuccessendlocal(button)
 {
-	//SilenceStartSync();
+	   StartSyncSendMessage();
+	
 	   $(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
         transition: 'pop',
         changeHash: false,
@@ -1101,6 +1110,9 @@ function GetStartSyncSuccess(tx,results)
 
 function SyncModalMessages()
 {
+	if(!IsSyncMessages)
+	{
+	IsSyncMessages=true;
 	var ipserver=$("#ipsync").val();
 	//alert("sync");
 	 showUpModal();
@@ -1110,6 +1122,7 @@ function SyncModalMessages()
 		sendmessages="";
 		 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
       	db.transaction(QuerytosendMessaModal, errorCB);
+	}
 }
 function QuerytosendMessaModal(tx)
 {
@@ -1151,6 +1164,7 @@ function SendMessageToServer()
 				    url: ipserver+'//SetMessages',
                     data: JSON.stringify(obj),
                     dataType: 'json',
+					async:false,
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
 						pbar.setValue(100);
@@ -1160,6 +1174,7 @@ function SendMessageToServer()
                       
                     },
                     error: function (xmlHttpRequest, textStatus, errorThrown) {
+					IsSyncMessages=false;
                     $("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
                     //setTimeout(function () { $("#generic-dialog").dialog("close"); }, 2000);
                     console.log(xmlHttpRequest.responseXML);
@@ -1198,6 +1213,7 @@ function DownloadMesagesModal()
 				    url:ipserver+'//GetMessages',
 					data: JSON.stringify(obj),
                     dataType: 'json',
+					async:false,
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
 						//alert(response.d);
@@ -1211,6 +1227,7 @@ function DownloadMesagesModal()
                        // $('#lblData').html(JSON.stringify());
                     },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
+				             IsSyncMessages=false;
 							$("#progressheader").html("Can not connect to server");
 							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
 							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 10000 );
@@ -1288,6 +1305,7 @@ function QuerytoinsertMModal(tx)
 
 function finishMModal()
 {
+	IsSyncMessages=false;
 	pbar.setValue(100);
 	setTimeout( function(){ 
 	 	$(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
@@ -1333,8 +1351,12 @@ function SyncSilenceMessages()
 }
 function QuerytoSilenceMessages(tx)
 {
+	if(!IsSyncMessages)
+	{
+		IsSyncMessages=true;
 	var querytosend="SELECT * FROM MESSAGES WHERE Sync='no' AND SentFT='no'";
 	tx.executeSql(querytosend, [], QuerytoSilenceMessagesSuccess, errorCB);
+	}
 }
 
 function QuerytoSilenceMessagesSuccess(tx,results)
@@ -1368,15 +1390,15 @@ function SilenceMessageToServer()
                     data: JSON.stringify(obj),
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
+					async:false,
                     success: function (response) {
-					
+					    // alert("successSET");
 						DownloadMesagesSilence();
            
                       
                     },
                     error: function (xmlHttpRequest, textStatus, errorThrown) {
-                   // $("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
-                    //setTimeout(function () { $("#generic-dialog").dialog("close"); }, 2000);
+                     IsSyncMessages=false;
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -1405,10 +1427,11 @@ function DownloadMesagesSilence()
 				    url:ipserver+'//GetMessages',
 					data: JSON.stringify(obj),
                     dataType: 'json',
+					async:false,
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
 						//alert(response.d);
-						//alert("WEb service works");
+						//alert("WEb service works GET MESSAGES");
 						InsertDatabaseMessaSil(response.d);
                         //alert(response.d.users);
                        // var obj = jQuery.parseJSON(response.d.users);
@@ -1418,9 +1441,7 @@ function DownloadMesagesSilence()
                        // $('#lblData').html(JSON.stringify());
                     },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
-							//$("#progressheader").html("Can not connect to server");
-							//$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
-							//setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 10000 );
+                     IsSyncMessages=false;
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -1468,6 +1489,7 @@ function QuerytoinsertMSil(tx)
 		 //alert(error);
 		 
 	 }
+	
 	 if(FilterMessages=="inbox")
 	{
 		GetMUserMessages("inbox");
@@ -1476,6 +1498,7 @@ function QuerytoinsertMSil(tx)
 	{
 		GetMUserMessages(FilterMessages);
 	}
+	 IsSyncMessages=false;
     updatelocaldatabaseMessages();
 
 }
@@ -1489,9 +1512,129 @@ function updatelocaldatabaseMessages()
 function QuerytoupdatelocalMessages(tx)
 {
 	tx.executeSql("UPDATE MESSAGES SET sync='yes' WHERE SentFT='0'");
+	 IsSyncMessages=false;
 	//alert("All updated");
 }
 
+function StartSyncSendMessage()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+	db.transaction(GetStartSyncSendMessage, errorCB);
+}
 
+function GetStartSyncSendMessage(tx)
+{
+	var querytosend="SELECT * FROM SETTINGS";
+	tx.executeSql(querytosend, [], function(tx,results){ GetStartSyncSendMessageSuccess(tx,results) }, errorCB);
+	
+}
 
+function GetStartSyncSendMessageSuccess(tx,results)
+{
+	var len = results.rows.length;
+	if(len>0)
+	{
+		$("#ipsync").val(results.rows.item(0).IP);
+		StartSyncSendMessageExe();
+	}
+	
+}
+
+function StartSyncSendMessageExe()
+{
+	var ipserver=$("#ipsync").val();
+	sendMessagealone="";
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QuerySendMessageExe, errorCB);
+	
+}
+
+function QuerySendMessageExe(tx)
+{
+	if(!IsSyncMessages)
+	{
+		IsSyncMessages=true;
+		var querytosend="SELECT * FROM MESSAGES WHERE Sync='no' AND SentFT='no'";
+		tx.executeSql(querytosend, [], QuerySendMessageExeSuccess, errorCB);
+	}
+	
+	
+}
+
+function QuerySendMessageExeSuccess(tx,results)
+{
+	var len = results.rows.length;
+	var array = [];
+	for (var i=0; i<results.rows.length; i++){
+ 	row = results.rows.item(i);
+ 	array.push(JSON.stringify(row));
+	}	
+sendMessagealone=array;
+ExecutePostMessageAlone();
+}
+
+function ExecutePostMessageAlone()
+{
+	var ipserver=$("#ipsync").val();
+	var obj = {};
+	 obj['Messages'] =JSON.stringify(sendMessagealone); 
+	   $.ajax({
+                    type: 'POST',
+				    url: ipserver+'//SetMessages',
+                    data: JSON.stringify(obj),
+                    dataType: 'json',
+					async:false,
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+					
+						if(response.d=="success")
+						{
+							 	//alert("sincronizo")
+								UpdateMessagesSend();
+						}
+					
+					
+           
+                      
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+                });
+	
+}
+
+function UpdateMessagesSend()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ QueryUpdateMessagesSend(tx) }, errorCB);	
+}
+
+function QueryUpdateMessagesSend(tx)
+{
+	var query='UPDATE MESSAGES SET Sync="yes" WHERE Deleted="0"  AND SentFT="no" AND Sync="no"';
+	tx.executeSql(query); 
+	var query='DELETE FROM MESSAGES WHERE Deleted="1"';
+	tx.executeSql(query); 
+	IsSyncMessages=false;
+}
+
+function SilenceupdateInbox()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+	db.transaction(GetSilenceupdateInbox, errorCB);
+}
+
+function GetSilenceupdateInbox(tx)
+{
+	var querytosend="SELECT * FROM SETTINGS";
+	tx.executeSql(querytosend, [], function(tx,results){ GetSilenceupdateInboxSuccess(tx,results) }, errorCB);
+}
+
+function GetSilenceupdateInboxSuccess(tx,results)
+{
+	
+}
 
