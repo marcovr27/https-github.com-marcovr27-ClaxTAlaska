@@ -49,6 +49,7 @@ function QuerytaskworkedSuccess(tx, results)
 	if(len>0)
 	{
 		for (var i=0; i<len; i++){
+			alert(results.rows.item(i).Duty+"==>"+results.rows.item(i).OrdNum);
 			 selecthtml+='<option value="'+results.rows.item(i).TaskID+'">'+results.rows.item(i).TaskID+'</option>';
              }
 		 $("#select_taskworked").html(selecthtml);	 
@@ -570,3 +571,8 @@ ItemSelected();
 
 
 ///////<<<<<<<<<<<<=============================END FUNCTION LOGBOOK PAGE  =========================================>>>>>>>>>>>///////
+
+function StartInsertDirect()
+{
+	
+}

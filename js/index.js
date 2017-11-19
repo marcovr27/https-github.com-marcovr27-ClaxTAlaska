@@ -16,6 +16,7 @@ var sendchecklistarray;//Sync Variables
 var sendmessages;//Sync Variables
 var sendsubmittedhours;//Sync Variables
 var sendMessagealone;//Sync Variables
+var sendLibraryalone;
 var synchours;
 var syncmessages;
 var pictureSource;   // picture source
@@ -2457,6 +2458,7 @@ else
 <!---------------------------------------------------------------------------------------------------------------------->
 //ON CREATE Launch Procedure
 $(document).on( 'pagebeforeshow', '#pageProcedureLaunch',function(){
+	IsSyncMessages=true;
      var tb = $('#stepsbodyh');
 		 tb.html("");
     $("#chpro").val("0");
@@ -3078,6 +3080,7 @@ $(document).on( 'pagebeforeshow', '#pageMessages',function(){
 $(document).on( 'pagebeforeshow', '#pageRead',function(){
 		clearInterval(IntervalMessagesP);
 	IntervalMessagesP="";
+		IsSyncMessages=true;
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
 	FillMessageRead();
@@ -3088,8 +3091,9 @@ $(document).on( 'pagebeforeshow', '#pageRead',function(){
 <!---------------------------------------------------------------------------------------------------------------------->
 //ON CREATE 
 $(document).on( 'pagebeforeshow', '#pageSMessage',function(){
-		clearInterval(IntervalMessagesP);
+	clearInterval(IntervalMessagesP);
 	IntervalMessagesP="";
+	IsSyncMessages=true;
 	//GetSendMessage();
     //alert("pagebeforeshow");
 	//fillSendMessage();
@@ -3112,6 +3116,7 @@ $(document).on( 'pagebeforeshow', '#pageSMessage',function(){
 $(document).on( 'pagebeforeshow', '#pageLibrary',function(){
 	clearInterval(IntervalMessagesP);
 	IntervalMessagesP="";
+	IsSyncMessages=true;
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
 	var headstring=userfullname+": Level "+leveluser;
@@ -3129,6 +3134,7 @@ $(document).on( 'pagebeforeshow', '#pageLibrary',function(){
 	 CountReady=0;
 	//var namedate=monthname+" "+daynumber+", "+yearnumber;
 	$("#hplibrarydate").html(monthname+" "+daynumber+", "+yearnumber);
+	//OpenLibrary();
 	OpenLibrary();
 
 });

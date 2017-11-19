@@ -8,6 +8,7 @@ var FileNameD="";
 var RemoteUR="";
 var jandlet;
 
+
 function OpenLibrary()
 {
 	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
@@ -193,7 +194,6 @@ if (cordova.file.documentsDirectory !== null) {
     DownloadDirectory = cordova.file.DataDirectory;
 } 
 DownloadDirectory+="FieldTracker"
-//alert(DownloadDirectory);
 downloadFileN(DownloadDirectory,fileName,RemoteURL);
 
 
@@ -224,7 +224,7 @@ function download(remoteURL, fileEntry) {
         function (entry) {
 			CountDownloads++;
 			pbar.setValue(100);
-            //alert("download complete: " + entry.fullPath);
+           // alert("download complete: " + entry.fullPath);
         },
         function (error) {
 			CountDownloads++;
@@ -597,6 +597,157 @@ function finishsynclib()
 	
 }
 
+function SyncOnlyData()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+	db.transaction(SyncOnlyDataQuery, errorCB);
+	
+}
+
+function SyncOnlyDataQuery(tx)
+{
+	var querytosend="SELECT * FROM SETTINGS";
+	tx.executeSql(querytosend, [], function(tx,results){ SyncOnlyDataSuccess(tx,results) }, errorCB);
+}
+
+function SyncOnlyDataSuccess(tx,results)
+{
+	var len = results.rows.length;
+	if(len>0)
+	{
+		$("#ipsync").val(results.rows.item(0).IP);
+		var ipserver=$("#ipsync").val();
+		sendLibraryalone="";
+    	PostToinsertLibrary();
+	}
+	
+}
+
+function PostToinsertLibrary()
+{
+	var ipserver=$("#ipsync").val();
+			                $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetLibrary',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						//alert(response.d);
+						//alert("WEb service works Library");
+						InsertDatabaseLibSilence(response.d);
+                        //alert(response.d.users);
+                       // var obj = jQuery.parseJSON(response.d.users);
+                       // $.each(obj, function (key, value) {
+                         //   alert(value.Username);//inserts users
+                        //});
+                       // $('#lblData').html(JSON.stringify());
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+				    OpenLibrary();
+				    alert("no sincronizo");
+                    console.log(xmlHttpRequest.responseText);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+	
+}
+
+function InsertDatabaseLibSilence(newdatabase)
+{
+	sendLibraryalone=newdatabase;
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QuerySLibrary, errorCB);
+}
+
+function QuerySLibrary(tx)
+{
+  tx.executeSql("DELETE FROM COURSES");
+  tx.executeSql("DELETE FROM GROUPS2CONTENT");
+  tx.executeSql("DELETE FROM USERS2GROUPS");
+  tx.executeSql("DELETE FROM GROUPS");
+  var obj = jQuery.parseJSON(sendLibraryalone.Courses);
+  var itemcount=0;
+   try
+	 {
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO COURSES (ID,Description,DescriptionLang2,ContentType,DurationHours,DurationMins,Scope,Instructor,FileName) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.Description)+'", "'+escapeDoubleQuotes(value.DescriptionLang2)+'", "'+value.ContentType+'", "'+value.DurationHours+'", "'+value.DurationMins+'", "'+value.Scope+'", "'+escapeDoubleQuotes(value.Instructor)+'","'+escapeDoubleQuotes(value.FileName)+'")';
+		//alert(query);
+		tx.executeSql(query);
+		itemcount++;
+     });
+	 }
+	 catch(error)
+	 {
+		 
+	 }
+	 	 itemcount=0;
+	 try
+	 {
+	obj=jQuery.parseJSON(sendLibraryalone.Groups2Content);
+    $.each(obj, function (key, value) {
+		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+		query='INSERT INTO GROUPS2CONTENT (GroupID,ID,Ord) VALUES ("'+escapeDoubleQuotes(value.GroupID)+'", "'+escapeDoubleQuotes(value.ID)+'","'+escapeDoubleQuotes(value.Ord)+'")';
+		//alert(query);
+		tx.executeSql(query);
+		itemcount++;
+     });
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+
+		 
+	 }
+	 
+	 	  try
+	 {
+	  obj=jQuery.parseJSON(sendLibraryalone.Users2groups);
+	  	 //alert("User2Groups:"+obj.length);
+	     $.each(obj, function (key, value) {
+		
+		query='INSERT INTO USERS2GROUPS (UserID,ID) VALUES ("'+value.UserID+'","'+value.ID+'")';
+		tx.executeSql(query);
+     });
+	// alert("3");
+	$("#progressMessage").html("Users2groups updated");
+
+	 }
+	 	 catch(error)
+	 {
+		 alert(error);
+
+		 
+	 }
+	 
+	 	 try
+	 {
+		 	 obj=jQuery.parseJSON(sendLibraryalone.Groups);
+			 //alert("Groups:"+obj.length);
+	     $.each(obj, function (key, value) {
+		query='INSERT INTO GROUPS (AreaID,GroupID,Description) VALUES ("'+escapeDoubleQuotes(value.AreaID)+'","'+escapeDoubleQuotes(value.GroupID)+'","'+escapeDoubleQuotes(value.Description)+'")';
+		tx.executeSql(query);
+	
+     });
+	 	 $("#progressMessage").html("Groups updated");
+
+		 //alert("4");
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+
+		 
+	 }
+	 OpenLibrary();
+	
+}
+
+
+
 /////TEST SYNC
 function TestSync()
 {
@@ -630,3 +781,5 @@ function TestSync()
                 }
             });
 }
+
+

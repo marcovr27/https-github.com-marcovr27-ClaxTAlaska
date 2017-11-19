@@ -1114,7 +1114,7 @@ function SyncModalMessages()
 	{
 	IsSyncMessages=true;
 	var ipserver=$("#ipsync").val();
-	//alert("sync");
+	//alert("syncmodal");
 	 showUpModal();
 	 	$("#progressheader").html("Connecting...");
 		$("#progressMessage").html("Waiting for server connection");
@@ -1153,6 +1153,7 @@ sendmessages=array;
 
 function SendMessageToServer()
 {
+	//alert("syncmodalConectando a insertar");
 		var ipserver=$("#ipsync").val();
 		$("#progressheader").html("Uploading Data...");
 		$("#progressMessage").html("Preparing data to send");
@@ -1168,7 +1169,7 @@ function SendMessageToServer()
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
 						pbar.setValue(100);
-					
+					//alert("insertar exito");
 						DownloadMesagesModal();
            
                       
@@ -1176,7 +1177,12 @@ function SendMessageToServer()
                     error: function (xmlHttpRequest, textStatus, errorThrown) {
 					IsSyncMessages=false;
                     $("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
-                    //setTimeout(function () { $("#generic-dialog").dialog("close"); }, 2000);
+                     setTimeout(function () { $(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
+        											transition: 'slidedown',
+        											changeHash: false,
+       												reverse: true,
+       												showLoadMsg: true
+    												}); }, 12000);
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -1201,7 +1207,7 @@ function DownloadMesagesModal()
 			 obj['UserID'] ="";
 			 
 		 }
-			             $("#progressheader").html(" ");
+	//alert("Conectar a descargar archivos");
 	//progressheader
 	$("#progressheader").html("Downloading data...");
 		$("#progressMessage").html("Post To GetMessages");
@@ -1218,6 +1224,7 @@ function DownloadMesagesModal()
                     success: function (response) {
 						//alert(response.d);
 						//alert("WEb service works");
+						//alert("Exito descargando archivos");
 						InsertDatabaseMessaModal(response.d);
                         //alert(response.d.users);
                        // var obj = jQuery.parseJSON(response.d.users);
@@ -1230,7 +1237,12 @@ function DownloadMesagesModal()
 				             IsSyncMessages=false;
 							$("#progressheader").html("Can not connect to server");
 							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
-							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 10000 );
+							 setTimeout(function () { $(':mobile-pagecontainer').pagecontainer('change', '#pageMessages', {
+        											transition: 'slidedown',
+        											changeHash: false,
+       												reverse: true,
+       												showLoadMsg: true
+    												}); }, 12000);
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -1268,6 +1280,7 @@ function QuerytoinsertMModal(tx)
 	var obj = jQuery.parseJSON(newmessagesdatatoinsert.Messages);
 	//alert("Items "+obj.length);
 	var itemcount=0;
+	//alert("Insertar nuevos mensajes");
 	 try
 	 {
     $.each(obj, function (key, value) {
@@ -1298,13 +1311,14 @@ function QuerytoinsertMModal(tx)
 	$("#progressMessage").html("");
 		pbar.setValue(100);
 		$("#progressheader").html("Sync completed");
-		updatelocaldatabaseMessages();
+		//updatelocaldatabaseMessages();
 		finishMModal();
 
 }
 
 function finishMModal()
 {
+	//alert("termina sincronizacion");
 	IsSyncMessages=false;
 	pbar.setValue(100);
 	setTimeout( function(){ 
@@ -1351,8 +1365,11 @@ function SyncSilenceMessages()
 }
 function QuerytoSilenceMessages(tx)
 {
+	
+	//alert(IsSyncMessages+" valor IsSyncMessages");
 	if(!IsSyncMessages)
 	{
+		//alert("empieza silence sync");
 		IsSyncMessages=true;
 	var querytosend="SELECT * FROM MESSAGES WHERE Sync='no' AND SentFT='no'";
 	tx.executeSql(querytosend, [], QuerytoSilenceMessagesSuccess, errorCB);
@@ -1381,7 +1398,7 @@ SilenceMessageToServer();
 function SilenceMessageToServer()
 {
 		var ipserver=$("#ipsync").val();
-
+//alert("hacer post a obter mensajes");
 	var obj = {};
 	 obj['Messages'] =JSON.stringify(sendmessages); 
 	   $.ajax({
@@ -1392,7 +1409,7 @@ function SilenceMessageToServer()
                     contentType: 'application/json; charset=utf-8',
 					async:false,
                     success: function (response) {
-					    // alert("successSET");
+					    //alert("Exito insertando mensajes");
 						DownloadMesagesSilence();
            
                       
@@ -1420,7 +1437,7 @@ function DownloadMesagesSilence()
 			 obj['UserID'] ="";
 			 
 		 }
-
+          // alert("conectar a obtener mensajes");
 	                $.ajax({
                     type: 'POST',
                     //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
@@ -1431,6 +1448,7 @@ function DownloadMesagesSilence()
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
 						//alert(response.d);
+						//alert("Exito obteniendo mensajes");
 						//alert("WEb service works GET MESSAGES");
 						InsertDatabaseMessaSil(response.d);
                         //alert(response.d.users);
@@ -1472,6 +1490,7 @@ function QuerytoinsertMSil(tx)
 	var query;
 	var obj = jQuery.parseJSON(newmessagesdatatoinsert.Messages);
 	//alert("Items "+obj.length);
+	//alert("insertar nuevos mensajes");
 	var itemcount=0;
 	 try
 	 {
@@ -1499,7 +1518,7 @@ function QuerytoinsertMSil(tx)
 		GetMUserMessages(FilterMessages);
 	}
 	 IsSyncMessages=false;
-    updatelocaldatabaseMessages();
+    //updatelocaldatabaseMessages();
 
 }
 
@@ -1511,9 +1530,10 @@ function updatelocaldatabaseMessages()
 
 function QuerytoupdatelocalMessages(tx)
 {
+	//alert("Actualizamos mensajes");
 	tx.executeSql("UPDATE MESSAGES SET sync='yes' WHERE SentFT='0'");
 	 IsSyncMessages=false;
-	//alert("All updated");
+
 }
 
 function StartSyncSendMessage()
@@ -1551,6 +1571,7 @@ function StartSyncSendMessageExe()
 
 function QuerySendMessageExe(tx)
 {
+	//alert("enviar mensaje solo");
 	if(!IsSyncMessages)
 	{
 		IsSyncMessages=true;
@@ -1575,10 +1596,11 @@ ExecutePostMessageAlone();
 
 function ExecutePostMessageAlone()
 {
+	//alert("intento enviar mensaje");
 	var ipserver=$("#ipsync").val();
 	var obj = {};
 	 obj['Messages'] =JSON.stringify(sendMessagealone); 
-	   $.ajax({
+	 var xhr= $.ajax({
                     type: 'POST',
 				    url: ipserver+'//SetMessages',
                     data: JSON.stringify(obj),
@@ -1589,6 +1611,7 @@ function ExecutePostMessageAlone()
 					
 						if(response.d=="success")
 						{
+							//alert("Mensaje enviado success");
 							 	//alert("sincronizo")
 								UpdateMessagesSend();
 						}
@@ -1598,11 +1621,14 @@ function ExecutePostMessageAlone()
                       
                     },
                     error: function (xmlHttpRequest, textStatus, errorThrown) {
+						//alert("Error al enviar mensaje");
+						 IsSyncMessages=false;
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
                 }
                 });
+		xhr.abort();
 	
 }
 
@@ -1614,6 +1640,7 @@ function UpdateMessagesSend()
 
 function QueryUpdateMessagesSend(tx)
 {
+	//alert("Actualizo mensaje");
 	var query='UPDATE MESSAGES SET Sync="yes" WHERE Deleted="0"  AND SentFT="no" AND Sync="no"';
 	tx.executeSql(query); 
 	var query='DELETE FROM MESSAGES WHERE Deleted="1"';
