@@ -1293,7 +1293,7 @@ function QuerytoinsertMModal(tx)
 	// alert("Messages: "+itemcount);
 	 
 	 	$("#progressMessage").html("Messages updated");
-	pbar.setValue(10);
+	
 	 }
 	 catch(error)
 	 {

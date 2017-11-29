@@ -17,6 +17,7 @@ var sendmessages;//Sync Variables
 var sendsubmittedhours;//Sync Variables
 var sendMessagealone;//Sync Variables
 var sendLibraryalone;
+var sendHoursalone;
 var synchours;
 var syncmessages;
 var pictureSource;   // picture source
@@ -165,281 +166,6 @@ var app = {
 };
 ///////=============================<<<<<<<<<<<< END START CORDOVA PHONEGAP >>>>>>>>>>>=========================================///////
 
-
-
-///////<<<<<<<<<<<<=============================SILENCE SYNC =========================================>>>>>>>>>>>///////
-
-//function checkifexistdbregh()
-//{
-//	alert("empieza invisible");
-//		var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-//      db.transaction(Querytocheckifdbh, errorCB);
-//	// $(':mobile-pagecontainer').pagecontainer('change', '#pageSettingsInit', {
-//      //  transition: 'flip',
-//        //changeHash: false,
-//        //reverse: true,
-//        //showLoadMsg: true
-//    //});
-//	
-//}
-//
-//function Querytocheckifdbh(tx)
-//{
-//	
-//	var querytosend="SELECT * FROM SETTINGS";
-//	tx.executeSql(querytosend, [], QuerytocheckifdbSuccessh, errorCB);
-//	
-//}
-//
-//function QuerytocheckifdbSuccessh(tx,results)
-//{
-//	var len = results.rows.length;
-//	if(len>0)
-//	{
-//		$("#ipsync").val(results.rows.item(0).IP);
-//		sendproceduresh();
-//	}
-//
-//	
-//}
-//
-////SEND DATA TO SERVER
-//function sendproceduresh()
-//{
-//	
-//	 sendproceduresarray="";
-//	 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-//      db.transaction(Querytosendproceduresh, errorCB);
-//	
-//}
-//
-//function Querytosendproceduresh(tx)
-//{
-//	var querytosend="SELECT * FROM SUBMITTEDPROCS WHERE Sync='no' AND Status='0'";
-//	tx.executeSql(querytosend, [], QuerytosendproceduresSuccessh, errorCB);
-//	
-//}
-//
-//function QuerytosendproceduresSuccessh(tx,results)
-//{
-//	var len = results.rows.length;
-//	var array = [];
-//	//alert(len);
-//for (var i=0; i<results.rows.length; i++){
-// row = results.rows.item(i);
-//
-//  array.push(JSON.stringify(row));
-//
-//}
-//
-//sendproceduresarray=array;
-//sendstepsh();
-//	
-//}
-//
-//function sendstepsh()
-//{
-//	 sendstepsarray="";
-//	 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-//      db.transaction(Querytosendstepsh, errorCB);
-//	
-//}
-//
-//function Querytosendstepsh(tx)
-//{
-//	var querytosend="SELECT submittedsteps.* FROM submittedprocs INNER JOIN submittedsteps ON submittedprocs.SubmitID = submittedsteps.SubmitID WHERE submittedprocs.Status='0' AND submittedsteps.Sync='no'";
-//	tx.executeSql(querytosend, [], QuerytosendstepsSuccessh, errorCB);
-//	
-//}
-//
-//function QuerytosendstepsSuccessh(tx,results)
-//{
-//	var len = results.rows.length;
-//	var array = [];
-//	//alert(len);
-//for (var i=0; i<results.rows.length; i++){
-// row = results.rows.item(i);
-// // alert(row.FaultID);
-// array.push(JSON.stringify(row));
-//
-//
-//
-//}
-//
-//sendstepsarray=array;
-//sendchecklistsh();
-//
-//	
-//}
-//
-//function sendchecklistsh()
-//{
-//	 sendchecklistarray="";
-//	 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-//      db.transaction(Querytosendchecklistsh, errorCB);
-//	
-//}
-//
-//function Querytosendchecklistsh(tx)
-//{
-//	var querytosend="SELECT * FROM USERS2CHECKLISTS WHERE Sync='no'";
-//	tx.executeSql(querytosend, [], QuerytosendchecklistsSuccessh, errorCB);
-//	
-//}
-//
-//function QuerytosendchecklistsSuccessh(tx,results)
-//{
-//	var len = results.rows.length;
-//	var array = [];
-//	//alert(len);
-//for (var i=0; i<results.rows.length; i++){
-// row = results.rows.item(i);
-//array.push(JSON.stringify(row));
-//
-//
-//
-//}
-//sendchecklistarray=array;
-//sendDataToServerh();
-//
-//	
-//}
-//
-//function sendDataToServerh()
-//{
-//	//alert("entro");
-//	var ipserver=$("#ipsync").val();
-//	var obj = {};
-// obj['procedures'] = JSON.stringify(sendproceduresarray);  //string
-// obj['steps'] = JSON.stringify(sendstepsarray); 
-// obj['checklists'] =JSON.stringify(sendchecklistarray); 
-//  $.ajax({
-//                    type: 'POST',
-//                   // url: 'http://'+ipserver+'/ftservice/service1.asmx//SetDeviceDataarray',
-//				    url: 'http://'+ipserver+'/service1.asmx//SetDeviceDataarray',
-//                    data: JSON.stringify(obj),
-//                    dataType: 'json',
-//                    contentType: 'application/json; charset=utf-8',
-//                    success: function (response) {
-//                        alert(response.d);
-//           
-//                      
-//                    },
-//                    error: function (error) {
-//                        alert(error);
-//                    }
-//                });
-//				
-//					
-//		sendmediaobjh();
-// 
-//	
-//}
-//
-//
-//
-// function sendmediaobjh()
-//{
-//		
-//	 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-//      db.transaction(Querytosendmediaobjh, errorCB);
-//	
-//}
-//
-//function Querytosendmediaobjh(tx)
-//{
-//	
-//	var querytosend="SELECT media.* FROM submittedprocs INNER JOIN media ON submittedprocs.SubmitID = media.SubmitID WHERE submittedprocs.Status='0' AND media.Sync='no'";
-//	//alert(querytosend);
-//	tx.executeSql(querytosend, [], QuerytosendmediaobjSuccessh, errorCB);
-//	
-//	
-//}
-//
-//function QuerytosendmediaobjSuccessh(tx,results)
-//{
-//		var  len = results.rows.length;
-//	//var array = [];
-//	//alert("media "+len);
-//	if(len>0)
-//	{
-//
-////alert(pptoshow+ppinitial);
-//for (var i=0; i<results.rows.length; i++){
-//
-//
-//
-// if(results.rows.item(i).FileType=="image")
-// {
-//	 uploadPhotoServer(results.rows.item(i).Path,results.rows.item(i).SubmitID,results.rows.item(i).StepID,results.rows.item(i).FileType);
-//  }
-//  else
-//  {
-//	 uploadVideoServer(results.rows.item(i).Path,results.rows.item(i).SubmitID,results.rows.item(i).StepID,results.rows.item(i).FileType);
-//   }
-// //array.push(JSON.stringify(row));
-//
-//
-//}
-//
-//
-//		
-//	}
-//	else
-//	{
-//		
-//		
-//		
-//	}
-//       translatehtml();
-//	    updatelocaldatabase();
-//		alert("sincronizar");
-//		
-//
-//	
-//}
-
-
-
-//
-//function winftp(r) {
-//	        // alert(r.response);
-//			ppinitial= parseFloat(ppinitial, 10)+parseFloat(pptoshow, 10);
-//            //console.log("Code = " + r.responseCode);
-//            //console.log("Response = " + r.response);
-//		//alert(pptoshow);
-//			//pptoshow= pptshow + ppinitial;
-//			$("#progressMessage").html("Sent = " + r.bytesSent+" Response ="+r.response);
-//			pbar.setValue(parseInt(ppinitial, 10));
-//			//pbar.setValue(pptoshow);
-//			//alert(pptoshow);
-//            //alert("Sent = " + r.bytesSent);
-//        }
-//
-//        function failftp(error) {
-//            alert("An error has occurred: Code = " + error.code);
-//        }
-//
-//
-////function to update local database
-//
-//function updatelocaldatabase()
-//{
-//		var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-//      db.transaction(Querytoupdatelocal, errorCB);
-//}
-//
-//function Querytoupdatelocal(tx)
-//{
-//	tx.executeSql("UPDATE USERS2CHECKLISTS SET sync='yes'");
-//	tx.executeSql("UPDATE MEDIA SET sync='yes'");
-//	tx.executeSql("UPDATE SUBMITTEDPROCS SET sync='yes'");
-//	tx.executeSql("UPDATE SUBMITTEDSTEPS SET sync='yes'");
-//	//alert("All updated");
-//}
-
-
-///////=============================<<<<<<<<<<<< SILENCE SYNC >>>>>>>>>>>=========================================///////
 
 ///////<<<<<<<<<<<<=============================CHECK INTERNET CONNECTION =========================================>>>>>>>>>>>///////
 
@@ -758,6 +484,56 @@ function Querychecklistsync(tx)
 }
 
 function QuerychecklistsyncSuccess(tx,results)
+{
+	//alert("aki");
+		 var len = results.rows.length;
+	if(len>0)
+	{
+		$("#hs").val("no");
+	}
+	hoursssync();
+	
+}
+
+function hoursssync()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(Queryhoursssync, errorCB);
+}
+
+function Queryhoursssync(tx)
+{
+	
+	var query="SELECT * FROM SUBMITTEDHOURS WHERE Sync='no'";
+	   tx.executeSql(query, [], QueryhoursssyncSuccess, errorCB);
+}
+
+function QueryhoursssyncSuccess(tx,results)
+{
+	//alert("aki");
+		 var len = results.rows.length;
+	if(len>0)
+	{
+		$("#hs").val("no");
+	}
+	messagesync();
+	
+}
+
+function messagesync()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(Querymessagesync, errorCB);
+}
+
+function Querymessagesync(tx)
+{
+	
+	var query='SELECT * FROM MESSAGES WHERE Deleted="0"  AND SentFT="no" AND Sync="no"';
+	tx.executeSql(query, [], QuerymessagesyncSuccess, errorCB);
+}
+
+function QuerymessagesyncSuccess(tx,results)
 {
 	//alert("aki");
 		 var len = results.rows.length;
@@ -1867,7 +1643,7 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS GROUP2SUPSRTI (GroupID,ID)');
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS GROUPS2CONTENT(GroupID,ID,Ord)');
 
-tx.executeSql('CREATE TABLE IF NOT EXISTS  DUTIES2TASKS(Duty,TaskID,OrdNum)');
+tx.executeSql('CREATE TABLE IF NOT EXISTS  DUTIES2TASKS(Duty,TaskID,OrdNum REAL)');
 //tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A1- Complete new miner MSHA training","1")');
 //tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A2- Review SOP for specific task(s)","2")');
 //tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A3- Complete Safety task training","4")');
@@ -3006,13 +2782,19 @@ $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
 	var monthname=monthNames[d.getMonth()];
 	var daynumber=(d.getDate()) > 9 ? (d.getDate()) : "0" + (d.getDate());
 	var yearnumber=d.getFullYear();
+	var pickerMsx = $( "#entryonevalue", this );
+    pickerMsx.mobipick({dateFormat:GetDateFormat()});
+	var pickerMfsx = $( "#entryoneitemvalue", this );
+    pickerMfsx.mobipick({dateFormat:GetDateFormat()});
 	//alert(monthname+" "+daynumber+", "+yearnumber);	
 	$("#hplogusername").html(headstring);
 	//var namedate=monthname+" "+daynumber+", "+yearnumber;
 	$("#hplogdatez").html(monthname+" "+daynumber+", "+yearnumber);
-	filltaskworked();
+	//filltaskworked();
+	StartInsertDirectX();
 	FillPersonnel();
 	fillitemworked();
+	filltaskworked();
 	InfoLevel();
 	$( "#onebt" ).addClass("ui-btn-active");
 });
@@ -3040,10 +2822,10 @@ $(document).on( 'pagebeforeshow', '#pageMessages',function(){
 	var yearnumber=d.getFullYear();
 	IsSyncMessages=false;
 	IntervalMessagesP= setInterval(function(){ SilenceStartSync(); }, 59000);
-	//var pickerMs = $( "#datesubmitM", this );
-    //pickerMs.mobipick({dateFormat:GetDateFormat()});
-	//var pickerMfs = $( "#datesubmitMF", this );
-   // pickerMfs.mobipick({dateFormat:GetDateFormat()});
+	var pickerMs = $( "#datesubmitM", this );
+   pickerMs.mobipick({dateFormat:GetDateFormat()});
+	var pickerMfs = $( "#datesubmitMF", this );
+    pickerMfs.mobipick({dateFormat:GetDateFormat()});
 	//alert(monthname+" "+daynumber+", "+yearnumber);	
 	var headingName="inbox";
 	$("#hmstring").html(headingName);
@@ -3156,6 +2938,8 @@ function LoginUser()
 	
 	var username=$("#username").val();
 	username=$.trim(username);
+	var newusername=username.replace(/\s+/g, '');
+	username=newusername;
 	var password=$("#password").val();
 	if(username!="" && password!="")
 	{
@@ -3179,6 +2963,8 @@ function LoginUser()
 		var username=$("#username").val();
 		var password=$("#password").val();
 		username=username.toLowerCase();
+		var newusername=username.replace(/\s+/g, '');
+		username=newusername;
 		//alert(username+" "+password);
 		//alert("SELECT * FROM PROCEDURESTEPS");
 		tx.executeSql("SELECT * FROM USERS WHERE Username='"+username+"' AND Password='"+password+"'", [], UserLoginSuccess, errorCB);

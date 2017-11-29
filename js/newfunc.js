@@ -31,6 +31,7 @@ function QueryPersonneSuccess(tx,results)
 
 function filltaskworked()
 {
+	//alert("filltaskworked");
 	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
     db.transaction(Querytaskworked, errorCB);
 	
@@ -49,7 +50,7 @@ function QuerytaskworkedSuccess(tx, results)
 	if(len>0)
 	{
 		for (var i=0; i<len; i++){
-			alert(results.rows.item(i).Duty+"==>"+results.rows.item(i).OrdNum);
+			//alert(results.rows.item(i).Duty+"==>"+results.rows.item(i).OrdNum);
 			 selecthtml+='<option value="'+results.rows.item(i).TaskID+'">'+results.rows.item(i).TaskID+'</option>';
              }
 		 $("#select_taskworked").html(selecthtml);	 
@@ -213,6 +214,12 @@ function QuerySubmitOJT(tx)
 }
 
  function onsuccessojt(button) {
+	StartInsertDirect();
+ try
+	 {
+		 $("#popupmuchtime").popup('close');
+	 }
+	 catch(error){}
 $( "#onebt" ).addClass("ui-btn-active");
 $("#entryonevalue").val("");	 
 $("#hourentryone").val("");
@@ -240,15 +247,15 @@ function CheckHoursOJT()
 	}
 	if(hourstime>0 || minstime>0)
 	{
-			if(hourstime>=10)
+			if(hourstime>=11)
 	{
 		//alert("primer if ="+hourstime );
 		
-		if(hourstime>10)
+		if(hourstime>11)
 		{
 			$("#popupmuchtime").popup("open");
 		}
-		else if(hourstime=10 && minstime>=30)
+		else if(hourstime=11 && minstime>=30)
 		{
 			$("#popupmuchtime").popup("open");
 			
@@ -288,7 +295,7 @@ function fillitemworked()
 function Queryitemworked(tx)
 {
 	var leveluser=sessionStorage.lvlname;
-  tx.executeSql('SELECT * FROM LEVELS2ITEMS WHERE LevelNum="'+leveluser+'" ORDER BY ID', [], QueryitemworkedSuccess, errorCB);
+  tx.executeSql('SELECT * FROM LEVELS2ITEMS ORDER BY ID', [], QueryitemworkedSuccess, errorCB);
 }
 
 function QueryitemworkedSuccess(tx, results)
@@ -560,6 +567,12 @@ function QuerySubmitItem(tx)
 }
 
  function onsuccessojtclass(button) {
+	 StartInsertDirect();
+	 try
+	 {
+		 $("#popupmuchtimeC").popup('close');
+	 }
+	 catch(error){}
 $( "#twobt" ).addClass("ui-btn-active");	 
 //$('#two').trigger('click');	 
 $("#entryoneitemvalue").val("");	 
@@ -574,5 +587,464 @@ ItemSelected();
 
 function StartInsertDirect()
 {
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+	db.transaction(GetStartInsert, errorCB);	
+}
+
+function GetStartInsert(tx)
+{
+	var querytosend="SELECT * FROM SETTINGS";
+	tx.executeSql(querytosend, [], function(tx,results){ GetStartInsertSuccess(tx,results) }, errorCB);
+}
+
+function GetStartInsertSuccess(tx,results)
+{
+	var len = results.rows.length;
+	if(len>0)
+	{
+		$("#ipsync").val(results.rows.item(0).IP);
+		StartSyncLogbookExe();
+	}
+}
+
+function StartSyncLogbookExe()
+{
+	var ipserver=$("#ipsync").val();
+	sendHoursalone="";
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryLogbookExe, errorCB);	
+}
+
+function QueryLogbookExe(tx)
+{
+	var querytosend="SELECT * FROM SUBMITTEDHOURS WHERE Sync='no'";
+	tx.executeSql(querytosend, [], QueryLogbookExeSuccess, errorCB);
+}
+
+function QueryLogbookExeSuccess(tx,results)
+{
+	var len = results.rows.length;
+	var array = [];
+	for (var i=0; i<results.rows.length; i++){
+ 	row = results.rows.item(i);
+ 	array.push(JSON.stringify(row));
+	}	
+	sendHoursalone=array;
+	ExecutePostLogAlone();
+}
+
+function ExecutePostLogAlone()
+{
+	var ipserver=$("#ipsync").val();
+	var obj = {};
+	obj['SubmittedHours'] =JSON.stringify(sendHoursalone); 
+	 $.ajax({
+                    type: 'POST',
+                   // url: 'http://192.168.1.129/test/serviceFt.asmx//SetDeviceDataarray',
+				    url: ipserver+'//SetSubmmitedHours',
+                    data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						if(response.d=="success")
+						{
+							updatenowlogsincy();
+						}
+						
+           
+                      
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+						//alert("error silence sync");
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+                });
+}
+
+//UPDATE LOGBOOK
+
+
+//Sync
+function StartInsertDirectX()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+	db.transaction(GetStartInsertX, errorCB);	
+}
+
+function GetStartInsertX(tx)
+{
+	var querytosend="SELECT * FROM SETTINGS";
+	tx.executeSql(querytosend, [], function(tx,results){ GetStartInsertSuccessX(tx,results) }, errorCB);
+}
+
+function GetStartInsertSuccessX(tx,results)
+{
+
+	var len = results.rows.length;
+	if(len>0)
+	{
+		$("#ipsync").val(results.rows.item(0).IP);
+		StartSyncLogbookExeX();
+	}
+}
+
+function StartSyncLogbookExeX()
+{
+	var ipserver=$("#ipsync").val();
+	sendHoursalone="";
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryLogbookExeX, errorCB);	
+}
+
+function QueryLogbookExeX(tx)
+{
+
+	var querytosend="SELECT * FROM SUBMITTEDHOURS WHERE Sync='no'";
+	tx.executeSql(querytosend, [], QueryLogbookExeSuccessX, errorCB);
+}
+
+function QueryLogbookExeSuccessX(tx,results)
+{
+	var len = results.rows.length;
+	var array = [];
+	for (var i=0; i<results.rows.length; i++){
+ 	row = results.rows.item(i);
+ 	array.push(JSON.stringify(row));
+	}	
+	sendHoursalone=array;
+	ExecutePostLogAloneX();
+}
+
+function ExecutePostLogAloneX()
+{
+	var ipserver=$("#ipsync").val();
+	var obj = {};
+	obj['SubmittedHours'] =JSON.stringify(sendHoursalone); 
+	 $.ajax({
+                    type: 'POST',
+                   // url: 'http://192.168.1.129/test/serviceFt.asmx//SetDeviceDataarray',
+				    url: ipserver+'//SetSubmmitedHours',
+                    data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						if(response.d=="success")
+						{
+							UpdateLogbookSync();
+						}
+						
+           
+                      
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+                });
+}
+
+function UpdateLogbookSync()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+	db.transaction(GetStartUpdateLogbook, errorCB);	
+}
+
+function GetStartUpdateLogbook(tx)
+{
+	var querytosend="SELECT * FROM SETTINGS";
+	tx.executeSql(querytosend, [], function(tx,results){ GetStartUpdateLogbookSuccess(tx,results) }, errorCB);	
+}
+
+function GetStartUpdateLogbookSuccess(tx,results)
+{
+	var len = results.rows.length;
+	if(len>0)
+	{
+		$("#ipsync").val(results.rows.item(0).IP);
+		StartSyncLogbookRead();
+	}
+}
+
+function StartSyncLogbookRead()
+{
+	var ipserver=$("#ipsync").val();
+	var obj = {};
+	if(!!sessionStorage.userid)
+	{
+	  obj['UserID'] =sessionStorage.userid;
+	}
+	else
+	{
+	 obj['UserID'] ="";
+	}
+	            $.ajax({
+                    type: 'POST',
+				    url:ipserver+'//GetSubmittedHours',
+					data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						InsertDatabaseSubmitHoursLog(response.d);
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+                });	
+}
+
+function InsertDatabaseSubmitHoursLog(newdatabase)
+{
+	newhoursdatatoinsert=newdatabase;
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QuerytoinsertSubmitHoursLog, errorCB);
 	
+}
+
+function QuerytoinsertSubmitHoursLog(tx)
+{
+	var idusera=sessionStorage.userid;	
+	if(!!sessionStorage.userid)
+	{
+		//alert("Deleting "+idusera);
+		tx.executeSql("DELETE FROM SUBMITTEDHOURS WHERE UserID='"+idusera+"'");
+	}
+	var query;
+	var obj = jQuery.parseJSON(newhoursdatatoinsert.SubmittedHours);
+	var itemcount=0;
+	var cuantos=obj.length;
+		 try
+		 {
+    $.each(obj, function (key, value) {
+		query='INSERT INTO SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Task,LevelNum,Item,Hours,Mins,PersonnelID,SupervisorID,RejectReason,ReviewDate,Sync) VALUES ("'+escapeDoubleQuotes(value.SubmitID)+'", "'+escapeDoubleQuotes(value.UserID)+'", "'+escapeDoubleQuotes(value.Type)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.SubmitDate+'", "'+value.EntryDate+'", "'+escapeDoubleQuotes(value.Task)+'", "'+value.LevelNum+'", "'+escapeDoubleQuotes(value.Item)+'", "'+value.Hours+'", "'+value.Mins+'", "'+value.PersonnelID+'", "'+value.SupervisorID+'", "'+value.RejectReason+'", "'+value.ReviewDate+'","yes")';
+		tx.executeSql(query);
+		itemcount++;		
+		if(itemcount==cuantos)
+		{
+			filltaskworked();
+		}
+     });
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+	 }
+
+}
+
+
+function updatenowlogsincy()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ Queryupdatenowlogsincy(tx) }, errorCB);	
+}
+
+function Queryupdatenowlogsincy(tx)
+{
+	//alert("entra al update");
+	var idusera=sessionStorage.userid;
+	var query="UPDATE SUBMITTEDHOURS SET sync='yes' WHERE UserID='"+idusera+"'";
+	//alert(query);
+	tx.executeSql(query);
+	//alert("ejecuta"); 	
+	
+}
+/// Sync Modal
+function opensyncLogb()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+	db.transaction(GetopensyncLogb, errorCB);	
+}
+
+function GetopensyncLogb(tx)
+{
+	var querytosend="SELECT * FROM SETTINGS";
+	tx.executeSql(querytosend, [], function(tx,results){ GetopensyncLogbSuccess(tx,results) }, errorCB);
+}
+
+function GetopensyncLogbSuccess(tx,results)
+{
+
+	var len = results.rows.length;
+	if(len>0)
+	{
+		$("#ipsync").val(results.rows.item(0).IP);
+		StartSyncModalLogbook();
+	}
+}
+function StartSyncModalLogbook()
+{
+	var ipserver=$("#ipsync").val();
+	sendHoursalone="";
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryModalLogbook, errorCB);	
+}
+
+function QueryModalLogbook(tx)
+{
+
+	var querytosend="SELECT * FROM SUBMITTEDHOURS WHERE Sync='no'";
+	tx.executeSql(querytosend, [], QueryModalLogbookSuccess, errorCB);
+}
+
+function QueryModalLogbookSuccess(tx,results)
+{
+	 showUpModal();
+	 $("#progressheader").html("Connecting...");
+	$("#progressMessage").html("Waiting for server connection");
+	pbar.setValue(0);
+	var len = results.rows.length;
+	var array = [];
+	for (var i=0; i<results.rows.length; i++){
+ 	row = results.rows.item(i);
+ 	array.push(JSON.stringify(row));
+	}	
+	sendHoursalone=array;
+	ExecutePostLogModal();
+}
+
+function ExecutePostLogModal()
+{
+	$("#progressMessage").html("Submitted Hours ready to send");
+	pbar.setValue(20);	
+	var ipserver=$("#ipsync").val();
+	var obj = {};
+	obj['SubmittedHours'] =JSON.stringify(sendHoursalone); 
+	$("#progressheader").html("Uploading Data...");
+	$("#progressMessage").html("Preparing data to send");
+	pbar.setValue(30);
+		 $.ajax({
+                    type: 'POST',
+                   // url: 'http://192.168.1.129/test/serviceFt.asmx//SetDeviceDataarray',
+				    url: ipserver+'//SetSubmmitedHours',
+                    data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						if(response.d=="success")
+						{
+							pbar.setValue(100);
+							UpdateLogbookModalSync();
+						}
+						
+           
+                      
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+					$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
+							alert("error");
+							 setTimeout(function () { $(':mobile-pagecontainer').pagecontainer('change', '#pageLogbook', {
+        											transition: 'slidedown',
+        											changeHash: false,
+       												reverse: true,
+       												showLoadMsg: true
+    												}); }, 12000);
+					
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+                });
+
+}
+
+function UpdateLogbookModalSync()
+{
+	$("#progressheader").html("Connecting...");
+		$("#progressMessage").html("Waiting for server connection");
+		pbar.setValue(0);
+	var ipserver=$("#ipsync").val();
+	var obj = {};
+	if(!!sessionStorage.userid)
+	{
+	  obj['UserID'] =sessionStorage.userid;
+	}
+	else
+	{
+	 obj['UserID'] ="";
+	}
+	            $.ajax({
+                    type: 'POST',
+				    url:ipserver+'//GetSubmittedHours',
+					data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						$("#progressMessage").html("Data downloaded");
+						pbar.setValue(100);
+						InsertDatabaseSubmitHoursLogModal(response.d);
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+					$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
+							 setTimeout(function () { $(':mobile-pagecontainer').pagecontainer('change', '#pageLogbook', {
+        											transition: 'slidedown',
+        											changeHash: false,
+       												reverse: true,
+       												showLoadMsg: true
+    												}); }, 12000);
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+                });	
+}
+
+function InsertDatabaseSubmitHoursLogModal(newdatabase)
+{
+	$("#progressheader").html("Connected");
+	$("#progressMessage").html("Successful connection");
+	pbar.setValue(70);
+	newhoursdatatoinsert=newdatabase;
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QuerytoinsertModalLogbook, errorCB);
+	
+}
+
+function QuerytoinsertModalLogbook(tx)
+{
+	$("#progressMessage").html("Insert New data");
+	var idusera=sessionStorage.userid;	
+	if(!!sessionStorage.userid)
+	{
+		//alert("Deleting "+idusera);
+		tx.executeSql("DELETE FROM SUBMITTEDHOURS WHERE UserID='"+idusera+"'");
+	}
+	var query;
+	var obj = jQuery.parseJSON(newhoursdatatoinsert.SubmittedHours);
+	var itemcount=0;
+	var cuantos=obj.length;
+		 try
+		 {
+    $.each(obj, function (key, value) {
+		query='INSERT INTO SUBMITTEDHOURS (SubmitID,UserID,Type,Status,SubmitDate,EntryDate,Task,LevelNum,Item,Hours,Mins,PersonnelID,SupervisorID,RejectReason,ReviewDate,Sync) VALUES ("'+escapeDoubleQuotes(value.SubmitID)+'", "'+escapeDoubleQuotes(value.UserID)+'", "'+escapeDoubleQuotes(value.Type)+'", "'+escapeDoubleQuotes(value.Status)+'", "'+value.SubmitDate+'", "'+value.EntryDate+'", "'+escapeDoubleQuotes(value.Task)+'", "'+value.LevelNum+'", "'+escapeDoubleQuotes(value.Item)+'", "'+value.Hours+'", "'+value.Mins+'", "'+value.PersonnelID+'", "'+value.SupervisorID+'", "'+value.RejectReason+'", "'+value.ReviewDate+'","yes")';
+		tx.executeSql(query);
+		itemcount++;		
+		if(itemcount==cuantos)
+		{
+			pbar.setValue(100);
+		$("#progressheader").html("Sync completed");
+		setTimeout( function(){ 
+	 	$(':mobile-pagecontainer').pagecontainer('change', '#pageLogbook', {
+ 	 	transition: 'flip',
+		changeHash: false,
+		reverse: true,
+		showLoadMsg: true
+		});
+	}, 3000 );
+			
+		}
+     });
+	 }
+	 catch(error)
+	 {
+		 $("#progressMessage").html("Error updating Submitted Hours "+error);
+		 alert(error);
+	 }
+
 }

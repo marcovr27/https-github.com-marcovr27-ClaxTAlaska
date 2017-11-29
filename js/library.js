@@ -417,98 +417,9 @@ function QuerytoinsertLibrary(tx)
 			pbar.setValue(20);
 		 
 	 }
-	 GetTableFiles();
+	 //GetTableFiles();
+	 FtpDownFiles();
 	 
-}
-
-function GetTableFiles()
-{
-	$("#progressheader").html("Download Files...");
-	$("#progressMessage").html("Waiting for server connection");
-	pbar.setValue(0);
-	var ipserver=$("#ipsync").val();
-	var obj = {};
-		 if(!!sessionStorage.userid)
-		 {
-			 obj['UserID'] =sessionStorage.userid;
-		 }
-		 else
-		 {
-			 obj['UserID'] ="";
-			 
-		 }
-	 $.ajax({
-                    type: 'POST',
-                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
-				    url:ipserver+'//GetUrls',
-					data: JSON.stringify(obj),
-                    dataType: 'json',
-                    contentType: 'application/json; charset=utf-8',
-                    success: function (response) {
-						//alert(response.d);
-						//alert("WEb service works");
-						InsertDatabaseurls(response.d);
-                        //alert(response.d.users);
-                       // var obj = jQuery.parseJSON(response.d.users);
-                       // $.each(obj, function (key, value) {
-                         //   alert(value.Username);//inserts users
-                        //});
-                       // $('#lblData').html(JSON.stringify());
-                    },
-            error: function (xmlHttpRequest, textStatus, errorThrown) {
-							$("#progressheader").html("Can not connect to server");
-							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
-							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
-                    console.log(xmlHttpRequest.responseText);
-                    console.log(textStatus);
-                    console.log(errorThrown);
-                   // alert("Error");
-                }
-                });
-}
-
-function InsertDatabaseurls(newdatabase)
-{
-	$("#progressMessage").html("Successful connection");
-	pbar.setValue(15);
-	newfilesdatatoinsert=newdatabase;
-	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
-    db.transaction(Querytoinsertfilesinfo, errorCB);
-	
-}
-
-function Querytoinsertfilesinfo(tx)
-{
-	tx.executeSql("DELETE FROM FILESDATA");
-	$("#progressMessage").html("Updating Media Data");
-	var obj = jQuery.parseJSON(newfilesdatatoinsert.MediaFiles);
-	var itemcount=0;
-	 try
-	 {
-    $.each(obj, function (key, value) {
-		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
-		query='INSERT INTO FILESDATA (FileID,FileUrl,FileName) VALUES ("'+escapeDoubleQuotes(value.FileID)+'","'+escapeDoubleQuotes(value.FileUrl)+'","'+escapeDoubleQuotes(value.FileName)+'")';
-		//alert(query);
-		tx.executeSql(query);
-		var filenamesc=escapeDoubleQuotes(value.FileName);
-		//alert(filenamesc+"==>"+filenamesc);
-		//downloadFile(filenamesc,value.FileUrl);
-     });
-	// alert("totalGroups2content: "+itemcount);
-	// alert("1");
-	 	$("#progressMessage").html("Media Data updated");
-	pbar.setValue(100);
-	 }
-	 catch(error)
-	 {
-		 alert(error);
-		 $("#progressMessage").html("Error Media Files "+error);
-			pbar.setValue(70);
-		 
-	 }
-	 	 itemcount=0;
-	//newlibrarydatatoinsert
-	FtpDownFiles();
 }
 
 function FtpDownFiles()
@@ -517,17 +428,47 @@ function FtpDownFiles()
 	pbar.setValue(0);
 	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
     db.transaction(QueryFtpDownFiles, errorCB);
+	
 }
 
 function QueryFtpDownFiles(tx)
 {
+	//alert("primer query");
 	var UseraID=sessionStorage.userid;
-	tx.executeSql('SELECT * FROM FILESDATA', [], QueryFtpDownFilesSuccess, errorCB);
+	tx.executeSql('SELECT GROUPS.Description,GROUPS.GroupID FROM USERS2GROUPS INNER JOIN Groups ON Users2Groups.ID = GROUPS.GroupID WHERE UserID="'+UseraID+'"', [], QueryFtpDownFilesSuccess, errorCB);
 	
 }
 
-function QueryFtpDownFilesSuccess(tx,results)
+function QueryFtpDownFilesSuccess(txtwo,resultstwo)
 {
+	//alert("Query2");
+	GroupsList_array = new Array();
+	var lentwo=resultstwo.rows.length;
+	//alert("USERS2GRoups="+lentwo);
+	var querytwo="SELECT  GROUPS2CONTENT.GroupID,COURSES.ID,COURSES.Description,COURSES.FileName,COURSES.FileSize  FROM GROUPS2CONTENT INNER JOIN COURSES ON GROUPS2CONTENT.ID = COURSES.ID WHERE COURSES.ContentType='F' ";
+	for (var i=0; i<lentwo; i++){
+		if(i==0)
+		{
+		  querytwo+='AND (GroupID="'+resultstwo.rows.item(i).GroupID+'"';	
+		}
+		else
+		{
+			querytwo+=' OR GroupID="'+resultstwo.rows.item(i).GroupID+'"';
+		}
+		//GroupsList_array.push(resultstwo.rows.item(i).GroupID);
+	}
+	if(lentwo>0)
+	{
+		querytwo+=")";
+	}
+	querytwo+=" ORDER BY Ord";
+	txtwo.executeSql(querytwo, [],function(tx,results){ QueryFtpDownFilesSuccessTwo(tx,results,resultstwo) }, errorCB);
+
+}
+
+function QueryFtpDownFilesSuccessTwo(tx,results,resultstwo)
+{
+	//alert("bajar");
 	if (cordova.file.documentsDirectory !== null) {
     // iOS, OSX
     DownloadDirectory = cordova.file.documentsDirectory;
@@ -548,20 +489,14 @@ CountReady=len;
 	for (var i=0; i<len; i++){
 		downloadfile=DownloadDirectory+results.rows.item(i).FileName;
 		FileNameD=results.rows.item(i).FileName;
-		var resfilema = FileNameD.replace(" ","%20");
+		var resfilema = FileNameD.split(' ').join('%20');
 		pbar.setValue(0);
+		var fileID=results.rows.item(i).ID;
+		var resfileid = fileID.split(' ').join('%20');
 		$("#progressMessage").html("Downloading File:"+resfilema);
-		var resUR = RemoteUR.replace("/ServiceFt.asmx", "/library/"+resfilema);
+		var resUR = RemoteUR+"/GetFile?IdFile="+resfileid
 		//alert(resUR);
-		downloadFile(FileNameD,resUR);
-		//window.cordova.plugins.FileOpener.canOpenFile(downloadfile, function(data){
-          //         alert('extension: ' + data.extension + '\n' +
-         //'canBeOpen: ' + data.canBeOpen);
-	         
-			//}, function(error){
-			//	 alert('message: '  + error.message);
-				
-			//	});				
+		downloadFile(FileNameD,resUR);				
 	}
 	
 	jandlet=setInterval(function(){ 
@@ -577,7 +512,166 @@ CountReady=len;
 		//clearInterval(handle);
 	//}
 	 }, 3000);
+	
 }
+
+//function GetTableFiles()
+//{
+//	$("#progressheader").html("Download Files...");
+//	$("#progressMessage").html("Waiting for server connection");
+//	pbar.setValue(0);
+//	var ipserver=$("#ipsync").val();
+//	var obj = {};
+//		 if(!!sessionStorage.userid)
+//		 {
+//			 obj['UserID'] =sessionStorage.userid;
+//		 }
+//		 else
+//		 {
+//			 obj['UserID'] ="";
+//			 
+//		 }
+//	 $.ajax({
+//                    type: 'POST',
+//                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+//				    url:ipserver+'//GetUrls',
+//					data: JSON.stringify(obj),
+//                    dataType: 'json',
+//                    contentType: 'application/json; charset=utf-8',
+//                    success: function (response) {
+//						//alert(response.d);
+//						//alert("WEb service works");
+//						InsertDatabaseurls(response.d);
+//                        //alert(response.d.users);
+//                       // var obj = jQuery.parseJSON(response.d.users);
+//                       // $.each(obj, function (key, value) {
+//                         //   alert(value.Username);//inserts users
+//                        //});
+//                       // $('#lblData').html(JSON.stringify());
+//                    },
+//            error: function (xmlHttpRequest, textStatus, errorThrown) {
+//							$("#progressheader").html("Can not connect to server");
+//							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseText+" Status: "+textStatus+" thrown: "+errorThrown);
+//							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+//                    console.log(xmlHttpRequest.responseText);
+//                    console.log(textStatus);
+//                    console.log(errorThrown);
+//                   // alert("Error");
+//                }
+//                });
+//}
+//
+//function InsertDatabaseurls(newdatabase)
+//{
+//	$("#progressMessage").html("Successful connection");
+//	pbar.setValue(15);
+//	newfilesdatatoinsert=newdatabase;
+//	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+//    db.transaction(Querytoinsertfilesinfo, errorCB);
+//	
+//}
+//
+//function Querytoinsertfilesinfo(tx)
+//{
+//	tx.executeSql("DELETE FROM FILESDATA");
+//	$("#progressMessage").html("Updating Media Data");
+//	var obj = jQuery.parseJSON(newfilesdatatoinsert.MediaFiles);
+//	var itemcount=0;
+//	 try
+//	 {
+//    $.each(obj, function (key, value) {
+//		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
+//		query='INSERT INTO FILESDATA (FileID,FileUrl,FileName) VALUES ("'+escapeDoubleQuotes(value.FileID)+'","'+escapeDoubleQuotes(value.FileUrl)+'","'+escapeDoubleQuotes(value.FileName)+'")';
+//		//alert(query);
+//		tx.executeSql(query);
+//		var filenamesc=escapeDoubleQuotes(value.FileName);
+//		//alert(filenamesc+"==>"+filenamesc);
+//		//downloadFile(filenamesc,value.FileUrl);
+//     });
+//	// alert("totalGroups2content: "+itemcount);
+//	// alert("1");
+//	 	$("#progressMessage").html("Media Data updated");
+//	pbar.setValue(100);
+//	 }
+//	 catch(error)
+//	 {
+//		 alert(error);
+//		 $("#progressMessage").html("Error Media Files "+error);
+//			pbar.setValue(70);
+//		 
+//	 }
+//	 	 itemcount=0;
+//	//newlibrarydatatoinsert
+//	FtpDownFiles();
+//}
+//
+//function FtpDownFiles()
+//{
+//	$("#progressMessage").html("Downloading Files");
+//	pbar.setValue(0);
+//	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+//    db.transaction(QueryFtpDownFiles, errorCB);
+//}
+//
+//function QueryFtpDownFiles(tx)
+//{
+//	var UseraID=sessionStorage.userid;
+//	tx.executeSql('SELECT * FROM FILESDATA', [], QueryFtpDownFilesSuccess, errorCB);
+//	
+//}
+//
+//function QueryFtpDownFilesSuccess(tx,results)
+//{
+//	if (cordova.file.documentsDirectory !== null) {
+//    // iOS, OSX
+//    DownloadDirectory = cordova.file.documentsDirectory;
+//} else if (cordova.file.sharedDirectory !== null) {
+//    // BB10
+//   DownloadDirectory = cordova.file.sharedDirectory;
+//} else if (cordova.file.externalRootDirectory !== null) {
+//    // Android, BB10
+//    DownloadDirectory = cordova.file.externalRootDirectory;
+//} else {
+//    // iOS, Android, BlackBerry 10, windows
+//    DownloadDirectory = cordova.file.DataDirectory;
+//} 
+//DownloadDirectory+="FieldTracker/";
+//var downloadfile="";	
+//var len=results.rows.length;
+//CountReady=len;
+//	for (var i=0; i<len; i++){
+//		downloadfile=DownloadDirectory+results.rows.item(i).FileName;
+//		FileNameD=results.rows.item(i).FileName;
+//		var resfilema = FileNameD.replace(" ","%20");
+//		pbar.setValue(0);
+//		$("#progressMessage").html("Downloading File:"+resfilema);
+//		var resUR = RemoteUR.replace("/ServiceFt.asmx", "/library/"+resfilema);
+//		//alert(resUR);
+//		downloadFile(FileNameD,resUR);
+//		//window.cordova.plugins.FileOpener.canOpenFile(downloadfile, function(data){
+//          //         alert('extension: ' + data.extension + '\n' +
+//         //'canBeOpen: ' + data.canBeOpen);
+//	         
+//			//}, function(error){
+//			//	 alert('message: '  + error.message);
+//				
+//			//	});				
+//	}
+//	
+//	jandlet=setInterval(function(){ 
+//	var sumsss=CountDownloads+CountNow;
+//	//alert("suma="+sumsss);
+//	if(CountReady==sumsss)
+//	{
+//		//alert("finalizar");
+//		finishsynclib();
+//	}
+//	//{
+//		//alert("clear");
+//		//clearInterval(handle);
+//	//}
+//	 }, 3000);
+//}
 
 
 function finishsynclib()
@@ -645,7 +739,7 @@ function PostToinsertLibrary()
                     },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 				    OpenLibrary();
-				    alert("no sincronizo");
+				    //alert("no sincronizo");
                     console.log(xmlHttpRequest.responseText);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -744,6 +838,94 @@ function QuerySLibrary(tx)
 	 }
 	 OpenLibrary();
 	
+}
+
+
+function postToBase64()
+{
+	         var url = "http://192.168.1.131/FieldTrackerService/ServiceFT.asmx/GetFile?IdFile=123";
+			 downloadFile("prueba.pdf",url);
+    
+}
+
+//Helper function that converts base64 to blob
+function b64toBlob(b64Data, contentType, sliceSize) {
+    var input = b64Data.replace(/\s/g, ''),
+        byteCharacters = atob(input),
+        byteArrays = [],
+        offset, slice, byteNumbers, i, byteArray, blob;
+
+    contentType = contentType || '';
+    sliceSize = sliceSize || 512;
+
+    for (offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        byteNumbers = new Array(slice.length);
+        for (i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        byteArray = new Uint8Array(byteNumbers);
+
+        byteArrays.push(byteArray);
+    }
+
+    //Convert to blob. 
+    try {
+        blob = new Blob(byteArrays, { type: contentType });
+    }
+    catch (e) {
+        // TypeError old chrome, FF and Android browser
+        window.BlobBuilder = window.BlobBuilder ||
+                             window.WebKitBlobBuilder ||
+                             window.MozBlobBuilder ||
+                             window.MSBlobBuilder;
+        if (e.name == 'TypeError' && window.BlobBuilder) {
+            var bb = new BlobBuilder();
+            for (offset = 0; offset < byteArrays.length; offset += 1) {
+                bb.append(byteArrays[offset].buffer);
+            }                    
+            blob = bb.getBlob(contentType);
+        }
+        else if (e.name == "InvalidStateError") {
+            blob = new Blob(byteArrays, {
+                type: contentType
+            });
+        }
+        else {
+            return null;
+        }
+    }
+
+    return blob;
+};
+
+/**
+ * Create a PDF file according to its database64 content only.
+ * 
+ * @param folderpath {String} The folder where the file will be created
+ * @param filename {String} The name of the file that will be created
+ * @param content {Base64 String} Important : The content can't contain the following string (data:application/pdf;base64). Only the base64 string is expected.
+ */
+function savebase64AsPDF(folderpath,filename,content,contentType){
+    // Convert the base64 string in a Blob
+    var DataBlob = b64toBlob(content,contentType);
+    
+    console.log("Starting to write the file :3");
+    
+    window.resolveLocalFileSystemURL(folderpath, function(dir) {
+        console.log("Access to the directory granted succesfully");
+		dir.getFile(filename, {create:true}, function(file) {
+            console.log("File created succesfully.");
+            file.createWriter(function(fileWriter) {
+                console.log("Writing content to file");
+                fileWriter.write(DataBlob);
+            }, function(){
+                alert('Unable to save file in path '+ folderpath);
+            });
+		});
+    });
 }
 
 

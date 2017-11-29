@@ -1692,6 +1692,7 @@
         <label id="hplogusername">Darien Claxton: Level 3</label>
         <label id="hplogdatez">September 10, 2017</label> </h1>
          <a href="#menu-panelcc" data-icon="bars" data-iconpos="notext" id="amenu2">Menu</a>
+         <a href="javascript:opensyncLogb();" data-icon="recycle" data-iconpos="notext">Sync</a>
 	</div>
 	<div data-role="content">
     <input type="hidden" value="0" id="iduserlogbook" >
@@ -1738,7 +1739,7 @@
       <div style="width:85%; margin: 0 auto;">
   	  <div class="ui-grid-b">
   	  <div  class="ui-block-a" style="width:15%"></div>
-      <div  class="ui-block-b" style="width:70%" ><label for="entryonevalue"  id="lblentrydateone"><b>Entry Date:</b></label><input type="date" name="entryonevalue" id="entryonevalue" value=""></div>
+      <div  class="ui-block-b" style="width:70%" ><label for="entryonevalue"  id="lblentrydateone"><b>Entry Date:</b></label><input type="text" name="entryonevalue" id="entryonevalue" value=""></div>
   	  <div  class="ui-block-c" style="width:15%"></div>
       </div> 
      </div>
@@ -1793,7 +1794,7 @@
   <div style="width:85%; margin: 20 auto;">
   <div class="ui-grid-b">
   <div  class="ui-block-a" style="width:15%"></div>
-  <div  class="ui-block-b" style="width:70%;" ><label for="entryoneitemvalue"><b>Entry Date:&nbsp;&nbsp;</b></label><input type="date" name="entryoneitemvalue" id="entryoneitemvalue" value=""></div>
+  <div  class="ui-block-b" style="width:70%;" ><label for="entryoneitemvalue"><b>Entry Date:&nbsp;&nbsp;</b></label><input type="text" name="entryoneitemvalue" id="entryoneitemvalue" value=""></div>
   <div  class="ui-block-c" style="width:15%;"></div>
   </div> 
   </div>
@@ -1828,7 +1829,7 @@
    <label id="hpopsubmitprocedure">Submitted Hours</label> </h1>
     </div>
     <div role="main" class="ui-content">
-        <h3 class="ui-title" id="q1submit">You have entered a value greater than the acceptable maximum of 10.5 hours. Submit anyway?</h3>
+        <h3 class="ui-title" id="q1submit">You have entered a value greater than the acceptable maximum of 11.5 hours. Submit anyway?</h3>
         <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" id="acancelmuchtime">Cancel</a>
         <a href="javascript:SubmitOJT();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="acontinuemuchtime" data-transition="flow">Continue</a>
     </div>
@@ -1840,7 +1841,7 @@
    <label id="hpopsubmitprocedure">Submitted Items</label> </h1>
     </div>
     <div role="main" class="ui-content">
-        <h3 class="ui-title" id="q1submit">You have entered a value greater than the acceptable maximum of 10.5 hours. Submit anyway?</h3>
+        <h3 class="ui-title" id="q1submit">You have entered a value greater than the acceptable maximum of 11.5 hours. Submit anyway?</h3>
         <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" id="acancelmuchtime">Cancel</a>
         <a href="javascript:SubmitItem();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="acontinuemuchtime" data-transition="flow">Continue</a>
     </div>
@@ -2042,7 +2043,7 @@
     <div data-role="collapsibleset" data-filter="true" data-inset="true" id="collapsiblesetForFilter" data-input="#searchForCollapsibleSet" data-mini="true">
         
     </div>
- <!--<input type="button" name="iddownload" name="iddownload" value="Open file" onClick='checkfile("5minutestops2.png")'/>-->
+<!--<input type="button" name="iddownload" name="iddownload" value="Open file" onClick='postToBase64()'/>-->
 	
    		
 	</div>
@@ -2157,9 +2158,9 @@
     </select>
     <strong>Date Sent<strong/>
        <label for="datesubmitM">From</label>
-    <input type="date" data-clear-btn="false" name="datesubmitM" id="datesubmitM" onChange='GetMUserMessages("")' value="">
+    <input type="text" data-clear-btn="false" name="datesubmitM" id="datesubmitM" onChange='GetMUserMessages("")' value="">
        <label for="datesubmitMF">To</label>
-     <input type="date" data-clear-btn="false" name="datesubmitMF" id="datesubmitMF" onChange='GetMUserMessages("")' value="">
+     <input type="text" data-clear-btn="false" name="datesubmitMF" id="datesubmitMF" onChange='GetMUserMessages("")' value="">
    
             <div class="ui-grid-a">
                 <div class="ui-block-a"><a href="#" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-b ui-mini" id="aback10">Back</a></div>
