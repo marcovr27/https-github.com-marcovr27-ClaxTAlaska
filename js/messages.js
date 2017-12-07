@@ -9,6 +9,7 @@ var Toback="";
 var IsSyncMessages=false;
 var IntervalMessagesP="";
 
+
 //Fill Filters
 
 function FillUsersTF()
@@ -1508,8 +1509,9 @@ function QuerytoinsertMSil(tx)
 		 //alert(error);
 		 
 	 }
-	
-	 if(FilterMessages=="inbox")
+	if(inPageMes==1)
+	{
+			 if(FilterMessages=="inbox")
 	{
 		GetMUserMessages("inbox");
 	}
@@ -1517,6 +1519,10 @@ function QuerytoinsertMSil(tx)
 	{
 		GetMUserMessages(FilterMessages);
 	}
+		
+	}
+
+	//alert("mensajes sincronizados");
 	 IsSyncMessages=false;
     //updatelocaldatabaseMessages();
 
@@ -1665,3 +1671,34 @@ function GetSilenceupdateInboxSuccess(tx,results)
 	
 }
 
+//CHECK NEW MESSAGES
+
+function GetQuantNewMessages()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+	db.transaction(QuantNewMessages, errorCB);
+}
+
+function QuantNewMessages(tx)
+{
+	var UseraID=sessionStorage.userid;
+	var querytosend='SELECT * FROM MESSAGES WHERE Deleted="0" AND UserIDTo="'+UseraID+'" AND Status="Unread"';
+	tx.executeSql(querytosend, [], function(tx,results){ QuantNewMessagesSuccess(tx,results) }, errorCB);
+}
+
+function QuantNewMessagesSuccess(tx,results)
+{
+	var len = results.rows.length;
+	$("#UnreadH").val(len);
+	//alert("messages "+len);
+	if(len>0)
+	{
+		$("#mbtnmessages").html('<img src="img/messages.png" height="36" width="36"/><br>Messages ('+len+')');
+	}
+	else
+	{
+		$("#mbtnmessages").html('<img src="img/messages.png" height="36" width="36"/><br>Messages');
+	}
+	
+	
+}

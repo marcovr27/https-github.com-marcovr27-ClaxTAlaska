@@ -25,12 +25,14 @@ var destinationType; // sets the format of returned value
 var capture; // The global capture object
 var SyncDB=false; //Show if the database is updated
 var IntervalMessagesP="";
+var IntervalMessagesNew="";
 var texportDirectory = "";
 var DownloadDirectory = "";
 var tsubdir = "EvalArcs";
 var FilterMessages="inbox";
 var arrayresponses = [];
 var tt=0;
+var inPageMes=0;
 var pbar = jQMProgressBar('progressbar')
    					.setOuterTheme('b')
                     .setInnerTheme('e')
@@ -2077,6 +2079,7 @@ $(document).on( 'pagebeforeshow', '#generic-dialog',function(event,data){
 //ON CREATE PAGE LOGIN
 $(document).on( 'pageinit', '#pageLogin',function(){
 	//SetPortrait();
+	inPageMes=0;
 verifyrejected();
 	if(window.innerHeight > window.innerWidth){
    // alert("Portrait!");
@@ -2092,10 +2095,6 @@ else
 
 translatehtml();
 
-
-	 
-
-
 });
 
 //ON SHOW PAGE LOGIN
@@ -2104,15 +2103,16 @@ translatehtml();
 
 //ON CREATE PAGE MENU
 $(document).on( 'pagebeforeshow', '#pageMenu',function(){
-		clearInterval(IntervalMessagesP);
-	IntervalMessagesP="";
-	
+		//clearInterval(IntervalMessagesP);
+	//IntervalMessagesP="";
+	inPageMes=0;
 	verifyrejected();
 	var rejbtn="";
 	var textprocedure=$("#btpro").val();
 	var textdata=$("#btdata").val();
 	var textcheck=$("#btcheck").val();
     var lenrej=$("#hrej").val();
+	var messagesNum=$("#UnreadH").val();
 		//alert("lenrej: "+lenrej);
 	  if(lenrej>0)
 	  {
@@ -2122,7 +2122,7 @@ $(document).on( 'pagebeforeshow', '#pageMenu',function(){
     //alert("Portrffgait!");
 
 			$('#menucontentd').empty();
-				$('#menucontentd').append('<form  style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></div></form>').trigger('create');
+				$('#menucontentd').append('<form  style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages ('+messagesNum+')</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></div></form>').trigger('create');
 	//$('#menucontentd').empty();
 	//$('#menucontentd').append('Portrait').trigger('create');	
 }
@@ -2130,7 +2130,7 @@ else
 {
 	// alert("Landscdfdapet!");
 		$('#menucontentd').empty();
-		$('#menucontentd').append('<div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form  style="width:70%; margin-left:20%; margin-top:32%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form></div>').trigger('create');
+		$('#menucontentd').append('<div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form  style="width:70%; margin-left:20%; margin-top:32%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages ('+messagesNum+')</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form></div>').trigger('create');
 		
 		
 		//$('#menucontentd').empty();
@@ -2146,8 +2146,13 @@ translatehtml();
 	$("#hs").val('yes');
 	checkifnotsync();
 	//verifyrejected();
+		GetQuantNewMessages();
+	//IntervalMessagesP= setInterval(function(){ SilenceStartSync(); }, 59000);
+	SilenceStartSync();
+	IntervalMessagesNew= setInterval(function(){ GetQuantNewMessages(); }, 35000);
+	IntervalMessagesP= setInterval(function(){ SilenceStartSync(); }, 59000);
 	refreshverify();
-	
+
 	//SyncStatus();
 	 
 
@@ -2160,6 +2165,7 @@ translatehtml();
 //ON CREATE CHECKLIST USERS
 $(document).on( 'pagecreate', '#pageChecklist',function(){
 
+     inPageMes=0;
      $("#bodycheck-list").html("");
        fillUsersSelect('#userlist');
 	   fillGroupsSelect();
@@ -2201,7 +2207,7 @@ $(document).on( 'pagebeforeshow', '#pageChecklistSave',function(){
 
  $("#checkuser").html("<img src='img/graphs/Logo_Small.png' style='height: 2em' /> &nbsp;&nbsp;Checklist: "+sessionStorage.userchoosename);
  
- 
+ inPageMes=0;
   var picker = $( "#dateentry", this );
     picker.mobipick({dateFormat:GetDateFormat()});
 var now = new Date();
@@ -2235,6 +2241,7 @@ else
 //ON CREATE Launch Procedure
 $(document).on( 'pagebeforeshow', '#pageProcedureLaunch',function(){
 	IsSyncMessages=true;
+	inPageMes=0;
      var tb = $('#stepsbodyh');
 		 tb.html("");
     $("#chpro").val("0");
@@ -2267,6 +2274,7 @@ $(document).on( 'pagebeforeshow', '#pageProcedureLaunch',function(){
 <!---------------------------------------------------------------------------------------------------------------------->
 //ON CREATE PROCEDURE STEPS
 $(document).on( 'pagebeforeshow', '#pageProcedure',function(){
+	inPageMes=0;
 	$('#bodyissues').html("");
 	var whattodo=sessionStorage.loadsteps;
 	if(whattodo=="true")
@@ -2290,6 +2298,7 @@ $(document).on( 'pagebeforeshow', '#pageProcedure',function(){
 //ON CREATE ISSUE REPORT PAGE
 $(document).on( 'pagebeforeshow', '#pageReport',function(){
 	sessionStorage.loadsteps="false";
+	inPageMes=0;
     $( '.popupParent' ).on({
         popupafterclose: function() {
             setTimeout( function(){ $( '.popupChild' ).popup( 'open' ) }, 300 );
@@ -2391,6 +2400,7 @@ $(document).on( 'pagebeforeshow', '#pagetempvideo',function(){
 		//ON CREATE PAGE HISTORY
 $(document).on( 'pagebeforeshow', '#pageHistoryProc',function(){
  $("#hgoto").val("0");
+ inPageMes=0;
   var tb = $('#stepsbody');
 		 tb.html("");
 
@@ -2582,6 +2592,7 @@ $(document).on( 'pagebeforeshow', '#pagetempvideoh',function(){
 //ON CREATE DataQueries
 $(document).on( 'pagebeforeshow', '#pageDataqueris',function(){
 	
+	inPageMes=0;
 	fillOperatorNameSelect();
 	//fillProcedureSelect();
 	fillFaultSelectdt();
@@ -2771,6 +2782,7 @@ fillevaluationsteps();
 $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
 		clearInterval(IntervalMessagesP);
 	IntervalMessagesP="";
+	inPageMes=0;
 //fill username name,level and name
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
@@ -2810,6 +2822,7 @@ $(document).on( 'pagebeforeshow', '#pageMessages',function(){
 //fill username name,level and name
 //alert("startpagemessages");
     $("#IdMessageop").val("0");
+	inPageMes=1;
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
 	var headstring=userfullname+": Level "+leveluser;
@@ -2821,7 +2834,7 @@ $(document).on( 'pagebeforeshow', '#pageMessages',function(){
 	var daynumber=(d.getDate()) > 9 ? (d.getDate()) : "0" + (d.getDate());
 	var yearnumber=d.getFullYear();
 	IsSyncMessages=false;
-	IntervalMessagesP= setInterval(function(){ SilenceStartSync(); }, 59000);
+	//IntervalMessagesP= setInterval(function(){ SilenceStartSync(); }, 59000);
 	var pickerMs = $( "#datesubmitM", this );
    pickerMs.mobipick({dateFormat:GetDateFormat()});
 	var pickerMfs = $( "#datesubmitMF", this );
@@ -2897,6 +2910,7 @@ $(document).on( 'pagebeforeshow', '#pageSMessage',function(){
 //ON CREATE 
 $(document).on( 'pagebeforeshow', '#pageLibrary',function(){
 	clearInterval(IntervalMessagesP);
+	inPageMes=0;
 	IntervalMessagesP="";
 	IsSyncMessages=true;
 	var userfullname=sessionStorage.fname;
@@ -2992,7 +3006,7 @@ function LoginUser()
         transition: 'flip',
         changeHash: false,
         reverse: true,
-        showLoadMsg: true
+        showLoadMsg: false
         });		  
 		  
 		  
