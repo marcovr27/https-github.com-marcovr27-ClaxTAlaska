@@ -1693,7 +1693,7 @@ function QuantNewMessagesSuccess(tx,results)
 	//alert("messages "+len);
 	if(len>0)
 	{
-		$("#mbtnmessages").html('<img src="img/messages.png" height="36" width="36"/><br>Messages ('+len+')');
+		$("#mbtnmessages").html('<img src="img/messagesnew.png" height="36" width="36"/><br>Messages ('+len+')');
 	}
 	else
 	{
