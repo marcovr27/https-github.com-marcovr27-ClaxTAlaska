@@ -23,7 +23,7 @@
     -->
 	<preference name='phonegap-version' value='cli-7.0.1' />
 	<preference name='pgb-builder-version' value='1' />
-    <preference name="permissions"                value="none"/>
+    <preference name="permissions" value="none"/>
     <!-- Customize your app and platform with the preference element. -->
     <preference name="orientation"                value="default" />        <!-- all: default means both landscape and portrait are enabled -->
     <preference name="target-device"              value="universal" />      <!-- all: possible values handset, tablet, or universal -->
@@ -46,7 +46,7 @@
 <!-- Core plugins -->
     <plugin name="cordova-plugin-battery-status" />
     <plugin name="cordova-plugin-camera" version="2.4.1" />
-    <plugin name="cordova-plugin-media-capture" />
+    <plugin name="cordova-plugin-media-capture" version="1.4.3" />
     <plugin name="cordova-plugin-console" />
     <plugin name="cordova-plugin-contacts" />
     <plugin name="cordova-plugin-device" />
@@ -60,7 +60,7 @@
     <plugin name="cordova-plugin-geolocation" />
     <plugin name="cordova-plugin-globalization" />
     <plugin name="cordova-plugin-inappbrowser" />
-    <plugin name="cordova-plugin-media" />
+    <plugin name="cordova-plugin-media"/>
     <plugin name="cordova-plugin-network-information" />
     <plugin name="cordova-plugin-splashscreen" />
     <plugin name="cordova-plugin-vibration" />

@@ -36,6 +36,8 @@
     <input type="hidden"  id="CategoryH" name="CategoryH" value="0"/>
     <input type="hidden"  id="PriorityH" name="PriorityH" value="0"/>
     <input type="hidden"  id="UnreadH" name="UnreadH" value="0"/>
+    <input type="hidden"  id="VersionFT" name="VersionFT" value="1.0"/>
+    
     <!--New MessageEnd -->
 
        
@@ -47,6 +49,8 @@
             <!--   <h1>
             <img src="img/graphs/Logo_Small.png" style="height: 2em" />
               &nbsp;&nbsp;FieldTracker</h1>-->
+          
+          <a href="#" class="ui-btn ui-mini ui-state-disabled" id="versionalv"></a>
             <a href="#pageSettingsInit" data-icon="recycle" class="ui-btn-right" id="fsynchome">Sync</a>
         </div>
         <div data-role="content" id="logincontent">
@@ -67,6 +71,7 @@
                         </div>
 
                         <input type="button" class="ui-btn-b" value="Login" id="LoginButton" onclick="LoginUser()">
+                        
 
 
 
@@ -1375,14 +1380,8 @@
     </select>
     <label for="ipsetting" style="color:#FFF;" id="ipserver">IP Server:</label>
      <input type="text" data-clear-btn="true" name="ipsetting" id="ipsetting" value="">
-    
-           
-                
-                           
-              	
-        
-                    
-                </div>
+     <p id="versionset1" style="color:white;"></p>
+               </div>
                  <div data-role="panel" data-position="right" data-display="reveal" data-theme="a" id="add-formset">
                     <form class="userform">
                         <h2 id="mainusername"></h2>
@@ -1434,7 +1433,7 @@
     </select>
     <label for="ipsettinginit" >IP Server:</label>
      <input type="text" data-clear-btn="true" name="ipsettinginit" id="ipsettinginit" value="">
-    
+    <p id="versionset2"></p>
            
                 
                            
@@ -1703,7 +1702,7 @@
     <ul>
       <li><a id="onebt" href="#one" data-ajax="false">OJT</a></li>
       <li><a id="twobt" href="#two" data-ajax="false">Classroom</a></li>
-      <!--<li><a href="#three" data-ajax="false" >Summary</a></li>-->
+     <!-- <li><a href="#three" data-ajax="false" >Summary</a></li>-->
     </ul>
   </div>
   <div id="one" class="ui-body ui-body-a">
@@ -1815,9 +1814,10 @@
   </form>
 
   </div>
-   <!--<div id="three">
-	<h1>SUMMARY</h1>
-  </div>-->
+   <div id="three">
+	
+    
+  </div>
 </div>
   
 	

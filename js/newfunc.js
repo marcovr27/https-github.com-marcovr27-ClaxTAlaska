@@ -1048,3 +1048,19 @@ function QuerytoinsertModalLogbook(tx)
 	 }
 
 }
+
+///SUMMARY
+
+function GetOJTOverall()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryOJTOverall, errorCB);	
+}
+
+function QueryOJTOverall(tx)
+{
+	var querytosend="SELECT * FROM SUBMITTEDHOURS WHERE Sync='no'";
+	tx.executeSql(querytosend, [], QueryModalLogbookSuccess, errorCB);
+	
+}
+

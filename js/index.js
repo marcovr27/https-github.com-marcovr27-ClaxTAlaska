@@ -1,6 +1,4 @@
 //CLAXTRACK SOLUTIONS 2014 --- (Developer:Marco Velarde) ---- DATE:10/7/2014 
-
-
 ///////<<<<<<<<<<<<============================= GLOBAL VARIABLES =========================================>>>>>>>>>>>///////
 var newdatabasetoinsert;//Variable to get all tables from web service and insert on device db;
 var newtasksdatatoinsert;
@@ -944,8 +942,8 @@ function QuerywritehtmltSuccess(tx,results,language)
 		 tx.executeSql('CREATE TABLE IF NOT EXISTS USERS2CHECKLISTS (UserID,CheckID,Date,Status,Sync)');
 		 //Table Media
 		 //
-		 tx.executeSql('CREATE TABLE IF NOT EXISTS MEDIA (SubmitID,StepID,FileType,FileName,Path,Sync)');
-		 tx.executeSql('CREATE TABLE IF NOT EXISTS TEMPMEDIA (SubmitID,StepID,FileType,FileName,Path)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS MEDIA (SubmitID,StepID,FileType,FileName,Path,SubmitDate,Sync)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS TEMPMEDIA (SubmitID,StepID,FileType,FileName,SubmitDate,Path)');
 		 //Table Groups2Procedures
 		 //
 		 tx.executeSql('CREATE TABLE IF NOT EXISTS GROUPS2PROCEDURES (GroupID,ID,Ord)');
@@ -2011,11 +2009,15 @@ function navbyapp(namewindow)
         reverse: true,
         showLoadMsg: true
     });
-	}
+	}	
+}
 
-	
-
-	
+function GetVersionProgram()
+{
+	var version=$("#VersionFT").val();
+	$("#versionalv").html("v"+version);
+	$("#versionset2").html("v"+version);
+	$("#versionset1").html("v"+version);
 	
 }
 
@@ -2079,6 +2081,7 @@ $(document).on( 'pagebeforeshow', '#generic-dialog',function(event,data){
 //ON CREATE PAGE LOGIN
 $(document).on( 'pageinit', '#pageLogin',function(){
 	//SetPortrait();
+	GetVersionProgram();
 	inPageMes=0;
 verifyrejected();
 	if(window.innerHeight > window.innerWidth){
@@ -2640,6 +2643,7 @@ $(document).on( 'pagecreate', '#pageResult',function(){
 
 //ON CREATE Page Settings
 $(document).on( 'pagebeforeshow', '#pageSettings',function(){
+GetVersionProgram();
 tt=0;	
 showsettings();
 
@@ -2647,6 +2651,7 @@ showsettings();
 
 //ON CREATE Page Settings
 $(document).on( 'pagebeforeshow', '#pageSettingsInit',function(){
+GetVersionProgram();
 tt=1;	
 showsettings();
 
@@ -4666,11 +4671,14 @@ tx.executeSql('INSERT INTO SUBMITTEDSTEPS (FaultID,SubmitID,ProcID,StepID,Text,O
 	
 		  function insermediatoprocedure(tx,results)
 	   {
+		   var dt = new Date();
+		  var SubmitDate = dt.toYMD();
+		 var SubmitTime=dt.toYMDhrs();
 		  // alert(results.rows.length);
 		   for (var i=0; i<results.rows.length; i++)
 			{
 				//alert(results.rows.item(i).Path+" "+results.rows.item(i).SubmitID);
-				tx.executeSql('INSERT INTO MEDIA (SubmitID,StepID,FileType,FileName,Path,Sync) VALUES ("'+results.rows.item(i).SubmitID+'","'+results.rows.item(i).StepID+'","'+results.rows.item(i).FileType+'","'+results.rows.item(i).FileName+'","'+results.rows.item(i).Path+'","no")');
+				tx.executeSql('INSERT INTO MEDIA (SubmitID,StepID,FileType,FileName,Path,SubmitDate,Sync) VALUES ("'+results.rows.item(i).SubmitID+'","'+results.rows.item(i).StepID+'","'+results.rows.item(i).FileType+'","'+results.rows.item(i).FileName+'","'+results.rows.item(i).Path+'","'+SubmitTime+'","no")');
 				
 			}
 			if(results.rows.length>0)
@@ -5456,6 +5464,7 @@ function resOnError(error) {
 
 function captureVideo()
 	{
+		//alert("take video");
 		 navigator.device.capture.captureVideo(captureSuccess, captureError, {limit: 1});
 	}
 	
@@ -7559,7 +7568,10 @@ function QueryPhotoTemph(tx,photopath)
 {
 	var SubmitID=sessionStorage.submitID;
 	var StepID=sessionStorage.currentStep;
-	var query='INSERT INTO MEDIA (SubmitID,StepID,FileType,FileName,Path,Sync) VALUES ("'+SubmitID+'","'+StepID+'","image"," ","'+photopath+'","no")';
+	var dt = new Date();
+	var SubmitDate = dt.toYMD();
+	var SubmitTime=dt.toYMDhrs();
+	var query='INSERT INTO MEDIA (SubmitID,StepID,FileType,FileName,Path,SubmitDate,Sync) VALUES ("'+SubmitID+'","'+StepID+'","image"," ","'+photopath+'","'+SubmitTime+'","no")';
 	//alert(query);
 	tx.executeSql(query);
 	$('#popupPhotoOptionsh').popup('close');
@@ -7580,8 +7592,10 @@ function QueryVideoTemph(tx,videopath)
 	var SubmitID=sessionStorage.submitID;
 	var StepID=sessionStorage.currentStep;
 	var FileType="video";
-	
-	var query='INSERT INTO MEDIA (SubmitID,StepID,FileType,FileName,Path,Sync) VALUES ("'+SubmitID+'","'+StepID+'","video"," ","'+videopath+'","no")';
+	var dt = new Date();
+	var SubmitDate = dt.toYMD();
+	var SubmitTime=dt.toYMDhrs();
+	var query='INSERT INTO MEDIA (SubmitID,StepID,FileType,FileName,Path,SubmitDate,Sync) VALUES ("'+SubmitID+'","'+StepID+'","video"," ","'+videopath+'","'+SubmitTime+'","no")';
 	//alert(query);
 	tx.executeSql(query);
 	$('#popupVideoOptionsh').popup('close');

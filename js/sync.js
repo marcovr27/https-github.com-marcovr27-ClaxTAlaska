@@ -1573,11 +1573,11 @@ tosend++;
 
  if(results.rows.item(i).FileType=="image")
  {
-	 uploadPhotoServer(results.rows.item(i).Path,results.rows.item(i).SubmitID,results.rows.item(i).StepID,results.rows.item(i).FileType);
+	 uploadPhotoServer(results.rows.item(i).Path,results.rows.item(i).SubmitID,results.rows.item(i).StepID,results.rows.item(i).FileType,results.rows.item(i).SubmitDate);
   }
   else
   {
-	 uploadVideoServer(results.rows.item(i).Path,results.rows.item(i).SubmitID,results.rows.item(i).StepID,results.rows.item(i).FileType);
+	 uploadVideoServer(results.rows.item(i).Path,results.rows.item(i).SubmitID,results.rows.item(i).StepID,results.rows.item(i).FileType,results.rows.item(i).SubmitDate);
    }
    
    //if(tosend==len)
@@ -1610,9 +1610,11 @@ tosend++;
 
 
 //Upload Videos
-function uploadVideoServer(VideoURI,SubmitID,StepID,FileType) {
+function uploadVideoServer(VideoURI,SubmitID,StepID,FileType,SubmitDate) {
 	//alert("akavideo"+VideoURI+"---->"+SubmitID+"---->"+StepID+"---->"+FileType);
 	var ipserver=$("#ipsync").val();
+	var dt = new Date();
+	var SubmitDate=dt.toYMDhrs();
             var options = new FileUploadOptions();
 			options.chunkedMode = true;
             options.fileKey="recFile";
@@ -1624,6 +1626,7 @@ function uploadVideoServer(VideoURI,SubmitID,StepID,FileType) {
             params.submitid = SubmitID;
             params.stepid = StepID;
 			params.filetype = FileType;
+			params.SubmitDate=SubmitDate;
 
             options.params = params;
 
@@ -1635,9 +1638,11 @@ function uploadVideoServer(VideoURI,SubmitID,StepID,FileType) {
         }
 
 //Upload Images
-function uploadPhotoServer(imageURI,SubmitID,StepID,FileType) {
+function uploadPhotoServer(imageURI,SubmitID,StepID,FileType,SubmitDate) {
 	//alert("akaimage"+imageURI+"---->"+SubmitID+"---->"+StepID+"---->"+FileType);
 	var ipserver=$("#ipsync").val();
+		var dt = new Date();
+		var SubmitDate=dt.toYMDhrs();
             var options = new FileUploadOptions();
 			options.chunkedMode = true;
             options.fileKey="recFile";
@@ -1649,6 +1654,7 @@ function uploadPhotoServer(imageURI,SubmitID,StepID,FileType) {
             params.submitid = SubmitID;
             params.stepid = StepID;
 			params.filetype = FileType;
+			params.SubmitDate=SubmitDate;
 
             options.params = params;
 			
