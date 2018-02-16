@@ -170,7 +170,7 @@ background: url(../img/graphs/loginbackgroundls.jpg) no-repeat center center fix
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    }*/
+    }
 }
 
 .loginbuttons
@@ -234,10 +234,16 @@ margin: auto;
     left     : 0;
 }
 
-.groc
+.colorrojo
 {
-	
+    color:red;
 }
-		
-		
 
+.colorverde
+{
+    color:rgb(3, 68, 3);
+}
+.halfwidth {
+    overflow:auto;
+    height: 50vw;
+}

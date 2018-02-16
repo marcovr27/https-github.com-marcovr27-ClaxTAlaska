@@ -13,7 +13,7 @@
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <link rel="stylesheet" type="text/css" href="css/mobipick.css">
         <link rel="stylesheet" type="text/css" href="css/photoswipe.css">
-         <link rel="stylesheet" type="text/css" href="css/jQMProgressBar.css">
+        <link rel="stylesheet" type="text/css" href="css/jQMProgressBar.css">
         <title>FieldTracker</title>
     </head>
     <body>
@@ -140,14 +140,19 @@
                 <div data-role="content" id="menucontentd">
                 <img src="img/logbook.png" height="42" width="42">
 				<form  style="width:70%; margin-left:20%; margin-top:32%;">
-                <div class="ui-grid-b ui-responsive">
+                 <div class="ui-grid-b ui-responsive">
                 <div class="ui-block-a"><a href="navbyapp('logbook')" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div>
                 <div class="ui-block-b"><a href="navbyapp('procedurelaunch')" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div>
                 <div class="ui-block-c"><a href="navbyapp('library')" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div>
                 </div>
+				<div class="ui-grid-b ui-responsive">
+				<div class="ui-block-a"><a href="navbyapp('audits')" id="mbtnaudit" class="ui-btn ui-shadow ui-corner-all"><img src="img/Audits.png" height="36" width="36"/><br>Audits</a></div>
+				<div class="ui-block-b"><a href="navbyapp('inspection')" id="mbtninspection" class="ui-btn ui-shadow ui-corner-all"><img src="img/Inspections.png" height="36" width="36"/><br>WP Inspections</a></div>
+                <div class="ui-block-c"><a href="navbyapp('certifications')" id="mbtndatacertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certificationstwo.png" height="36" width="36"/><br>Certifications</a></div>
+				</div>
                 <div class="ui-grid-b ui-responsive">
-               <div class="ui-block-a"><a href="navbyapp('messages')" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div>
-       <div class="ui-block-b"><a href="navbyapp('certifications')" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div>
+				<div class="ui-block-a"><a href="navbyapp('messages')" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div>
+				<div class="ui-block-b"><a href="navbyapp('checklist')" id="mbtnchecklists" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Checklists</a></div>
                 <div class="ui-block-c"><a href="navbyapp('dataqueris')" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div>
                 </div>
                 <div class="ui-grid-solo">
@@ -177,7 +182,7 @@
                             <li data-icon="clock"><a href="#pageHistoryProc" id="ahist0">History</a></li>
                             <li data-icon="gear"><a href="#pageSettings" id="asettings1">Settings</a></li>
                             <li data-icon="gear"><a href="javascript:backupdb();" id="asettingsbck">Create Backup</a></li>
-                            <li data-icon="info"><a href="#panel-fixed-page2" id="ahelp1">Help</a></li>
+                            <li data-icon="info"><a href="#pageCert" id="ahelp1">Help</a></li>
                             
                     </ul>
                     <br>
@@ -1695,14 +1700,20 @@
          <a href="javascript:opensyncLogb();" data-icon="recycle" data-iconpos="notext">Sync</a>
 	</div>
 	<div data-role="content">
-    <input type="hidden" value="0" id="iduserlogbook" >
+    <input type="hidden" value="0" id="iduserlogbook">
     <input type="hidden" value="0" id="idtasklogbook" >
+    <input type="hidden" value="0" id="idclassselected" >
+    <input type="hidden" value="0" id="idojtselected" >
+    <input type="hidden" value="0" id="idsupervisorname" >
+    <input type="hidden" value="0" id="idsupervisorfname" >
+    <input type="hidden" value="0" id="idsubrow" >
     <div data-role="tabs" id="tabs">
   <div data-role="navbar">
     <ul>
       <li><a id="onebt" href="#one" data-ajax="false">OJT</a></li>
       <li><a id="twobt" href="#two" data-ajax="false">Classroom</a></li>
-     <!-- <li><a href="#three" data-ajax="false" >Summary</a></li>-->
+      <li><a id="threebt" href="#three" data-ajax="false" >Summary</a></li>
+       <li><a id="fourbt" href="#four" data-ajax="false" >Submissions</a></li>
     </ul>
   </div>
   <div id="one" class="ui-body ui-body-a">
@@ -1715,7 +1726,7 @@
     <br>
     <div style="width:85%; margin: 0 auto;">
      <h3 style=" margin: 0 auto; text-align:center;" >Status Summary for This Task</h3>
-        <table data-role="table" data-filter="false" id="table-logbook"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
+        <table data-role="table" data-filter="false" id="table-logbook"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  			data-column-popup-theme="a">
     <thead>
       <tr class="ui-bar-a">
         <th data-priority="1" style="text-align: center" id="tablerequiredh">Required Hours</th>
@@ -1814,9 +1825,145 @@
   </form>
 
   </div>
-   <div id="three">
-	
+   <div id="three" class="ui-body ui-body-a">
+   <form>
+	<div style="width:85%; margin: 0 auto;">
+    <br><br>
+     <h3 style=" margin: 0 auto; text-align:center;" >My OJT Summary</h3>
+        <table data-role="table" data-filter="false" id="table-ojtsummary"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  			data-column-popup-theme="a">
+    <thead id="headojtsummary" >
+      <tr class="ui-bar-a">
+        <th data-priority="1" style="text-align: center" id="tabledutyojt">Duty</th>
+        <th data-priority="2" style="text-align: center" id="tablerequiredojt">Required Hours</th>
+        <th data-priority="3" style="text-align: center" id="tablecompletedojt">Completed Hours</th>
+        <th data-priority="4" style="text-align: center" id="tabletogoojt">Hours To Go</th> 
+        <th data-priority="4" style="text-align: center" id="tabledoneojt">% Done</th>   
+      </tr>
+    </thead>
+    <tbody id="body-ojtsummary">
+     
+    </tbody>
+  </table>
+  <br>
+  <br>
+  <h3 style=" margin: 0 auto; text-align:center;" >My Classroom Summary</h3>
+     <table data-role="table" data-filter="false" id="table-classsummary"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  			data-column-popup-theme="a">
+ <thead id="headclasssummary">
+   <tr class="ui-bar-a">
+     <th data-priority="1" style="text-align: center" id="tabledutyclass">Level</th>
+     <th data-priority="2" style="text-align: center" id="tablerequiredclass">Required Hours</th>
+     <th data-priority="3" style="text-align: center" id="tablecompleteclass">Completed Hours</th>
+     <th data-priority="4" style="text-align: center" id="tabletogoclass">Hours To Go</th> 
+     <th data-priority="4" style="text-align: center" id="tabledoneclass">% Done</th>   
+   </tr>
+ </thead>
+ <tbody id="body-classsummary">
+  
+ </tbody>
+</table>
+<br>
+<br>
+ 
+  </div>
     
+  </div>
+  </form>
+  <div id="four" class="ui-body ui-body-a">
+  	<form>  
+  <br>
+  <br>
+  <h3 style=" margin: 0 auto; text-align:center;" >Submitted Entries</h3>
+        <select name="select_Submission" id="select_Submission" data-mini="true" onChange='GetSubmissions()'>
+            <option value="All">All Statuses</option>
+            <option value="Submitted">Submitted</option>
+            <option value="Approved">Approved</option>
+            <option value="Modified">Modified</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+<div class="ui-grid-solo halfwidth">
+     <table data-role="table" data-filter="false" id="table-submissions"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
+            <thead id="tsubmis">
+                 <tr class="ui-bar-a">
+                    <th data-priority="1" style="text-align: center">Entry Date</th>
+                    <th data-priority="2" style="text-align: center">Hours/Mins</th>
+                    <th data-priority="3" style="text-align: center">Entry Type</th>
+                    <th data-priority="4" style="text-align: center">Status</th> 
+                    <th data-priority="4" style="text-align: center">Review Date</th>   
+                 </tr>
+            </thead>
+            <tbody id="body-submissions">
+  
+            </tbody>
+    </table>
+</div>
+<br>
+<br>
+<div class="ui-grid-solo halfwidth">
+        <h3 style=" margin: 0 auto; text-align:center;">Selected Entry Details</h3>
+        <div class="ui-grid-a" style="background-color:#fff2cc !important;">
+                <div class="ui-block-a">
+                        <table data-role="table" id="my-tableo" data-mode="reflow" style="background-color:#fff2cc;">
+                                <thead>
+                                  <tr>
+                                    <th>Entry Date:</th>
+                                    <th>Submit Date:</th>
+                                    <th>Entry Type:</th>
+                                    <th>Personnel</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="bdonerow">
+                                  <tr>
+                                    <td id="rowentrydate"></td>
+                                    <td id="rowsubmitdate"></td>
+                                    <td id="rowtype"></td>
+                                    <td id="rowpersonnel"></td>
+                                  </tr>
+                                  </tbody>
+                              </table>
+                </div>
+                <div class="ui-block-b">
+                        <table data-role="table" id="my-tablet" data-mode="reflow" style="background-color:#fff2cc;">
+                                <thead>
+                                  <tr>
+                                    <th>Hours/Mins:</th>
+                                    <th>Status:</th>
+                                    <th>Review Date:</th>
+                                    <th><a href="javascript:sendtosupervisor();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-transition="flow">Supervisor:</a></th>
+                                  </tr>
+                                </thead>
+                                <tbody id="bdtworow">
+                                  <tr>
+                                    <td id="rowhrmin"></td>
+                                    <td id="rowstatus"></td>
+                                    <td id="rowreview"></td>
+                                    <td id="rowsupervisor"></td>
+                                  </tr>
+                                  </tbody>
+                              </table>
+                </div>
+            </div>
+            <table data-role="table" id="my-tabletr" data-mode="reflow" style="background-color:#fff2cc;">
+                <thead>
+                  <tr>
+                    <th>Task/Item</th>
+                    <th>Modify/Reject Reason:</th>
+                  </tr>
+                </thead>
+                <tbody id="bdthreerow">
+                  <tr>
+                    <td id="rowtaskitem"></td>
+                    <td id="rowreason"></td>
+                  </tr>
+                  </tbody>
+              </table>
+     
+
+</div>
+<br>
+<br>
+
+	
+    </form>
   </div>
 </div>
   
@@ -1847,6 +1994,48 @@
         <a href="javascript:SubmitItem();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" id="acontinuemuchtime" data-transition="flow">Continue</a>
     </div>
 </div>
+<div data-role="popup" id="popupdetailojt" data-history="false" data-overlay-theme="b" data-theme="b" data-dismissible="true" style="max-width:700px; min-width:500px;">
+    <div data-role="header" data-theme="a">
+    <h1 id="hojttext">
+    Detailed Summary for</h1>
+    </div>
+    <div role="main" class="ui-content">
+            <table data-role="table" data-filter="false" id="table-taskojt"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
+                    <thead id="headtaskojt">
+                        <tr class="ui-bar-a">
+                        <th data-priority="1" style="text-align: center" id="taskojt">Task</th>
+                        <th data-priority="2" style="text-align: center" id="tabletaskojtrequired">Required Hours</th>
+                        <th data-priority="3" style="text-align: center" id="tabletaskojtcompeted">Completed Hours</th>
+                        <th data-priority="4" style="text-align: center" id="tabletaskojttogo">Hours To Go</th> 
+                        <th data-priority="4" style="text-align: center" id="tabledoneclass">% Done</th>   
+                        </tr>
+                    </thead>
+                <tbody id="body-taskojt">
+                     
+                </tbody>
+            </table>
+       
+    </div>
+</div>
+<div data-role="popup" id="popupdetailclass" data-history="false" data-overlay-theme="b" data-theme="b" data-dismissible="true" style="max-width:700px; min-width:500px;">
+        <div data-role="header" data-theme="a">
+        <h1 id="hoclasstext">
+        Detailed Summary for</h1>
+        </div>
+        <div role="main" class="ui-content">
+                <table data-role="table" data-filter="false" id="table-classdetail"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  			data-column-popup-theme="a">
+                        <thead id="headclassdetail">
+                          <tr class="ui-bar-a">
+                            <th data-priority="1" style="text-align: center" id="taskxclass">Task</th>
+                            <th data-priority="3" style="text-align: center" id="tablexclasscompleted">Completed Hours</th>  
+                          </tr>
+                        </thead>
+                        <tbody id="body-classdetail">
+                         
+                        </tbody>
+                       </table>
+              </div>
+    </div>
 	<div data-role="footer" data-position="fixed">
         <div data-role="navbar">
 	            <ul>
@@ -2071,6 +2260,140 @@
 
 <!--Page Library-->
 
+<!--Page Certifications-->
+<div data-role="page" id="pageCert" class="normal">
+        <div data-role="header" data-position="fixed" data-theme="b">
+                <h1><label id="hcertifications"><b>Certifications</b></label>
+                    <label id="hcertificationsusername">Marco Velarde</label>
+                    <label id="hcertificationsdate">September 10, 2017</label>
+                 </h1>
+                 <a href="javascript:navbyapp('menu');" data-icon="home"  data-iconpos="notext" >Menu</a>
+                 <a href="javascript:opensynccert();" data-icon="recycle" data-iconpos="notext">Sync</a>
+        </div>
+        <div data-role="content" class="ui-body ui-body-a">
+             <form>  
+                <input type="hidden" value="0" id="idhcert" >
+                <input type="hidden" value="0" id="fechacert" >
+                <input type="hidden" value="0" id="fechaday" >
+                <input type="hidden" value="0" id="fechamonth" >
+                <input type="hidden" value="0" id="fechayear" >
+                <input type="hidden" value="0" id="idselect" >
+                <input type="hidden" value="0" id="expcertype" >
+                <br>
+                <br>
+                    <div class="ui-grid-a">
+                            <div class="ui-block-a" style="width:28%;"><h2 style="vertical-align:bottom; text-align:right;">Select User:&nbsp;&nbsp;</h2></div>
+                            <div class="ui-block-b" style="width:65%"><select name="select_usercertifications" id="select_usercertifications" onChange='filltablecertifications()'>
+                            
+                            </select></div>
+                    </div><!-- /grid-a -->
+                    <input id="filterTable-certifications" data-type="search">
+                    <div class="ui-grid-solo halfwidth">
+                  
+                       <table data-role="table" data-filter="false" id="table-Certifications" data-input="#filterTable-certifications"  class="ui-body-a ui-shadow table-stripe ui-responsive" data-column-btn-theme="b"  data-column-popup-theme="a">
+                              <thead id="tcertifications">
+                                   <tr class="ui-bar-a">
+                                      <th data-priority="1" style="text-align: center">Description</th>
+                                      <th data-priority="2" style="text-align: center">Date Completed</th>
+                                      <th data-priority="3" style="text-align: center">Expires</th>
+                                   </tr>
+                              </thead>
+                              <tbody id="body-certifications">
+                    
+                              </tbody>
+                      </table>
+                  </div>
+                  <div class="ui-grid-solo halfwidth">
+                      <br>
+                      <br>
+                      <br>
+                        <h3 style=" margin: 0 auto; text-align:center;" id="hinfocerts"></h3>
+                    <table data-role="table" id="table-scert" data-mode="reflow" style="background-color:#fff2cc;">
+                        <thead>
+                          <tr>
+                            <th>Title:</th>
+                            <th>Description:</th>
+                            <th>Supervisor:</th>
+                            <th>Date Completed:</th>
+                            <th>Expires:</th>
+                          </tr>
+                        </thead>
+                        <tbody id="bodyscert">
+                          
+                          </tbody>
+                      </table>
+                      <div class="ui-grid-solo" style="margin:20px;" id="supervisorbutton">
+                            
+                            </div>
+                  </div>
+    
+        </div>
+        <div data-role="popup" id="popuphoracert" data-history="false" data-overlay-theme="b" data-theme="b" data-dismissible="true" style="max-width:700px; min-width:500px;">
+                <div data-role="header" data-theme="a">
+                <h1>
+                Add Certification</h1>
+                </div>
+                <div role="main" class="ui-content">
+                        <input type="date" name="entrycertndate" id="entrycertndate" value="">
+                    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+                    <a href="javascript:Clearcertnewdate();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Clear</a>
+                    <a href="javascript:Entercertnewdate();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-transition="flow">Enter</a>        
+                </div>
+            </div>
+        <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                        <ul>
+                <li><a href="javascript:navbyapp('menu');" class="ui-btn-c" data-icon="back" data-iconpos="left">Back</a></li></ul>
+                </div>   
+        </div>
+    </div>
+
+   <!--Page Certifications--> 
+
+    <!--Page Audits--> 
+
+   <div data-role="page" id="pageAudits" class="normal">
+        <div data-role="header" data-position="fixed" data-theme="b">
+                <h1>
+                    <img src="img/graphs/Logo_Small.png" style="height: 2em" />
+                    <label>Audits</label> 
+                </h1>
+        </div>
+        <div data-role="content">
+    
+        </div>
+        <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                        <ul>
+                <li><a href="javascript:navbyapp('menu');" class="ui-btn-c" data-icon="back" data-iconpos="left">Back</a></li></ul>
+                </div>   
+        </div>
+    </div>
+
+   <!--Page Audits--> 
+
+       <!--Page Inspections--> 
+
+    <div data-role="page" id="pageInspections" class="normal">
+            <div data-role="header" data-position="fixed" data-theme="b">
+                    <h1>
+                        <img src="img/graphs/Logo_Small.png" style="height: 2em" />
+                        <label>Inspections</label> 
+                    </h1>
+            </div>
+            <div data-role="content">
+           
+            </div>
+            <div data-role="footer" data-position="fixed">
+                    <div data-role="navbar">
+                            <ul>
+                    <li><a href="javascript:navbyapp('menu');" class="ui-btn-c" data-icon="back" data-iconpos="left">Back</a></li></ul>
+                    </div>   
+            </div>
+        </div>
+    
+       <!--Page Inspections--> 
+
 <!--Page Messages Launch-->
 
 <div data-role="page" id="pageMessages" class="normal">
@@ -2171,17 +2494,7 @@
     </div><!-- /panel -->
 </div>
 
-<!--Page Message Launch-->
-
-
-
-
-
-
-
-
-
-          
+<!--Page Message Launch-->        
         <script type="text/javascript" src="cordova.js"></script>
 		<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="js/jquery.mobile-1.4.3.min.js"></script>
@@ -2191,6 +2504,7 @@
         <script type="text/javascript" src="js/newfunc.js"></script>
         <script type="text/javascript" src="js/messages.js"></script>
         <script type="text/javascript" src="js/library.js"></script>
+        <script type="text/javascript" src="js/certifications.js"></script>
         <script type="text/javascript" src="js/xdate.js"></script>
   		<script type="text/javascript" src="js/xdate.i18n.js"></script>
 		<script type="text/javascript" src="js/mobipick.js"></script>

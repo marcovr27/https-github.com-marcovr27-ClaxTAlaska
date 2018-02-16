@@ -95,6 +95,122 @@ function QuerytocheckifdbSuccess(tx,results,typeofsync)
 	}
 	
 }
+function GetserviceCertifications()
+{
+	var ipserver=$("#ipsync").val();
+	var obj = {};
+
+	$("#progressheader").html(" ");
+	//progressheader
+	$("#progressheader").html("Downloading data...");
+		$("#progressMessage").html("Post To GetCertificationsData");
+		pbar.setValue(0);
+		//alert("listo para el post: "+ipserver+'//GetStructureData');
+	                $.ajax({
+                    type: 'POST',
+                    //url: 'http://dc4life78-001-site6.dtempurl.com/ServiceFt.asmx//GetStructureData',
+				    url:ipserver+'//GetCertificationsData',
+					data: JSON.stringify(obj),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (response) {
+						InsertDatabaseCerts(response.d);
+                    },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+							$("#progressheader").html("Can not connect to server");
+							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
+					IsSyncMessages=false;		
+					setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 10000 );
+                    console.log(xmlHttpRequest.responseXML);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                   // alert("Error");
+                }
+                });
+	
+	
+}
+
+function InsertDatabaseCerts(newdatabase)
+{
+
+	$("#progressMessage").html("Successful connection");
+		pbar.setValue(1);
+		newcertsdatatoinsert=newdatabase;
+		var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      	db.transaction(QuerytoinsertCerts, errorCB);
+	
+}
+
+function QuerytoinsertCerts(tx)
+{
+	//alert("deleteoldrecords");
+	//alert("Insert new data GetMessages");
+	$("#progressMessage").html("Deleting old records");
+		pbar.setValue(2);
+		//alert("Deleting "+idusera);
+		tx.executeSql("DELETE FROM CERTIFICATIONS");
+		tx.executeSql("DELETE FROM USERS2CERTS");
+
+
+	$("#progressMessage").html("Ready to insert new records");
+	var query;
+	var obj = jQuery.parseJSON(newcertsdatatoinsert.Certifications);
+	//alert("Items "+obj.length);
+	var itemcount=0;
+	 try
+	 {
+    $.each(obj, function (key, value) {
+		query='INSERT INTO CERTIFICATIONS (ID,Title,Desc,Type,ReqAllUsers,Expires,Months,Years,Days) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.Title)+'", "'+escapeDoubleQuotes(value.Desc)+'", "'+escapeDoubleQuotes(value.Type)+'", "'+value.ReqAllUsers+'", "'+escapeDoubleQuotes(value.Expires)+'", "'+value.Months+'", "'+value.Years+'","'+value.Days+'")';
+		//alert(query);
+		tx.executeSql(query);
+		itemcount++;
+     });
+	 //alert("Certifications: "+itemcount);
+	 
+	 	$("#progressMessage").html("Certifications updated");
+	pbar.setValue(10);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating Certifications "+error);
+			pbar.setValue(30);
+		 
+	 }
+	 itemcount=0;
+	 obj=jQuery.parseJSON(newcertsdatatoinsert.Users2Certs);
+	 try
+	 {
+    $.each(obj, function (key, value) {
+		query='INSERT INTO USERS2CERTS (FTID,UserID,ID,Date,Expiration,AlertSent,CertFile,AssesorID,PrintID) VALUES ("'+"ft"+itemcount+'","'+escapeDoubleQuotes(value.UserID)+'", "'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.Date)+'", "'+escapeDoubleQuotes(value.Expiration)+'", "'+value.AlertSent+'", "'+value.CertFile+'", "'+value.AssesorID+'","'+value.PrintID+'")';
+		tx.executeSql(query);
+		itemcount++;
+     });
+	 //("USERS2CERTS: "+itemcount);
+	 
+	 	$("#progressMessage").html("USERS2CERTS updated");
+	pbar.setValue(10);
+	 }
+	 catch(error)
+	 {
+		 alert(error);
+		 $("#progressMessage").html("Error updating USERS2CERTS "+error);
+			pbar.setValue(30);
+		 
+	 }
+	 
+	
+		 
+	 $("#progressMessage").html("Certifications updated");
+		pbar.setValue(100);
+
+	$("#progressMessage").html("");
+		pbar.setValue(100);
+		Getservicedata();		
+		
+  //sendprocedures();	
+}
 //GET DATA FROM SERVER
 function GetservicedataMessages(typesinc)
 {
@@ -139,7 +255,8 @@ function GetservicedataMessages(typesinc)
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
 							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
-							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 10000 );
+					IsSyncMessages=false;		
+					setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 10000 );
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -217,7 +334,7 @@ function QuerytoinsertMessages(tx)
 	$("#progressMessage").html("");
 		pbar.setValue(100);
 
-	  Getservicedata();		
+	    GetserviceCertifications();		
 
 		
 
@@ -273,7 +390,8 @@ function GetservicedataSubmitHours(typesinc)
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
 							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
-							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+					IsSyncMessages=false;		
+					setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -398,7 +516,8 @@ $("#progressheader").html(" ");
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
 							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
-							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+					IsSyncMessages=false;		
+					setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -499,7 +618,8 @@ $("#progressheader").html(" ");
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
 							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
-							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+					IsSyncMessages=false;		
+					setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -668,7 +788,8 @@ $("#progressheader").html(" ");
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 							$("#progressheader").html("Can not connect to server");
 							$("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
-							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
+					IsSyncMessages=false;		
+				    setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -698,6 +819,8 @@ function QuerytoinsertTasks(tx)
 	tx.executeSql("DELETE FROM ITEMS");
 	tx.executeSql("DELETE FROM LEVELS2ITEMS");
 	tx.executeSql("DELETE FROM DUTIES2TASKS");
+	tx.executeSql("DELETE FROM TASKS");
+	tx.executeSql("DELETE FROM LEVELS");
 	//ready to insert new records
 	//alert("Insert new data GetTaskData");
 	$("#progressMessage").html("Ready to insert new records");
@@ -709,7 +832,7 @@ function QuerytoinsertTasks(tx)
 	 {
     $.each(obj, function (key, value) {
 		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
-		query='INSERT INTO ITEMS (ID,Item,CourseID) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.Item)+'","'+escapeDoubleQuotes(value.CourseID)+'")';
+		query='INSERT INTO ITEMS (ID,Item,Location,RTISup,CourseID) VALUES ("'+escapeDoubleQuotes(value.ID)+'", "'+escapeDoubleQuotes(value.Item)+'","'+escapeDoubleQuotes(value.Location)+'","'+escapeDoubleQuotes(value.RTISup)+'","'+escapeDoubleQuotes(value.CourseID)+'")';
 		tx.executeSql(query);
 		itemcount++;
      });
@@ -731,7 +854,7 @@ function QuerytoinsertTasks(tx)
 		 	 obj=jQuery.parseJSON(newtasksdatatoinsert.Levels2Items);
 			 //alert("Groups:"+obj.length);
 	     $.each(obj, function (key, value) {
-		query='INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES ("'+value.LevelNum+'","'+escapeDoubleQuotes(value.ID)+'")';
+		query='INSERT INTO LEVELS2ITEMS (LevelNum,ID,Location) VALUES ("'+value.LevelNum+'","'+escapeDoubleQuotes(value.ID)+'","'+escapeDoubleQuotes(value.Location)+'")';
 		tx.executeSql(query);
 		 $("#progressMessage").html("Levels2Items updated");
 	pbar.setValue(20);
@@ -744,6 +867,27 @@ function QuerytoinsertTasks(tx)
 			pbar.setValue(20);
 		 
 	 }
+
+	 try
+	 {
+	  obj=jQuery.parseJSON(newtasksdatatoinsert.Duties);
+	     $.each(obj, function (key, value) {
+		
+		query='INSERT INTO DUTIES (Duty,Location) VALUES ("'+escapeDoubleQuotes(value.Duty)+'","'+escapeDoubleQuotes(value.Location)+'")';
+		//alert(query);
+		tx.executeSql(query);
+     });
+	 
+	$("#progressMessage").html("Duties updated");
+	pbar.setValue(60);
+	 }
+	 	 catch(error)
+	 {
+		 
+		  $("#progressMessage").html("Error updating Duties "+error);
+			pbar.setValue(60);
+		 
+	 }
 	   
 	  
 	  try
@@ -752,7 +896,7 @@ function QuerytoinsertTasks(tx)
 	  	 //alert("Duties2Tasks:"+obj.length);
 	     $.each(obj, function (key, value) {
 		
-		query='INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES ("'+escapeDoubleQuotes(value.Duty)+'","'+escapeDoubleQuotes(value.TaskID)+'","'+value.OrdNum+'")';
+		query='INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum,Location) VALUES ("'+escapeDoubleQuotes(value.Duty)+'","'+escapeDoubleQuotes(value.TaskID)+'","'+value.OrdNum+'","'+escapeDoubleQuotes(value.Location)+'")';
 		//alert(query);
 		tx.executeSql(query);
      });
@@ -774,7 +918,7 @@ function QuerytoinsertTasks(tx)
 	  	 //alert("Duties2Tasks:"+obj.length);
 	     $.each(obj, function (key, value) {
 		
-		query='INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES ("'+escapeDoubleQuotes(value.ID)+'","'+escapeDoubleQuotes(value.Name)+'","'+value.ReqHrsOJT+'")';
+		query='INSERT INTO TASKS (ID,Name,ReqHrsOJT,Location) VALUES ("'+escapeDoubleQuotes(value.ID)+'","'+escapeDoubleQuotes(value.Name)+'","'+value.ReqHrsOJT+'","'+escapeDoubleQuotes(value.Location)+'")';
 		//alert(query);
 		tx.executeSql(query);
      });
@@ -796,7 +940,7 @@ function QuerytoinsertTasks(tx)
 	  	 //alert("Duties2Tasks:"+obj.length);
 	     $.each(obj, function (key, value) {
 		
-		query='INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("'+value.LevelNum+'","'+value.Months+'","'+value.ReqHrsRTI+'","'+value.ReqHrsOJT+'")';
+		query='INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT,Location) VALUES ("'+value.LevelNum+'","'+value.Months+'","'+value.ReqHrsRTI+'","'+value.ReqHrsOJT+'","'+escapeDoubleQuotes(value.Location)+'")';
 		//alert(query);
 		tx.executeSql(query);
      });
@@ -854,6 +998,7 @@ $("#progressheader").html(" ");
                        // $('#lblData').html(JSON.stringify());
                     },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
+				            IsSyncMessages=false;
 							$("#progressheader").html("Can not connect to server");
 							$("#progressMessage").html("ERROR Downloading Data:"+xmlHttpRequest.responseXML+" Status: "+textStatus+" thrown: "+errorThrown);
 							setTimeout( function(){ $("#generic-dialog").dialog("close"); }, 6000 );
@@ -907,7 +1052,7 @@ function Querytoinsertusers(tx)
 	 {
     $.each(obj, function (key, value) {
 		//alert('INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")');
-		query='INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'")';
+		query='INSERT INTO USERS (Username,Password,FirstName,LastName,LevelNum,LevelType,Location,AltLevel) VALUES ("'+value.Username+'", "'+value.Password+'","'+value.FirstName+'","'+value.LastName+'","'+value.LevelNum+'","'+value.LevelType+'","'+escapeDoubleQuotes(value.Location)+'","'+value.AltLevel+'")';
 		tx.executeSql(query);
 		usercount++;
      });
@@ -929,7 +1074,7 @@ function Querytoinsertusers(tx)
 		 	 obj=jQuery.parseJSON(newdatabasetoinsert.groups);
 			 //alert("Groups:"+obj.length);
 	     $.each(obj, function (key, value) {
-		query='INSERT INTO GROUPS (AreaID,GroupID,Description) VALUES ("'+value.AreaID+'","'+value.GroupID+'","'+escapeDoubleQuotes(value.Description)+'")';
+		query='INSERT INTO GROUPS (AreaID,GroupID,Description,Location) VALUES ("'+value.AreaID+'","'+value.GroupID+'","'+escapeDoubleQuotes(value.Description)+'","'+escapeDoubleQuotes(value.Location)+'")';
 		tx.executeSql(query);
 		 $("#progressMessage").html("Groups updated");
 	pbar.setValue(20);
@@ -1246,6 +1391,7 @@ function Querytoinsertusers(tx)
 	
 	$("#progressMessage").html("Updated device database");
 		$("#progressheader").html("Sync completed");
+		IsSyncMessages=false;
 	$("#progressMessage").html("");
 		pbar.setValue(100);
 		if(tt==0)
@@ -1298,6 +1444,7 @@ function sendprocedures()
 {
 	
 	    showUpModal();
+		IsSyncMessages=true;
 	 	$("#progressheader").html("Collecting data...");
 		$("#progressMessage").html("Preparing data to send");
 		pbar.setValue(0);
@@ -1474,6 +1621,46 @@ for (var i=0; i<results.rows.length; i++){
 sendsubmittedhours=array;
 	$("#progressMessage").html("Submitted Hours ready to send");
 		pbar.setValue(50);
+sendCertRows();
+
+	
+}
+
+function sendCertRows()
+{
+	//alert("submittedhours");
+	sendCertificationsarray="";
+	 var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+      db.transaction(QuerytosendCert, errorCB);
+	
+}
+
+function QuerytosendCert(tx)
+{
+	var querytosend="SELECT * FROM USERS2CERTS WHERE Sync='no'";
+	tx.executeSql(querytosend, [], QuerytosendCertSuccess, errorCB);
+}
+
+function QuerytosendCertSuccess(tx,results)
+{
+	
+	var len = results.rows.length;
+	//alert("SubmittedHours="+len);
+	var array = [];
+	
+	//alert(len);
+for (var i=0; i<results.rows.length; i++){
+ row = results.rows.item(i);
+ // alert(row.Title);
+ array.push(JSON.stringify(row));
+
+
+
+}
+
+sendCertificationsarray=array;
+	$("#progressMessage").html("Certifications ready to send");
+		pbar.setValue(50);
 sendDataToServer();
 
 	
@@ -1495,6 +1682,7 @@ function sendDataToServer()
  obj['submittedcustomvalues'] ="[]";
  obj['Messages'] =JSON.stringify(sendmessages); 
  obj['SubmittedHours'] =JSON.stringify(sendsubmittedhours); 
+ obj['CertificationsUpdate'] =JSON.stringify(sendCertificationsarray); 
  $("#progressMessage").html("Connecting to "+ipserver);
  //var kaka=obj['procedures'];
  //alert("enviar datos"+ipserver+'//SetDeviceDataarray');
@@ -1517,6 +1705,7 @@ function sendDataToServer()
                     error: function (xmlHttpRequest, textStatus, errorThrown) {
                     $("#progressMessage").html("Error sending data:" +xmlHttpRequest.responseXML+" Status: "+textStatus+"==>"+xmlHttpRequest.statusText+" thrown: "+errorThrown);
                     //setTimeout(function () { $("#generic-dialog").dialog("close"); }, 2000);
+					IsSyncMessages=false;
                     console.log(xmlHttpRequest.responseXML);
                     console.log(textStatus);
                     console.log(errorThrown);
@@ -1706,6 +1895,7 @@ function Querytoupdatelocal(tx)
 	tx.executeSql("UPDATE SUBMITTEDSTEPS SET sync='yes'");
 	tx.executeSql("UPDATE SUBMITTEDHOURS SET sync='yes'");
 	tx.executeSql("UPDATE MESSAGES SET sync='yes' WHERE SentFT='0'");
+	tx.executeSql("UPDATE USERS2CERTS SET sync='yes'");
 	//alert("All updated");
 }
 

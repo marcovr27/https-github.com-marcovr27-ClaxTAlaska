@@ -6,8 +6,11 @@ var newgroupsdatatoinsert;
 var newcoursesdatatoinsert;
 var newhoursdatatoinsert;
 var newmessagesdatatoinsert;
+var newcertsdatatoinsert;
 var newlibrarydatatoinsert;
 var newfilesdatatoinsert;
+var sendCertificationsarray;
+var sendAloneCertifications;
 var sendproceduresarray; //Sync Variables
 var sendstepsarray; //Sync Variables
 var sendchecklistarray;//Sync Variables
@@ -225,14 +228,15 @@ $(document).on('pagecontainertransition', function(event, ui) {
 	//alert("p portrait");
 	$("#one").height(contenttabs);
 	$("#two").height(contenttabs);
-	$("#three").height(contenttabs);
+	//$("#three").height(contenttabs);
+	//$("#four").height(content);
 	}
 	else
 	{
 	$("#one").height(content);
 	$("#two").height(content);
-	$("#three").height(content);
-		
+	//$("#three").height(content);
+	//$("#four").height(content);	
 	}
 	$("#readcontent").height(contentmessage);
 	$("#formreadcontent").height(formcontentmessage);
@@ -258,14 +262,15 @@ $(window).bind( 'resize', function(e){
 	//alert("p portrait");
 	$("#one").height(contenttabs);
 	$("#two").height(contenttabs);
-	$("#three").height(contenttabs);
+	//$("#three").height(contenttabs);
+	//$("#four").height(content);
 	}
 	else
 	{
 	$("#one").height(content);
 	$("#two").height(content);
-	$("#three").height(content);
-		
+	//$("#three").height(content);
+	//$("#four").height(content);	
 	}
 	$("#readcontent").height(contentmessage);
 	$("#formreadcontent").height(formcontentmessage);
@@ -312,13 +317,15 @@ $(window).bind( 'orientationchange', function(e){
 	//alert("p portrait");
 	$("#one").height(contenttabs);
 	$("#two").height(contenttabs);
-	$("#three").height(contenttabs);
+	//$("#three").height(contenttabs);
+	//$("#four").height(content);
 	}
 	else
 	{
 	$("#one").height(content);
 	$("#two").height(content);
-	$("#three").height(content);
+	//$("#three").height(content);
+	//$("#four").height(content);
 		
 	}
 	$("#readcontent").height(contentmessage);
@@ -347,7 +354,7 @@ $(window).bind( 'orientationchange', function(e){
 		//alert("p portrait");
 		//$('#logincontent').empty();
 		//$('#logincontent').append('<div class="ui-grid-a"></div><div class="ui-grid-b"><form id="loginForm" style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div data-role="fieldcontain" class="ui-hide-label"><label for="username">Username:</label><input type="text" name="username" id="username" value="" placeholder="Username" /></div><div data-role="fieldcontain" class="ui-hide-label"><label for="password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" /></div><input type="button" class="ui-btn-b"  value="Login" id="LoginButton" onClick="LoginUser()"></form></div>').trigger('create');
-				$('#menucontentd').append('<form  style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></div></form>').trigger('create');
+				$('#menucontentd').append('<form  style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch"id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageAudits" id="mbtnaudit" class="ui-btn ui-shadow ui-corner-all"><img src="img/Audits.png" height="36" width="36"/><br>Audits</a></div><div class="ui-block-b"><a href="#pageInspections" id="mbtninspection" class="ui-btn ui-shadow ui-corner-all"><img src="img/Inspections.png" height="36" width="36"/><br>WP Inspections</a></div><div class="ui-block-c"><a href="#pageCert" id="mbtndatacertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certificationstwo.png" height="36" width="36"/><br>Certifications</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages ('+messagesNum+')</div><div class="ui-block-b"><a href="javascript:navbyapp('+"'checklist'"+');" id="mbtnchecklists" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Checklists</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></div></form>').trigger('create');
         //Do whatever in portrait mode
 
     } else {
@@ -356,7 +363,7 @@ $(window).bind( 'orientationchange', function(e){
 		//$('#logincontent').empty();
 		//$('#logincontent').append(' <div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form id="loginForm" style="width:70%; margin-left:20%; margin-top:32%;"><div data-role="fieldcontain" class="ui-hide-label"><label for="username">Username:</label><input type="text" name="username" id="username" value="" placeholder="Username" /></div><div data-role="fieldcontain" class="ui-hide-label"><label for="password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" /></div><input type="button" class="ui-btn-b"  value="Login" id="LoginButton" onClick="LoginUser()"></form></div></div>').trigger('create');
 					$('#menucontentd').empty();
-			$('#menucontentd').append('<div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form  style="width:70%; margin-left:20%; margin-top:32%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form></div>').trigger('create');
+			$('#menucontentd').append('<div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form  style="width:70%; margin-left:20%; margin-top:32%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageAudits" id="mbtnaudit" class="ui-btn ui-shadow ui-corner-all"><img src="img/Audits.png" height="36" width="36"/><br>Audits</a></div><div class="ui-block-b"><a href="#pageInspections" id="mbtninspection" class="ui-btn ui-shadow ui-corner-all"><img src="img/Inspections.png" height="36" width="36"/><br>WP Inspections</a></div><div class="ui-block-c"><a href="#pageCert"  id="mbtndatacertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certificationstwo.png" height="36" width="36"/><br>Certifications</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages ('+messagesNum+')</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'checklist'"+');" id="mbtnchecklists" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Checklists</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form></div>').trigger('create');
 		
 		//$('#menucontentd').empty();
 		//$('#menucontentd').append('LANDSCAPE').trigger('create');
@@ -541,6 +548,30 @@ function QuerymessagesyncSuccess(tx,results)
 	{
 		$("#hs").val("no");
 	}
+	certsync();
+	
+}
+
+function certsync()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(Querycertsync, errorCB);
+}
+
+function Querycertsync(tx)
+{
+	
+	var query='SELECT * FROM USERS2CERTS WHERE Sync="no"';
+	tx.executeSql(query, [], QuerycertsyncSuccess, errorCB);
+}
+
+function QuerycertsyncSuccess(tx,results)
+{
+	var len = results.rows.length;
+	if(len>0)
+	{
+		$("#hs").val("no");
+	}
 	SyncStatus();
 	
 }
@@ -706,7 +737,18 @@ function QuerywritehtmltSuccess(tx,results,language)
 		//Table Settings
 		 //
 		 //alert("checadb");
-		
+		 //New Tables febraury 2017
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS CERTIFICATIONS (ID,Title,Desc,Type,ReqAllUsers,Expires,Months,Years,Days)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS USERS2CERTS (FTID,UserID,ID,Date,Expiration,AlertSent,CertFile,AssesorID,PrintID,Sync)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS AUDITS (AuditID,StepID,Text,SubPart)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS AUDITMEDIA (SubmitID,StepID,FileName,FileSize,Path)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS AUDITSUBPARTS (Name)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS GROUPS2AUDITS (GroupID,ID,Ord)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS SUBMITTEDAUDITS (SubmitID,AuditID,StepID,Comments,Status,NumFiles)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS GROUPS2LOCATIONS (ID,Location)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS DUTIES (Duty,Location)');
+		 //alert("pasaron todas");
+		 //End New Tables
 		 tx.executeSql('CREATE TABLE IF NOT EXISTS UserSettings (UserID,ClientName,DateFormat,InterfaceLang,ShowCertAlerts,TabletLang)');
 		 tx.executeSql('CREATE TABLE IF NOT EXISTS REJECTED (SubmitID,ProcID,Name,UserID,Status,SubmitDate,RejectReason)');
 		 tx.executeSql('CREATE TABLE IF NOT EXISTS STEPS2COMPS (StepID,CompID)');
@@ -752,7 +794,7 @@ function QuerywritehtmltSuccess(tx,results,language)
         // tx.executeSql('DROP TABLE IF EXISTS USERS');
 		
 		
-         tx.executeSql('CREATE TABLE IF NOT EXISTS USERS (Username unique,Password,FirstName,LastName,LevelNum)');
+         tx.executeSql('CREATE TABLE IF NOT EXISTS USERS (Username unique,Password,FirstName,LastName,LevelNum,LevelType,AltLevel,CertDate,Location)');
 		 
 //         tx.executeSql('INSERT INTO USERS (Username,Password,FirstName,LastName) VALUES ("dclaxton", "pai","Darien","Claxton")');
 //		 tx.executeSql('INSERT INTO USERS (Username,Password,FirstName,LastName) VALUES ("mpoarch", "pai","Mark","Poarch")');
@@ -769,7 +811,7 @@ function QuerywritehtmltSuccess(tx,results,language)
 		 //Table Groups
 		 //
 		 
-		 tx.executeSql('CREATE TABLE IF NOT EXISTS GROUPS (AreaID,GroupID,Description)');
+		 tx.executeSql('CREATE TABLE IF NOT EXISTS GROUPS (AreaID,GroupID,Description,Location)');
 //		 tx.executeSql('INSERT INTO GROUPS (AreaID,GroupID,Description) VALUES ("01","01005","Grinding")');
 //		 tx.executeSql('INSERT INTO GROUPS (AreaID,GroupID,Description) VALUES ("01","01006","Crushing")');
 //		 tx.executeSql('INSERT INTO GROUPS (AreaID,GroupID,Description) VALUES ("01","01008","Tailings")');
@@ -1470,14 +1512,14 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS STEPS2RESPONSES (ID,OrdNum,Text)');
 //tx.executeSql('INSERT INTO STEPS2RESPONSES (ID,OrdNum,Text) VALUES ("MTC.013","4","4")');
 //tx.executeSql('INSERT INTO STEPS2RESPONSES (ID,OrdNum,Text) VALUES ("MTC.013","5","5 (Excellent)")');
 //Levels
-tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT)');
+tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT,Location)');
 //tx.executeSql('INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("1","6","72","1000")');
 //tx.executeSql('INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("2","6","72","1000")');
 //tx.executeSql('INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("3","12","144","2000")');
 //tx.executeSql('INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("4","12","144","2000")');
 //tx.executeSql('INSERT INTO LEVELS (LevelNum,ReqMonths,ReqHrsRTI,ReqHrsOJT) VALUES ("5","12","144","2000")');
 
-tx.executeSql('CREATE TABLE IF NOT EXISTS TASKS (ID,Name,ReqHrsOJT)');
+tx.executeSql('CREATE TABLE IF NOT EXISTS TASKS (ID,Name,ReqHrsOJT,Location)');
 //tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("A1- Complete new miner MSHA training","A1- Complete new miner MSHA training","30")');
 //tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("A2- Review SOP for specific task(s)","A2- Review SOP for specific task(s)","120")');
 //tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("A3- Complete Safety task training","A3- Complete Safety task training","250")');
@@ -1582,7 +1624,7 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS TASKS (ID,Name,ReqHrsOJT)');
 //tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("H9- Complete daily control room operator reports","H9- Complete daily control room operator reports","89")');
 //tx.executeSql('INSERT INTO TASKS (ID,Name,ReqHrsOJT) VALUES("F9- Manage dust suppression system","F9- Manage dust suppression system","61")');
 
-tx.executeSql('CREATE TABLE IF NOT EXISTS ITEMS (ID,Item,CourseID)');
+tx.executeSql('CREATE TABLE IF NOT EXISTS ITEMS (ID,Item,CourseID,Location,RTISup)');
 //tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00104-15 Introduction to Power Tools","00104-15 Introduction to Power Tools"," ")');
 //tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00105-15 Introduction to Construction Drawings","00105-15 Introduction to Construction Drawings"," ")');	
 //tx.executeSql('INSERT INTO ITEMS (ID,Item,CourseID) VALUES("00101-15 Basic Safety","00101-15 Basic Safety","401")');
@@ -1605,7 +1647,7 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS ITEMS (ID,Item,CourseID)');
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS2TASKS (LevelNum,ID)');
 
-tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS2ITEMS (LevelNum,ID)');
+tx.executeSql('CREATE TABLE IF NOT EXISTS LEVELS2ITEMS (LevelNum,ID,Location)');
 //tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("1","00101-15 Basic Safety")');
 //tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("1","00102-15 Introduction to Construction Math")');
 //tx.executeSql('INSERT INTO LEVELS2ITEMS (LevelNum,ID) VALUES("1","00103-15 Introduction to Hand Tools")');
@@ -1643,7 +1685,7 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS GROUP2SUPSRTI (GroupID,ID)');
 
 tx.executeSql('CREATE TABLE IF NOT EXISTS GROUPS2CONTENT(GroupID,ID,Ord)');
 
-tx.executeSql('CREATE TABLE IF NOT EXISTS  DUTIES2TASKS(Duty,TaskID,OrdNum REAL)');
+tx.executeSql('CREATE TABLE IF NOT EXISTS DUTIES2TASKS(Duty,TaskID,OrdNum REAL,Location)');
 //tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A1- Complete new miner MSHA training","1")');
 //tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A2- Review SOP for specific task(s)","2")');
 //tx.executeSql('INSERT INTO DUTIES2TASKS (Duty,TaskID,OrdNum) VALUES("A","A3- Complete Safety task training","4")');
@@ -1751,10 +1793,254 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS  DUTIES2TASKS(Duty,TaskID,OrdNum REAL)
 //temp
 tx.executeSql('CREATE TABLE IF NOT EXISTS TEMPRESPONSES (SubmitID,ProcID,StepID,Text,Num,Response,Comments,UserID,QNum)');
 
-
-
+AlterTablesNew();
 
  }
+
+ function AlterTablesNew()
+ {
+   // alert("new columns alter");
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(findColumnExistx, errorFunctionx, successFunctionx);
+ }
+
+ function findColumnExistx(tx) {
+	tx.executeSql("SELECT LevelType FROM USERS LIMIT 1", [], querySuccessx, queryFailuserstype);
+	tx.executeSql("SELECT AltLevel FROM USERS LIMIT 1", [], querySuccessx, queryFailusersaltlevel);
+	tx.executeSql("SELECT CertDate FROM USERS LIMIT 1", [], querySuccessx, queryFailuserscertdate);
+	tx.executeSql("SELECT Location FROM USERS LIMIT 1", [], querySuccessx, queryFailuserslocation);
+	tx.executeSql("SELECT Location FROM ITEMS LIMIT 1", [], querySuccessx, queryFailItems);
+	tx.executeSql("SELECT RTISup FROM ITEMS LIMIT 1", [], querySuccessx, queryFailItemsRti);
+	tx.executeSql("SELECT Location FROM LEVELS2ITEMS LIMIT 1", [], querySuccessx, queryFaill2items);
+	tx.executeSql("SELECT Location FROM GROUPS LIMIT 1", [], querySuccessx, queryFailGroups);
+	tx.executeSql("SELECT Location FROM LEVELS LIMIT 1", [], querySuccessx, queryFailLevels);
+	tx.executeSql("SELECT Location FROM TASKS LIMIT 1", [], querySuccessx, queryFailTasks);
+	tx.executeSql("SELECT Location FROM DUTIES2TASKS LIMIT 1", [], querySuccessx, queryFaild2tasks);
+
+}
+
+function querySuccessx(tx, results){
+	//alert("COLUMN EXISTS");
+	console.log(results.rows.item(0));      
+}
+function queryFailuserslocation(err){
+	console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("ERROR COLUMN"+err.message);
+	createuserslocation();
+   // IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function createuserslocation()
+{
+   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+   db.transaction(Adduserlocation, errorCB);
+}
+
+function Adduserlocation(tx)
+{
+   //alert("Creamos Columna USERS->Location");
+   tx.executeSql("alter table USERS add column Location");
+   //alert("ColumnaCreada USERS->Location");
+}
+function queryFailuserscertdate(err){
+	console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("ERROR COLUMN"+err.message);
+	createcertdate();
+   // IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function createcertdate()
+{
+   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+   db.transaction(Addcertdate, errorCB);
+}
+
+function Addcertdate(tx)
+{
+   //alert("Creamos Columna Users->CertDate");
+   tx.executeSql("alter table USERS  add column CertDate");
+  // alert("ColumnaCreada Users->CertDate");
+}
+function queryFailusersaltlevel(err){
+	console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("ERROR COLUMN"+err.message);
+	createusersaltlevel();
+   // IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function createusersaltlevel()
+{
+   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+   db.transaction(AddColusersaltlevel, errorCB);
+}
+
+function AddColusersaltlevel(tx)
+{
+   //alert("Creamos Columna USERS->AltLevel");
+   tx.executeSql("alter table USERS  add column AltLevel");
+  //alert("ColumnaCreada USERS->AltLevel");
+}
+function queryFailuserstype(err){
+	console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("ERROR COLUMN"+err.message);
+	createuserstype();
+   // IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function createuserstype()
+{
+   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+   db.transaction(AddColuserstype, errorCB);
+}
+
+function AddColuserstype(tx)
+{
+   //alert("Creamos Columna USERS -> LevelType");
+   tx.executeSql("alter table USERS  add column LevelType");
+   //alert("ColumnaCreada LEVELS2ITEMS->Location");
+}
+function queryFaill2items(err){
+	console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("ERROR COLUMN"+err.message);
+	createl2itemslocation();
+   // IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function createl2itemslocation()
+{
+   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+   db.transaction(AddColl2itemslocation, errorCB);
+}
+
+function AddColl2itemslocation(tx)
+{
+   //alert("Creamos Columna LEVELS2ITEMS->Location");
+   tx.executeSql("alter table LEVELS2ITEMS  add column Location");
+   //alert("ColumnaCreada LEVELS2ITEMS->Location");
+}
+function queryFailItemsRti(err){
+	console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("ERROR COLUMN"+err.message);
+	createitemsRti();
+   // IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function createitemsRti()
+{
+   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+   db.transaction(AddColitemsrti, errorCB);
+}
+
+function AddColitemsrti(tx)
+{
+  // alert("Creamos Columna ITEMS->RTISup");
+   tx.executeSql("alter table ITEMS  add column RTISup");
+  //alert("ColumnaCreada ITEMS->RTISup");
+}
+function queryFailItems(err){
+	console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("ERROR COLUMN"+err.message);
+	createitemsLocation();
+   // IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function createitemsLocation()
+{
+   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+   db.transaction(AddColitemsLocation, errorCB);
+}
+
+function AddColitemsLocation(tx)
+{
+   //alert("Creamos Columna ITEMS->Location");
+   tx.executeSql("alter table ITEMS  add column Location");
+   //alert("ColumnaCreada ITEMS->Location");
+}
+function queryFaild2tasks(err){
+	console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("ERROR COLUMN"+err.message);
+	created2tasksLocation();
+   // IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function created2tasksLocation()
+{
+   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+   db.transaction(AddCol2tasksLocation, errorCB);
+}
+
+function AddCol2tasksLocation(tx)
+{
+  // alert("Creamos Columna DUTIES2TASKS->Location");
+   tx.executeSql("alter table DUTIES2TASKS add column Location");
+  // alert("ColumnaCreada DUTIES2TASKS->Location");
+}
+function queryFailTasks(err){
+	console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("ERROR COLUMN"+err.message);
+	createTasksLocation();
+   // IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function createTasksLocation()
+{
+   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+   db.transaction(AddColTasksLocation, errorCB);
+}
+
+function AddColTasksLocation(tx)
+{
+   //alert("Creamos Columna TASKS->Location");
+   tx.executeSql("alter table TASKS add column Location");
+   //alert("ColumnaCreada TASKS->Location");
+}
+function queryFailLevels(err){
+	console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("ERROR COLUMN"+err.message);
+	createLevelsLocation();
+   // IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function createLevelsLocation()
+{
+   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+   db.transaction(AddColLevelsLocation, errorCB);
+}
+
+function AddColLevelsLocation(tx)
+{
+  // alert("Creamos Columna LEVELS->Location");
+   tx.executeSql("alter table LEVELS add column Location");
+  // alert("ColumnaCreada LEVELS->Location");
+}
+function queryFailGroups(err){
+	 console.log("Query Failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	 //alert("ERROR COLUMN"+err.message);
+	 createGroupsLocation();
+	// IF queryFail reached column not found so again use executeSql() function for add new column
+}  
+
+function createGroupsLocation()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(AddColGroupsLocation, errorCB);
+}
+
+function AddColGroupsLocation(tx)
+{
+	//alert("Creamos Columna GROUPS->Location");
+	tx.executeSql("alter table GROUPS add column Location");
+	//alert("ColumnaCreada");
+}
+
+ function errorFunctionx(err) {
+	console.log("Transaction failure => errorcb-->error msg "+err.message+" error code "+err.code);
+	//alert("Transaction failure => errorcb-->error msg "+err.message+" error code "+err.code);
+}
+function successFunctionx() {
+	consol.log("success!");
+}
+
  
  // Transaction success callback
     //
@@ -1763,12 +2049,18 @@ tx.executeSql('CREATE TABLE IF NOT EXISTS TEMPRESPONSES (SubmitID,ProcID,StepID,
     }
 	 // Transaction error callback
 	function errorCBIN(tx, err) {
-      // alert("Error processing SQL:: "+err);
+       //alert("Error processing SQL:: "+err);
 	   //alert("DB Error: "+err.message + "\nCode="+err.code);
     }
 		function errorCBlan(tx, err) {
        //alert(err.code)
-    }
+	}
+	
+	function errorUserLogin(tx, err)
+	{
+	   alert("DB Error: "+err.message + "\nCode="+err.code);
+
+	}
 	
 	//Export Database 
 
@@ -1824,7 +2116,7 @@ $(function(){
     function errorCB(err) {
 		 // alert("DB Error: "+err.message + "\nCode="+err.code);
 		 //alert(tt);
-        //alert("Error processing SQL:: "+err.code+ "::" + err.message);
+       // alert("Error processing SQL:: "+err.code+ "::" + err.message);
     }
 	    function errorCBeval(err) {
 		  alert("DB Error: "+err.message + "\nCode="+err.code);
@@ -2010,6 +2302,11 @@ function navbyapp(namewindow)
         showLoadMsg: true
     });
 	}	
+	else if (namewindow=="certifications")
+	{
+		alert("Certifications");
+
+	}
 }
 
 function GetVersionProgram()
@@ -2108,7 +2405,9 @@ translatehtml();
 $(document).on( 'pagebeforeshow', '#pageMenu',function(){
 		//clearInterval(IntervalMessagesP);
 	//IntervalMessagesP="";
+	$("#idsupervisorname").val("0");
 	inPageMes=0;
+	IsSyncMessages=false;
 	verifyrejected();
 	var rejbtn="";
 	var textprocedure=$("#btpro").val();
@@ -2125,7 +2424,7 @@ $(document).on( 'pagebeforeshow', '#pageMenu',function(){
     //alert("Portrffgait!");
 
 			$('#menucontentd').empty();
-				$('#menucontentd').append('<form  style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages ('+messagesNum+')</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></div></form>').trigger('create');
+				$('#menucontentd').append('<form  style="margin-left:10%;  margin-right:10%; margin-top:85%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch"id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageAudits" id="mbtnaudit" class="ui-btn ui-shadow ui-corner-all"><img src="img/Audits.png" height="36" width="36"/><br>Audits</a></div><div class="ui-block-b"><a href="#pageInspections" id="mbtninspection" class="ui-btn ui-shadow ui-corner-all"><img src="img/Inspections.png" height="36" width="36"/><br>WP Inspections</a></div><div class="ui-block-c"><a href="#pageCert"  id="mbtndatacertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certificationstwo.png" height="36" width="36"/><br>Certifications</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages ('+messagesNum+')</div><div class="ui-block-b"><a href="javascript:navbyapp('+"'checklist'"+');" id="mbtnchecklists" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Checklists</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></div></form>').trigger('create');
 	//$('#menucontentd').empty();
 	//$('#menucontentd').append('Portrait').trigger('create');	
 }
@@ -2133,7 +2432,7 @@ else
 {
 	// alert("Landscdfdapet!");
 		$('#menucontentd').empty();
-		$('#menucontentd').append('<div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form  style="width:70%; margin-left:20%; margin-top:32%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages ('+messagesNum+')</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'certifications'"+');" id="mbtncertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Certifications</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form></div>').trigger('create');
+		$('#menucontentd').append('<div class="ui-grid-a"><div class="ui-block-a"></div><div class="ui-block-b"><form  style="width:70%; margin-left:20%; margin-top:32%;"><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageLogbook" id="mbtnlogbook" class="ui-btn ui-shadow ui-corner-all"><img src="img/logbook.png" height="36" width="36"/><br>Logbook</a></div><div class="ui-block-b"><a href="#pageProcedureLaunch" id="mbtnprocedures" class="ui-btn ui-shadow ui-corner-all"><img src="img/procedures.png" height="36" width="36"/><br>Procedures</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'library'"+');" id="mbtnlibrary" class="ui-btn ui-shadow ui-corner-all"><img src="img/library.png" height="36" width="36"/><br>Library</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="#pageAudits" id="mbtnaudit" class="ui-btn ui-shadow ui-corner-all"><img src="img/Audits.png" height="36" width="36"/><br>Audits</a></div><div class="ui-block-b"><a href="#pageInspections" id="mbtninspection" class="ui-btn ui-shadow ui-corner-all"><img src="img/Inspections.png" height="36" width="36"/><br>WP Inspections</a></div><div class="ui-block-c"><a href="#pageCert"  id="mbtndatacertifications" class="ui-btn ui-shadow ui-corner-all"><img src="img/certificationstwo.png" height="36" width="36"/><br>Certifications</a></div></div><div class="ui-grid-b ui-responsive"><div class="ui-block-a"><a href="javascript:navbyapp('+"'messages'"+');" id="mbtnmessages" class="ui-btn ui-shadow ui-corner-all"><img src="img/messages.png" height="36" width="36"/><br>Messages ('+messagesNum+')</a></div><div class="ui-block-b"><a href="javascript:navbyapp('+"'checklist'"+');" id="mbtnchecklists" class="ui-btn ui-shadow ui-corner-all"><img src="img/certifications.png" height="36" width="36"/><br>Checklists</a></div><div class="ui-block-c"><a href="javascript:navbyapp('+"'dataqueris'"+');" id="mbtndataqueris" class="ui-btn ui-shadow ui-corner-all"><img src="img/query.png" height="36" width="36"/><br>Data Queries</a></div></div><div class="ui-grid-solo">'+rejbtn+'</div><input type="hidden" value="yes" id="hs" name="hs"><div id="Syncready" class="blink"><p class="event received">Database is not synchronized</p></div></form></div>').trigger('create');
 		
 		
 		//$('#menucontentd').empty();
@@ -2163,12 +2462,12 @@ translatehtml();
 });
 
 
-<!---------------------------------------------------------------------------------------------------------------------->
 
 //ON CREATE CHECKLIST USERS
 $(document).on( 'pagecreate', '#pageChecklist',function(){
 
      inPageMes=0;
+	IsSyncMessages=true;
      $("#bodycheck-list").html("");
        fillUsersSelect('#userlist');
 	   fillGroupsSelect();
@@ -2203,7 +2502,7 @@ $(document).on( 'pagecreate', '#pageChecklist',function(){
 
 });
 
-<!---------------------------------------------------------------------------------------------------------------------->
+
 
 //ON CREATE CHECKLIST SAVE
 $(document).on( 'pagebeforeshow', '#pageChecklistSave',function(){
@@ -2211,6 +2510,7 @@ $(document).on( 'pagebeforeshow', '#pageChecklistSave',function(){
  $("#checkuser").html("<img src='img/graphs/Logo_Small.png' style='height: 2em' /> &nbsp;&nbsp;Checklist: "+sessionStorage.userchoosename);
  
  inPageMes=0;
+ IsSyncMessages=true;
   var picker = $( "#dateentry", this );
     picker.mobipick({dateFormat:GetDateFormat()});
 var now = new Date();
@@ -2240,7 +2540,6 @@ else
 
 });
 
-<!---------------------------------------------------------------------------------------------------------------------->
 //ON CREATE Launch Procedure
 $(document).on( 'pagebeforeshow', '#pageProcedureLaunch',function(){
 	IsSyncMessages=true;
@@ -2278,6 +2577,7 @@ $(document).on( 'pagebeforeshow', '#pageProcedureLaunch',function(){
 //ON CREATE PROCEDURE STEPS
 $(document).on( 'pagebeforeshow', '#pageProcedure',function(){
 	inPageMes=0;
+	IsSyncMessages=true;
 	$('#bodyissues').html("");
 	var whattodo=sessionStorage.loadsteps;
 	if(whattodo=="true")
@@ -2296,12 +2596,12 @@ $(document).on( 'pagebeforeshow', '#pageProcedure',function(){
 	}
 });
 
-<!---------------------------------------------------------------------------------------------------------------------->
 
 //ON CREATE ISSUE REPORT PAGE
 $(document).on( 'pagebeforeshow', '#pageReport',function(){
 	sessionStorage.loadsteps="false";
 	inPageMes=0;
+	IsSyncMessages=true;
     $( '.popupParent' ).on({
         popupafterclose: function() {
             setTimeout( function(){ $( '.popupChild' ).popup( 'open' ) }, 300 );
@@ -2391,19 +2691,20 @@ $(document).on( 'pagebeforeshow', '#Gallery1',function(){
 				
 		});
 		
-<!---------------------------------------------------------------------------------------------------------------------->
+
 
 //ON CREATE Gallery Video Temp
 $(document).on( 'pagebeforeshow', '#pagetempvideo',function(){
 	
 	fillgalleryvidtemp();
 	});
-<!---------------------------------------------------------------------------------------------------------------------->
+
 
 		//ON CREATE PAGE HISTORY
 $(document).on( 'pagebeforeshow', '#pageHistoryProc',function(){
  $("#hgoto").val("0");
  inPageMes=0;
+ IsSyncMessages=true;
   var tb = $('#stepsbody');
 		 tb.html("");
 
@@ -2455,7 +2756,7 @@ fillhistorylist();
 
 });
 
-<!---------------------------------------------------------------------------------------------------------------------->
+
 //ON CREATE PROCEDURE HISTORY STEPS
 
 $(document).on( 'pagebeforeshow', '#pageProcedureHsteps',function(){
@@ -2596,6 +2897,7 @@ $(document).on( 'pagebeforeshow', '#pagetempvideoh',function(){
 $(document).on( 'pagebeforeshow', '#pageDataqueris',function(){
 	
 	inPageMes=0;
+	IsSyncMessages=true;
 	fillOperatorNameSelect();
 	//fillProcedureSelect();
 	fillFaultSelectdt();
@@ -2663,6 +2965,7 @@ showsettings();
 
 		//ON CREATE PAGE REJECTED
 $(document).on( 'pagebeforeshow', '#pageRejected',function(){
+	IsSyncMessages=true;
  $("#hgoto").val("2");
   var tb = $('#stepsbody');
   tb.html("");
@@ -2788,6 +3091,7 @@ $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
 		clearInterval(IntervalMessagesP);
 	IntervalMessagesP="";
 	inPageMes=0;
+	IsSyncMessages=true;
 //fill username name,level and name
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
@@ -2807,17 +3111,102 @@ $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
 	$("#hplogusername").html(headstring);
 	//var namedate=monthname+" "+daynumber+", "+yearnumber;
 	$("#hplogdatez").html(monthname+" "+daynumber+", "+yearnumber);
+	//$("#select_Submission").val("All");
+	var reminderSettings = $("#select_Submission");
+	reminderSettings.val("All").attr('selected', true).siblings('option').removeAttr('selected'); 
+	reminderSettings.selectmenu("refresh", true);
 	//filltaskworked();
 	StartInsertDirectX();
 	FillPersonnel();
 	fillitemworked();
 	filltaskworked();
 	InfoLevel();
+	GetOJTOverall();
+	GetRTIOverall();
+	GetSubmissions();
 	$( "#onebt" ).addClass("ui-btn-active");
+	$('#table-ojtsummary').on('click','tr', function() {
+        $('#body-ojtsummary tr').css({background: 'transparent'});
+		$('#body-ojtsummary tr').css({color: 'black'});
+        $(this).css({background: 'blue'});
+		$(this).css({color: 'white'});
+		var idrow=$(this).attr('data-name');
+		$("#idojtselected").val(idrow);
+		$("#hojttext").html("Detailed Summary for Duty "+idrow);
+		GetOJTOverallModal();
+		$("#headojtsummary").addClass("ui-bar-c");
+	 	$("#table-ojtsummary").table("refresh");
+		$("#table-ojtsummary").trigger('create');	
+	});
+	$('#table-classsummary').on('click','tr', function() {
+        $('#body-classsummary tr').css({background: 'transparent'});
+		$('#body-classsummary tr').css({color: 'black'});
+        $(this).css({background: 'blue'});
+		$(this).css({color: 'white'});
+		var idrow=$(this).attr('data-name');
+		$("#idclassselected").val(idrow);
+		$("#hoclasstext").html("Detailed Summary for Level "+idrow);
+		//Detailed Summary for Level
+		GetRTIOverallModal();
+		$("#headclasssummary").addClass("ui-bar-c");
+	 	$("#table-classsummary").table("refresh");
+		$("#table-classsummary").trigger('create');	
+	});
+	$('#table-submissions').on('click','tr', function() {
+        $('#body-submissions tr').css({background: 'transparent'});
+		$('#body-submissions tr').css({color: 'black'});
+        $(this).css({background: 'blue'});
+		$(this).css({color: 'white'});
+		var idrow=$(this).attr('data-name');
+		$('#idsubrow').val(idrow);
+		Getinfosubmittedrow();
+		$("#tsubmis").addClass("ui-bar-c");
+	 	$("#table-submissions").table("refresh");
+		$("#table-submissions").trigger('create');	
+    });
 });
 
 
 <!---------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------------------------------------------->
+//ON CREATE 
+//Certifications
+$(document).on( 'pagebeforeshow', '#pageCert',function(){
+var userfullname=sessionStorage.fname;
+var leveluser=sessionStorage.lvlname;
+var headstring=userfullname;
+var monthNames = ["January", "February", "March", "April", "May", "June",
+"July", "August", "September", "October", "November", "December"
+];
+var d = new Date();
+var monthname=monthNames[d.getMonth()];
+var daynumber=(d.getDate()) > 9 ? (d.getDate()) : "0" + (d.getDate());
+var yearnumber=d.getFullYear();
+//var pickerMsx = $("#entrycertndate", this );
+//pickerMsx.mobipick({dateFormat:GetDateFormat()});
+$("#supervisorbutton").html("");
+var tb = $('#bodyscert');
+tb.empty().append("");
+$("#table-scert").table("refresh");
+$("#table-scert").trigger('create');
+$("#hcertificationsusername").html(headstring);
+$("#hcertificationsdate").html(monthname+" "+daynumber+", "+yearnumber);
+GetUsersSelectCertifications();
+$('#table-Certifications').on('click','tr', function() {
+	$('#body-certifications tr').css({background: 'transparent'});
+	$('#body-certifications tr').css({color: 'black'});
+	$(this).css({background: 'blue'});
+	$(this).css({color: 'white'});
+	var idrow=$(this).attr('data-name');
+	$('#idhcert').val(idrow);
+	Getinfocertrow();
+	$("#tcertifications").addClass("ui-bar-c");
+	 $("#table-Certifications").table("refresh");
+	$("#table-Certifications").trigger('create');	
+});
+});
+
+
 <!---------------------------------------------------------------------------------------------------------------------->
 
 <!---------------------------------------------------------------------------------------------------------------------->
@@ -2826,8 +3215,10 @@ $(document).on( 'pagebeforeshow', '#pageLogbook',function(){
 $(document).on( 'pagebeforeshow', '#pageMessages',function(){
 //fill username name,level and name
 //alert("startpagemessages");
-    $("#IdMessageop").val("0");
+	$("#IdMessageop").val("0");
+	$("#idsupervisorname").val("0");
 	inPageMes=1;
+	IsSyncMessages=false;
 	var userfullname=sessionStorage.fname;
 	var leveluser=sessionStorage.lvlname;
 	var headstring=userfullname+": Level "+leveluser;
@@ -2969,7 +3360,7 @@ function LoginUser()
 	}
 	else
 	{
-		 navigator.notification.vibrate(2500);
+		 //navigator.notification.vibrate(2500);
 		 navigator.notification.alert("Please enter username and password", null, 'FieldTracker', 'Accept');
 	}
 
@@ -2986,42 +3377,64 @@ function LoginUser()
 		username=newusername;
 		//alert(username+" "+password);
 		//alert("SELECT * FROM PROCEDURESTEPS");
-		tx.executeSql("SELECT * FROM USERS WHERE Username='"+username+"' AND Password='"+password+"'", [], UserLoginSuccess, errorCB);
+		tx.executeSql("SELECT * FROM USERS WHERE Username='"+username+"' AND Password='"+password+"'", [], UserLoginSuccess, errorUserLogin);
 		//tx.executeSql("SELECT * FROM PROCEDURESTEPS", [], UserLoginSuccess, errorCB);
 		
 	}
 	
 	 function UserLoginSuccess(tx, results) {
-      var len = results.rows.length;
-	 // alert("query rows:"+len);
-	  if(len==1)
-	  {
-		  var nameuser=results.rows.item(0).Username;
-		  var fname=results.rows.item(0).FirstName;
-		  var lname=results.rows.item(0).LastName
-		  var fullname=fname+' '+lname;
-		  var LevelName=results.rows.item(0).LevelNum;
-		 // alert(LevelName);
-		   sessionStorage.userid=nameuser;
-		   sessionStorage.fname=fullname;
-		   sessionStorage.lvlname=LevelName;
-		  // SyncStatus();
-		  
-		$(':mobile-pagecontainer').pagecontainer('change', '#pageMenu', {
-        transition: 'flip',
-        changeHash: false,
-        reverse: true,
-        showLoadMsg: false
-        });		  
-		  
-		  
-	  }
-	  else
-	  {
-		  navigator.notification.vibrate(2500);
-		
-		  navigator.notification.alert("Invalid username or password", null, 'FieldTracker', 'Accept'); 
-	  }
+		try
+		{
+			var len = results.rows.length;
+			//alert("query rows:"+len);
+			if(len==1)
+			{
+				var nameuser=results.rows.item(0).Username;
+				var fname=results.rows.item(0).FirstName;
+				var lname=results.rows.item(0).LastName
+				var fullname=fname+' '+lname;
+				var LevelName="";
+				//alert(results.rows.item(0).Location);
+				if(results.rows.item(0).LevelNum!="" && results.rows.item(0).LevelNum!="null")
+				{
+				  LevelName=results.rows.item(0).LevelNum;
+				}
+				else
+				{
+				  LevelName=results.rows.item(0).AltLevel;
+				}
+			  // alert("LevelType "+results.rows.item(0).LevelType)
+				//alert("LevelName= "+LevelName);
+				 sessionStorage.userid=nameuser;
+				 sessionStorage.fname=fullname;
+				 sessionStorage.lvlname=LevelName;
+				 sessionStorage.lvltype=results.rows.item(0).LevelType;
+				 sessionStorage.location=results.rows.item(0).Location;
+				// SyncStatus();
+				
+			  $(':mobile-pagecontainer').pagecontainer('change', '#pageMenu', {
+			  transition: 'flip',
+			  changeHash: false,
+			  reverse: true,
+			  showLoadMsg: false
+			  });		  
+				
+				
+			}
+			else
+			{
+				//navigator.notification.vibrate(2500);
+			  
+				navigator.notification.alert("Invalid username or password", null, 'FieldTracker', 'Accept'); 
+			}
+
+		}	
+		catch(error)
+		{
+			alert(error);
+
+		} 
+     
      
    }
 
@@ -8786,15 +9199,7 @@ function AddResponses()
   {
 	  //verifiy if all have responeses
 	   var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
- 		db.transaction(Queryverifyresponses, errorCB);
- 
-	//$(':mobile-pagecontainer').pagecontainer('change', '#pageMenu', {
-      //  transition: 'pop',
-       // changeHash: false,
-        //reverse: true,
-        //showLoadMsg: true
-    //});
-	  
+ 		db.transaction(Queryverifyresponses, errorCB); 
   }
   function Queryverifyresponses(tx)
   {

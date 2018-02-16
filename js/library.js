@@ -402,7 +402,7 @@ function QuerytoinsertLibrary(tx)
 		 	 obj=jQuery.parseJSON(newlibrarydatatoinsert.Groups);
 			 //alert("Groups:"+obj.length);
 	     $.each(obj, function (key, value) {
-		query='INSERT INTO GROUPS (AreaID,GroupID,Description) VALUES ("'+escapeDoubleQuotes(value.AreaID)+'","'+escapeDoubleQuotes(value.GroupID)+'","'+escapeDoubleQuotes(value.Description)+'")';
+		query='INSERT INTO GROUPS (AreaID,GroupID,Description,Location) VALUES ("'+escapeDoubleQuotes(value.AreaID)+'","'+escapeDoubleQuotes(value.GroupID)+'","'+escapeDoubleQuotes(value.Description)+'","'+escapeDoubleQuotes(value.Location)+'")';
 		tx.executeSql(query);
 	
      });
@@ -822,7 +822,7 @@ function QuerySLibrary(tx)
 		 	 obj=jQuery.parseJSON(sendLibraryalone.Groups);
 			 //alert("Groups:"+obj.length);
 	     $.each(obj, function (key, value) {
-		query='INSERT INTO GROUPS (AreaID,GroupID,Description) VALUES ("'+escapeDoubleQuotes(value.AreaID)+'","'+escapeDoubleQuotes(value.GroupID)+'","'+escapeDoubleQuotes(value.Description)+'")';
+		query='INSERT INTO GROUPS (AreaID,GroupID,Description,Location) VALUES ("'+escapeDoubleQuotes(value.AreaID)+'","'+escapeDoubleQuotes(value.GroupID)+'","'+escapeDoubleQuotes(value.Description)+'","'+escapeDoubleQuotes(value.Location)+'")';
 		tx.executeSql(query);
 	
      });

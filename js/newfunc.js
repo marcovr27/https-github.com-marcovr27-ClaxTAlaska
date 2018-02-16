@@ -39,7 +39,8 @@ function filltaskworked()
 
 function Querytaskworked(tx)
 {
-  tx.executeSql("SELECT * FROM DUTIES2TASKS ORDER BY Duty,OrdNum", [], QuerytaskworkedSuccess, errorCB);
+  var currentuserlocation=sessionStorage.location;
+  tx.executeSql("SELECT * FROM DUTIES2TASKS WHERE Location='"+currentuserlocation+"' ORDER BY Duty,OrdNum", [], QuerytaskworkedSuccess, errorCB);
 }
 
 function QuerytaskworkedSuccess(tx, results)
@@ -377,8 +378,7 @@ function QueryInfoItemSuccess(tx, results)
 	//alert("task worked"+len);
 	if(len>0)
 	{
-			for (var i=0; i<len; i++){
-		//alert(results.rows.item(i).Hours);	
+			for (var i=0; i<len; i++){	
 		totalhours+= parseFloat(results.rows.item(i).Hours);
 		totalmins+= parseFloat(results.rows.item(i).Mins);
 		}
@@ -1059,8 +1059,587 @@ function GetOJTOverall()
 
 function QueryOJTOverall(tx)
 {
-	var querytosend="SELECT * FROM SUBMITTEDHOURS WHERE Sync='no'";
-	tx.executeSql(querytosend, [], QueryModalLogbookSuccess, errorCB);
-	
+	var querytosend="SELECT DUTIES2TASKS.Duty, SUM(Tasks.ReqHrsOJT) as Suma FROM DUTIES2TASKS INNER JOIN TASKS ON DUTIES2TASKS.TaskID=TASKS.Name GROUP BY DUTIES2TASKS.Duty";
+	tx.executeSql(querytosend, [], QueryOJTOverallSuccess, errorCB);
+
 }
 
+function QueryOJTOverallSuccess(tx,results)
+{	
+	QuerySubOjt(results);
+}
+
+function QuerySubOjt(resultados)
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ RQuerySubOjt(tx,resultados)}, errorCB);
+}
+function RQuerySubOjt(tx,resultados)
+{
+	var idusera=sessionStorage.userid;
+	var query="SELECT DUTIES2TASKS.Duty,SUM(SUBMITTEDHOURS.Hours) as suma, SUM(SUBMITTEDHOURS.Mins) as smins FROM SUBMITTEDHOURS  INNER JOIN DUTIES2TASKS ON SUBMITTEDHOURS.Task=DUTIES2TASKS.TaskID WHERE SUBMITTEDHOURS.Type='O' AND SUBMITTEDHOURS.UserID='"+idusera+"' AND SUBMITTEDHOURS.Status='Approved' GROUP BY Duty ORDER By DUTIES2TASKS.Duty";
+	tx.executeSql(query,[],function(tx,results){ RQuerySubOjtSuccess(tx,results,resultados) }, errorCB);	
+}
+
+function RQuerySubOjtSuccess(tx,results,resultados)
+{
+	var len= results.rows.length;
+	var lentwo= resultados.rows.length;
+	var sumahrs=0;
+	var minshrs=0;
+	var totalminsh=0;
+	var totalfix=0;
+	var togo=0;
+	var perresult =0;
+	var tb = $('#body-ojtsummary');
+	var tablehtml="";
+	try
+	{
+		for (var i=0; i<lentwo; i++){
+			sumahrs=0;
+			minshrs=0;
+			totalminsh=0;
+			togo=0;
+			for (var t=0; t<len; t++){
+			  if(results.rows.item(t).Duty==resultados.rows.item(i).Duty)
+			  {
+				
+				  sumahrs+=results.rows.item(t).suma;
+				  minshrs+=results.rows.item(t).smins;
+			  }
+			}
+			if(minshrs>0)
+			{
+		 	 totalminsh=parseFloat(minshrs)*(1/60);
+			}
+			totalfix=parseFloat(sumahrs)+parseFloat(totalminsh);
+			togo=parseFloat(resultados.rows.item(i).Suma)-parseFloat(totalfix);
+			perresult = (parseFloat(totalfix) / parseFloat(resultados.rows.item(i).Suma)) * 100;
+			if(perresult==100)
+			{
+				tablehtml+='<tr data-name="'+resultados.rows.item(i).Duty+'"><td class="colorverde" align="center">'+resultados.rows.item(i).Duty+'</td><td class="colorverde" align="center">'+resultados.rows.item(i).Suma+'</td><td class="colorverde" align="center">'+totalfix+'</td><td class="colorverde" align="center">'+togo+'</td><td class="colorverde" align="center">'+perresult.toFixed(2)+'</td></tr>';
+
+			}
+			else
+			{
+				tablehtml+='<tr data-name="'+resultados.rows.item(i).Duty+'"><td class="colorrojo" align="center">'+resultados.rows.item(i).Duty+'</td><td class="colorrojo" align="center">'+resultados.rows.item(i).Suma+'</td><td class="colorrojo" align="center">'+totalfix+'</td><td class="colorrojo" align="center">'+togo+'</td><td class="colorrojo" align="center">'+perresult.toFixed(2)+'</td></tr>';
+
+			}
+			
+			tb.empty().append(tablehtml);
+			$("#table-ojtsummary").table("refresh");
+			$("#table-ojtsummary").trigger('create');
+
+	}
+
+	}
+	catch(error)
+	{
+		alert(error);
+	}
+}
+
+function GetOJTOverallModal()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryOJTOverallModal, errorCB);	
+}
+
+function QueryOJTOverallModal(tx)
+{
+	var ojtvar=$("#idojtselected").val();
+	var querytosend="SELECT DUTIES2TASKS.Duty,Tasks.ReqHrsOJT,Tasks.Name FROM DUTIES2TASKS INNER JOIN TASKS ON DUTIES2TASKS.TaskID=TASKS.Name  WHERE DUTIES2TASKS.Duty='"+ojtvar+"' ORDER By Duties2Tasks.OrdNum";
+	tx.executeSql(querytosend, [], QueryOJTOverallSuccessModal, errorCB);
+}
+
+function QueryOJTOverallSuccessModal(tx,results)
+{	
+	QuerySubOjtModal(results);
+}
+
+function QuerySubOjtModal(resultados)
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ RQuerySubOjtModal(tx,resultados)}, errorCB);
+}
+function RQuerySubOjtModal(tx,resultados)
+{
+	var idusera=sessionStorage.userid;
+	var ojtvar=$("#idojtselected").val();
+	var query="SELECT DUTIES2TASKS.Duty,SUBMITTEDHOURS.Task, SUBMITTEDHOURS.Hours, SUBMITTEDHOURS.Mins FROM SUBMITTEDHOURS  INNER JOIN DUTIES2TASKS ON SUBMITTEDHOURS.Task=DUTIES2TASKS.TaskID WHERE SUBMITTEDHOURS.Type='O' AND SUBMITTEDHOURS.UserID='"+idusera+"' AND SUBMITTEDHOURS.Status='Approved' AND DUTIES2TASKS.Duty='"+ojtvar+"' ORDER By DUTIES2TASKS.Duty";
+	tx.executeSql(query,[],function(tx,results){ RQuerySubOjtSuccessModal(tx,results,resultados) }, errorCB);	
+}
+
+function RQuerySubOjtSuccessModal(tx,results,resultados)
+{
+	var len= results.rows.length;
+	var lentwo= resultados.rows.length;
+	var tb = $('#body-taskojt');
+	var tablehtml="";
+	var taskname="";
+	var sumahrs=0;
+	var minshrs=0;
+	var totalminsh=0;
+	var totalfix=0;
+	var togo=0;
+	var perresult =0;
+	try
+	{
+		for (var i=0; i<lentwo; i++){
+			sumahrs=0;
+			minshrs=0;
+			totalminsh=0;
+			togo=0;
+			for (var t=0; t<len; t++){
+				if(results.rows.item(t).Task==resultados.rows.item(i).Name)
+				{
+					sumahrs+=results.rows.item(t).Hours;
+					minshrs+=results.rows.item(t).Mins;
+				
+				}
+			 
+			}
+			if(minshrs>0)
+			{
+		 	 totalminsh=parseFloat(minshrs)*(1/60);
+			}
+			taskname=resultados.rows.item(i).Name;
+			totalfix=parseFloat(sumahrs)+parseFloat(totalminsh);
+			togo=parseFloat(resultados.rows.item(i).ReqHrsOJT)-parseFloat(totalfix);
+			perresult = (parseFloat(totalfix) / parseFloat(resultados.rows.item(i).ReqHrsOJT)) * 100;
+			if(perresult==100)
+			{
+				tablehtml+='<tr><td class="colorverde" align="center">'+taskname+'</td><td class="colorverde" align="center">'+resultados.rows.item(i).ReqHrsOJT+'</td><td class="colorverde" align="center">'+totalfix+'</td><td class="colorverde" align="center">'+togo+'</td><td class="colorverde" align="center">'+perresult.toFixed(2)+'</td></tr>';
+			}
+			else
+			{
+				tablehtml+='<tr><td class="colorrojo" align="center">'+taskname+'</td><td class="colorrojo" align="center">'+resultados.rows.item(i).ReqHrsOJT+'</td><td class="colorrojo" align="center">'+totalfix+'</td><td class="colorrojo" align="center">'+togo+'</td><td class="colorrojo" align="center">'+perresult.toFixed(2)+'</td></tr>';
+			
+			}
+			
+			tb.empty().append(tablehtml);
+			$("#table-taskojt").table("refresh");
+			$("#table-taskojt").trigger('create');
+			$("#popupdetailojt").popup("reposition", {
+				y: 0 /* move it to top */
+			  });
+			$("#popupdetailojt").popup("open");
+
+	}
+
+	}
+	catch(error)
+	{
+		alert(error);
+	}
+}
+
+
+function GetRTIOverall()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryRTIOverall, errorCB);	
+}
+
+function QueryRTIOverall(tx)
+{
+	var querytosend="SELECT Levels.LevelNum,Levels.ReqHrsRTI FROM Levels";
+	tx.executeSql(querytosend, [], QueryRTIOverallSuccess, errorCB);	
+}
+
+function QueryRTIOverallSuccess(tx,results)
+{
+	QuerySubRTI(results);
+}
+
+function QuerySubRTI(resultados)
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ RQuerySubRTI(tx,resultados)}, errorCB);
+}
+function RQuerySubRTI(tx,resultados)
+{
+	var idusera=sessionStorage.userid;
+	var query="SELECT SubmittedHours.LevelNum, SUM(SubmittedHours.Hours) as hours, Sum(SubmittedHours.Mins) as mins FROM SubmittedHours WHERE SubmittedHours.Type='C' AND UserID='"+idusera+"' GROUP BY LevelNum";
+	tx.executeSql(query, [],function(tx,results){ RQuerySubRTISuccess(tx,results,resultados) }, errorCB);	
+}
+
+function RQuerySubRTISuccess(tx,results,resultados)
+{
+	var len= results.rows.length;
+	var lentwo= resultados.rows.length;
+	var sumahrs=0;
+	var minshrs=0;
+	var totalminsh=0;
+	var totalfix=0;
+	var togo=0;
+	var perresult =0;
+	var tb = $('#body-classsummary');
+	var tablehtml="";
+	try
+	{
+		for (var i=0; i<lentwo; i++){
+			sumahrs=0;
+			minshrs=0;
+			totalminsh=0;
+			togo=0;
+			for (var t=0; t<len; t++){
+			  if(results.rows.item(t).LevelNum==resultados.rows.item(i).LevelNum)
+			  {
+				
+				  sumahrs+=results.rows.item(t).hours;
+				  minshrs+=results.rows.item(t).mins;
+			  }
+			}
+			if(minshrs>0)
+			{
+		 	 totalminsh=parseFloat(minshrs)*(1/60);
+			}
+			totalfix=parseFloat(sumahrs)+parseFloat(totalminsh);
+			togo=parseFloat(resultados.rows.item(i).ReqHrsRTI)-parseFloat(totalfix);
+			perresult = (parseFloat(totalfix) / parseFloat(resultados.rows.item(i).ReqHrsRTI)) * 100;
+			if(perresult==100)
+			{
+				tablehtml+='<tr data-name="'+resultados.rows.item(i).LevelNum+'"><td class="colorverde" align="center">'+resultados.rows.item(i).LevelNum+'</td><td class="colorverde" align="center">'+resultados.rows.item(i).ReqHrsRTI+'</td><td class="colorverde" align="center">'+totalfix+'</td><td class="colorverde" align="center">'+togo+'</td><td class="colorverde" align="center">'+perresult.toFixed(2)+'</td></tr>';
+
+			}
+			else
+			{
+				tablehtml+='<tr data-name="'+resultados.rows.item(i).LevelNum+'"><td class="colorrojo" align="center">'+resultados.rows.item(i).LevelNum+'</td><td class="colorrojo" align="center">'+resultados.rows.item(i).ReqHrsRTI+'</td><td class="colorrojo" align="center">'+totalfix+'</td><td class="colorrojo" align="center">'+togo+'</td><td class="colorrojo" align="center">'+perresult.toFixed(2)+'</td></tr>';
+
+			}
+			
+			tb.empty().append(tablehtml);
+			$("#table-classsummary").table("refresh");
+			$("#table-classsummary").trigger('create');
+			
+	}
+
+	}
+	catch(error)
+	{
+		alert(error);
+	}	
+
+}
+function GetRTIOverallModal()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QueryRTIOverallModal, errorCB);	
+}
+
+function QueryRTIOverallModal(tx)
+{
+	var classid=$("#idclassselected").val();
+	var querytosend="SELECT Levels.LevelNum,Levels.ReqHrsRTI FROM Levels WHERE LevelNum='"+classid+"'";
+	tx.executeSql(querytosend, [], QueryRTIOverallSuccessModal, errorCB);	
+}
+
+function QueryRTIOverallSuccessModal(tx,results)
+{
+	QuerySubRTIModal(results);
+}
+
+function QuerySubRTIModal(resultados)
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ RQuerySubRTIModal(tx,resultados)}, errorCB);
+}
+function RQuerySubRTIModal(tx,resultados)
+{
+	var idusera=sessionStorage.userid;
+	var classid=$("#idclassselected").val();
+	var query="SELECT SubmittedHours.LevelNum, SubmittedHours.Hours as hours, SubmittedHours.Mins as mins, SubmittedHours.Item FROM SubmittedHours WHERE SubmittedHours.Type='C' AND UserID='"+idusera+"'";
+	tx.executeSql(query, [],function(tx,results){ RQuerySubRTISuccessModal(tx,results,resultados) }, errorCB);	
+}
+
+function RQuerySubRTISuccessModal(tx,results,resultados)
+{
+	var len= results.rows.length;
+	var lentwo= resultados.rows.length;
+	var sumahrs=0;
+	var minshrs=0;
+	var totalminsh=0;
+	var totalfix=0;
+	var togo=0;
+	var perresult =0;
+	var tb = $('#body-classdetail');
+	var tablehtml="";
+	var namesx="";
+	try
+	{
+		for (var i=0; i<lentwo; i++){
+			sumahrs=0;
+			minshrs=0;
+			totalminsh=0;
+			togo=0;
+			namesx="";
+			for (var t=0; t<len; t++){
+			  if(results.rows.item(t).LevelNum==resultados.rows.item(i).LevelNum)
+			  {
+				
+				  sumahrs+=results.rows.item(t).hours;
+				  minshrs+=results.rows.item(t).mins;
+				  namesx=results.rows.item(t).Item;
+			  }
+			}
+			if(minshrs>0)
+			{
+		 	 totalminsh=parseFloat(minshrs)*(1/60);
+			}
+			totalfix=parseFloat(sumahrs)+parseFloat(totalminsh);
+			tablehtml+='<tr><td class="colorrojo" align="center">'+ namesx+'</td><td class="colorrojo" align="center">'+totalfix+'</td></tr>';	
+			tb.empty().append(tablehtml);
+			$("#table-classdetail").table("refresh");
+			$("#table-classdetail").trigger('create');
+			$("#popupdetailclass").popup("reposition", {
+				y: 0 /* move it to top */
+			  });
+			$("#popupdetailclass").popup("open");
+	}
+
+	}
+	catch(error)
+	{
+		alert(error);
+	}	
+}
+
+function GetSubmissions()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(QuerySubmissions, errorCB);	
+}
+
+function QuerySubmissions(tx)
+{
+	var options=$("#select_Submission").val();
+	var idusera=sessionStorage.userid;
+	var query="SELECT SubmitID,EntryDate,Hours,Mins,Type,Status,ReviewDate FROM SubmittedHours WHERE UserID='"+idusera+"'";
+	if(options=="Submitted")
+	{
+		query+=" AND Status='Submitted' ";
+
+	}
+	else if(options=="Approved")
+	{
+		query+=" AND Status='Approved' ";
+
+	}
+	else if(options=="Modified")
+	{
+		query+=" AND Status='Modified' ";
+
+	}
+	else if(options=="Rejected")
+	{
+		query+=" AND Status='Rejected' ";
+
+	}
+	//alert(query);
+	query+=" ORDER BY EntryDate";
+	tx.executeSql(query, [], QuerySubmissionsSuccess, errorCB);
+
+}
+
+function QuerySubmissionsSuccess(tx,results)
+{
+	var len= results.rows.length;
+	var tb = $('#body-submissions');
+	var tablehtml="";
+	var entrydate="";
+	var hoursandmins="";
+	var entrytype="";
+	var refe="";
+	for (var t=0; t<len; t++){
+		if(results.rows.item(t).Type=="O")
+		{
+			entrytype="OJT";
+
+		}
+		else
+		{
+			entrytype="RTI";
+		}
+		
+		if(results.rows.item(t).ReviewDate=="null" || results.rows.item(t).ReviewDate=="1900-01-01 00:00:00")
+		{
+			refe="";
+		}
+		else
+		{
+			refe=ShowFormatDate(results.rows.item(t).ReviewDate);
+		}
+		if(parseFloat(results.rows.item(t).Mins)<=9)
+		{
+			//alert("menor");
+			hoursandmins=results.rows.item(t).Hours+":0"+results.rows.item(t).Mins;
+		}
+		else
+		{
+			hoursandmins=results.rows.item(t).Hours+":"+results.rows.item(t).Mins;
+
+		}
+	
+		tablehtml+='<tr data-name="'+results.rows.item(t).SubmitID+'"><td align="center">'+ShowFormatDate(results.rows.item(t).EntryDate)+'</td><td align="center">'+hoursandmins+'</td><td align="center">'+entrytype+'</td><td align="center">'+ results.rows.item(t).Status+'</td><td align="center">'+refe+'</td></tr>';	
+	}
+	tb.empty().append(tablehtml);
+	$("#table-submissions").table("refresh");
+	$("#table-submissions").trigger('create');
+
+}
+
+function Getinfosubmittedrow()
+{
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(Queryinfosubmittedrow, errorCB);
+
+}
+
+function Queryinfosubmittedrow(tx)
+{
+	var idsubmitrow=$('#idsubrow').val();
+	//alert(idsubmitrow);
+	var query="SELECT * FROM SubmittedHours WHERE SubmitID='"+idsubmitrow+"'";
+	//alert(query);
+	tx.executeSql(query, [], infosubmittedrowSuccess, errorCB);
+
+}
+
+function infosubmittedrowSuccess(tx,results)
+{
+	var len=results.rows.length;
+	var tb = $('#bdonerow');
+	var tbt = $('#bdtworow');
+	var tbth = $('#bdthreerow');
+	var htmltbo="";
+	var htmltbt="";
+	var htmltbth="";
+	var minss="";
+	var hoursandmins="";
+	var refe="";
+	//alert("vavers");
+	if(len>0)
+	{
+		try
+		{
+			var typeofs="";
+		var itemtask="";
+		if(results.rows.item(0).Type=="O")
+		{
+			typeofs="OJT";
+			itemtask=results.rows.item(0).Task;
+		}
+		else
+		{
+			typeofs="RTI";
+			itemtask=results.rows.item(0).Item;
+		}
+		//alert("comprar fecha; "+results.rows.item(0).ReviewDate);
+		if(results.rows.item(0).ReviewDate=="null" || results.rows.item(0).ReviewDate=="1900-01-01 00:00:00")
+		{
+			refe="";
+		}
+		else
+		{
+			refe=ShowFormatDate(results.rows.item(0).ReviewDate);
+		}
+		if(parseFloat(results.rows.item(0).Mins)<=9)
+		{
+			//alert("menor");
+			hoursandmins=results.rows.item(0).Hours+":0"+results.rows.item(0).Mins;
+		}
+		else
+		{
+			hoursandmins=results.rows.item(0).Hours+":"+results.rows.item(0).Mins;
+
+		}
+		//alert("horas y minutos: "+results.rows.item(0).Mins);
+		
+		htmltbo='<tr><td id="rowentrydate">'+ShowFormatDate(results.rows.item(0).EntryDate)+'</td><td id="rowsubmitdate">'+ShowFormatDate(results.rows.item(0).SubmitDate)+'</td><td id="rowtype">'+typeofs+'</td><td id="rowpersonnel"></td></tr>';
+		htmltbt='<tr><td id="rowhrmin">'+hoursandmins+'</td><td id="rowstatus">'+results.rows.item(0).Status+'</td><td id="rowreview">'+refe+'</td><td id="rowsupervisor"></td></tr>';
+		htmltbth='<tr><td id="rowtaskitem">'+itemtask+'</td><td id="rowreason">'+results.rows.item(0).RejectReason+'</td></tr>';
+		tb.empty().append(htmltbo);
+		$("#my-tableo").table("refresh");
+		$("#my-tableo").trigger('create');
+		tbt.empty().append(htmltbt);
+		$("#my-tablet").table("refresh");
+		$("#my-tablet").trigger('create');
+		tbth.empty().append(htmltbth);
+		$("#my-tabletr").table("refresh");
+		$("#my-tabletr").trigger('create');
+		FillNameByID(results.rows.item(0).SupervisorID);
+		FillNameByIDP(results.rows.item(0).PersonnelID);
+
+		}
+		catch(error)
+		{
+			alert(error);
+		}
+		
+
+	}
+
+}
+
+function FillNameByID(iduser)
+{
+	$("#idsupervisorname").val(iduser);
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ QueryFillNameID(tx,iduser)}, errorCB);
+
+}
+
+function QueryFillNameID(tx,iduser)
+{
+	var query="SELECT USERS.FirstName, USERS.LastName, Users.Username FROM USERS WHERE USERS.Username='"+iduser+"'";
+	tx.executeSql(query, [],function(tx,results){ QueryFillNameIDSuccess(tx,results,iduser) }, errorCB);	
+}
+
+function QueryFillNameIDSuccess(tx,results,iduser)
+{
+	var len=results.rows.length;
+	if(len>0)
+	{
+		//alert(results.rows.item(0).LastName+', '+results.rows.item(0).FirstName);
+		$("#rowsupervisor").empty().append(results.rows.item(0).LastName+', '+results.rows.item(0).FirstName);
+		$("#idsupervisorfname").val(results.rows.item(0).LastName+', '+results.rows.item(0).FirstName);
+		$("#my-tablet").table("refresh");
+		//return results.rows.item(0).LastName+', '+results.rows.item(0).FirstName;
+	}
+}
+
+function FillNameByIDP(iduser)
+{
+	
+	var db = window.openDatabase("Fieldtracker", "1.0", "Fieldtracker", 50000000);
+    db.transaction(function(tx){ QueryFillNameIDP(tx,iduser)}, errorCB);
+
+}
+
+function QueryFillNameIDP(tx,iduser)
+{
+	var query="SELECT USERS.FirstName, USERS.LastName, Users.Username FROM USERS WHERE USERS.Username='"+iduser+"'";
+	tx.executeSql(query, [],function(tx,results){ QueryFillNameIDSuccessP(tx,results,iduser) }, errorCB);	
+}
+
+function QueryFillNameIDSuccessP(tx,results,iduser)
+{
+	var len=results.rows.length;
+	if(len>0)
+	{
+		//alert(results.rows.item(0).LastName+', '+results.rows.item(0).FirstName);
+		$("#rowpersonnel").empty().append(results.rows.item(0).LastName+', '+results.rows.item(0).FirstName);
+		$("#my-tableo").table("refresh");
+		//return results.rows.item(0).LastName+', '+results.rows.item(0).FirstName;
+	}
+}
+function sendtosupervisor()
+{
+	var iduser=$("#idsupervisorname").val();
+	var userfullname=$("#idsupervisorfname").val();
+	$("#FromH").val(iduser);
+	$("#FromHName").val(userfullname);
+	OpenSendMessage("5");
+	
+}
